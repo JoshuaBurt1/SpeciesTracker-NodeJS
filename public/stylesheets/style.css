@@ -1,14 +1,16 @@
-.jumbotron {
-  background-color: rgb(88, 201, 246);
-  padding: 2%;
-}
-
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background-image: url("/images/site_images/background.png"); /* Specify the path to your image */
+  background-size: cover; /* Adjust the size to cover the entire viewport */
+  background-repeat: no-repeat; /* Prevent the image from repeating */
+}
+
+#indexHeader{
+  background-color: rgba(255, 255, 255, 0.173);
 }
 
 .navImage{
@@ -28,6 +30,12 @@ body {
   transition: color 0.3s;
 }
 
+#container{
+  background-color: rgba(255, 255, 255, 0.765);
+  padding:2%;
+  border-radius: 7px;
+  
+}
 
 footer {
   display: flex;
