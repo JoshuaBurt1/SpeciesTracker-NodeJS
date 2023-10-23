@@ -1,0 +1,23 @@
+<!-- views/index.ejs -->
+<!DOCTYPE html>
+<html>
+<body>
+    <div class="container">
+        <%- include('partials/header') %>
+        <!--Jumbotron HTML/Bootstrap header-->
+        <div class="jumbotron jumbotron-fluid">
+          <h1 class="display-3"><%= title %></h1>
+          <p class="lead">All about where to find species and their characteristics</p>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="list-group">
+                  <!-- loop over blog posts and render them -->
+                  LIST_OF_POSTS
+                </div>
+            </div>
+        </div>
+        <%- include('partials/footer') %>
+    </div>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!-- views/partials/header.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title><%= title %></title>
+
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+      integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+</head>
+
+<!-- views/partials/header.ejs -->
+<div class="header clearfix">
+    <!--Nav-bar-->
+    <nav class="navbar navbar-expand-sm bg-light navbar-light">
+      <div class="container-fluid">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/page_plantae">Plant</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/page_fungi">Fungi</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/page_animalia">Animal</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/page_protista">Protists</a>
+          </li>
+          <ul class="nav nav-pills pull-right">
+            <li role="presentation"><a href="/">Home</a></li>
+        </ul>
+          <div
+              class="collapse navbar-collapse"
+              id="navbarSupportedContent"
+            >
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                  <a
+                    class="nav-link dropdown-toggle"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >User Portal </a>
+                  <ul class="dropdown-menu" id="developerDropdown">
+                    <a class="dropdown-item" href="/Identification">Identification</a>
+                    <a class="dropdown-item" href="/Forum">Forum</a>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item"><a
+                class="nav-link"
+                href="#"
+              >{{user.username}}</a></li>
+            <li class="nav-item"><a
+                class="nav-link"
+                href="/Logout"
+              >Logout</a></li>
+            <li class="nav-item"><a
+                class="nav-link"
+                href="/Register"
+              >Register</a></li>
+            <li class="nav-item"><a
+                class="nav-link"
+                href="/Login"
+              >Login</a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
