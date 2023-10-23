@@ -26,64 +26,40 @@
     <!--Nav-bar-->
     <nav class="navbar navbar-expand-sm bg-light navbar-light">
       <div class="container-fluid">
-        <ul class="navbar-nav">
+        <ul class="nav nav-tabs">
           <li class="nav-item">
-            <a class="nav-link active" href="/">Home</a>
+            <a class="nav-link" id="linkColor" href="/">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/page_plantae">Plant</a>
+              <a class="nav-link" id="linkColor" href="/plants"><img class="navImage" src="images/tab_images/plant.png"/> Plants</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/page_fungi">Fungi</a>
+            <a class="nav-link" id="linkColor" href="/fungi"><img class="navImage" src="images/tab_images/mushroom.jpg"/> Fungi</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/page_animalia">Animal</a>
+            <a class="nav-link" id="linkColor" href="/protists"><img class="navImage" src="images/tab_images/protist.jpg"/> Protists</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/page_protista">Protists</a>
+            <a class="nav-link" id="linkColor" href="/animals"><img class="navImage" src="images/tab_images/animal.png"/> Animals</a>
           </li>
-          <ul class="nav nav-pills pull-right">
-            <li role="presentation"><a href="/">Home</a></li>
         </ul>
-          <div
-              class="collapse navbar-collapse"
-              id="navbarSupportedContent"
-            >
-              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item dropdown">
+          <ul class="nav nav-tabs">
+            <li class="dropdown-menu-end">
                   <a
                     class="nav-link dropdown-toggle"
                     href="#"
                     role="button"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
+                    id="linkColor"
                   >User Portal </a>
                   <ul class="dropdown-menu" id="developerDropdown">
-                    <a class="dropdown-item" href="/Identification">Identification</a>
-                    <a class="dropdown-item" href="/Forum">Forum</a>
+                    <a class="dropdown-item" href="/identification">Identification</a>
+                    <a class="dropdown-item" href="/forum">Forum</a>
                   </ul>
-                </li>
-              </ul>
-            </div>
-        </ul>
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item"><a
-                class="nav-link"
-                href="#"
-              >{{user.username}}</a></li>
-            <li class="nav-item"><a
-                class="nav-link"
-                href="/Logout"
-              >Logout</a></li>
-            <li class="nav-item"><a
-                class="nav-link"
-                href="/Register"
-              >Register</a></li>
-            <li class="nav-item"><a
-                class="nav-link"
-                href="/Login"
-              >Login</a></li>
-        </ul>
+            </li>
+          </ul>
       </div>
     </nav>
-  </div>
+</div>
+<body>
