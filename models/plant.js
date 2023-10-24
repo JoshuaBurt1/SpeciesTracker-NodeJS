@@ -7,11 +7,8 @@ const plantsSchemaDefinition = {
   // note: changing updateDate type to String = 2010-10-10 format)
   name: { type: String, required: true },
   updateDate: { type: Date },
-  language: { type: String, required: true },
-  host: { type: String, required: true },
   image: { type: String, required: true },
   link: { type: String, required: true },
-  status: { type: String, required: true },
   issue: { type: String, default: "Running" },
 };
 

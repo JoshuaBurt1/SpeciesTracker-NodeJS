@@ -4,11 +4,24 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-image: url("/images/site_images/background.png"); /* Specify the path to your image */
-  background-size: cover; /* Adjust the size to cover the entire viewport */
-  background-repeat: no-repeat; /* Prevent the image from repeating */
+  background-image: url("/images/site_images/background0.png"); /* Specify the path to your image */
+  margin: 0;
+    overflow: hidden;
+    animation: background-fade 10s infinite;
+    background-size: cover;
+    background-position: center;
+    animation-timing-function: ease-in-out;
+    animation-duration: 20s;
 }
 
+@keyframes background-fade {
+  0%, 100% {
+      background-image: url('/images/site_images/background0.png');
+  }
+  50% {
+      background-image: url('/images/site_images/background1.jpg');
+  }
+}
 #indexHeader{
   background-color: rgba(255, 255, 255, 0.173);
 }
@@ -34,7 +47,6 @@ body {
   background-color: rgba(255, 255, 255, 0.765);
   padding:2%;
   border-radius: 7px;
-  
 }
 
 footer {

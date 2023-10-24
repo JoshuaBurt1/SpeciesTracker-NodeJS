@@ -30,8 +30,7 @@ const Plant = require("../models/plant");
 router.get("/", (req, res, next) => {
   //res.render("plants/index", { title: "Plant Tracker" });
   //renders data in table
-  Plant.find()
-    .sort({ language: 1 }) //sorting function (alphabetically)
+  Plant.find() //sorting function (alphabetically)
     .then((plants) => {
       res.render("plants/index", {
         title: "Plant Tracker Dataset",
@@ -45,21 +44,21 @@ router.get("/", (req, res, next) => {
 });
 
 //note: NEED TO COMBINE THESE 2 FUNCTIONS TO RENDER ASYNCHRONOUSLY (see below)
-// //GET handler for index /plants/add
-// router.get("/add", (req, res, next) => {
-//   //res.render("plants/add", { title: "Add a New Plant" });
-//   Language.find()
-//     .then((languageList) => {
-//       res.render("plants/add", {
-//         title: "Add a new Plant",
-//         languages: languageList,
-//         user: req.user,
-//       });
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// });
+//GET handler for index /plants/add
+router.get("/add", (req, res, next) => {
+  res.render("plants/add", { title: "Add a New Plant" });
+  // Language.find()
+  //   .then((languageList) => {
+  //     res.render("plants/add", {
+  //       title: "Add a new Plant",
+  //       languages: languageList,
+  //       //user: req.user,
+  //     });
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
+});
 // //GET handler for index /plants/add
 // router.get("/add", (req, res, next) => {
 //   //res.render("plants/add", { title: "Add a New Plant" });
@@ -77,21 +76,20 @@ router.get("/", (req, res, next) => {
 // });
 
 router.get("/add", async (req, res, next) => {
-  try {
-    const [languageList, hostList] = await Promise.all([
-      Language.find().exec(),
-      Host.find().exec(),
-    ]);
-    res.render("plants/add", {
-      title: "Add a new Plant Entry",
-      languages: languageList,
-      hosting: hostList,
-      //user: req.user,
-    });
-  } catch (err) {
-    console.log(err);
-    // Handle the error appropriately
-  }
+  res.render("plant/add", { title: "Add Plant" });
+  // try {
+  //   const [languageList, hostList] = await Promise.all([
+  //     Language.find().exec(),
+  //     Host.find().exec(),
+  //   ]);
+  //   res.render("plants/add", {
+  //     title: "Add a new Plant Entry",
+  //     //user: req.user,
+  //   });
+  // } catch (err) {
+  //   console.log(err);
+  //   // Handle the error appropriately
+  // }
 });
 
 //POST handler (save button action)
@@ -101,11 +99,8 @@ router.post("/add", (req, res, next) => {
   Plant.create({
     name: req.body.name,
     updateDate: req.body.updateDate,
-    language: req.body.language,
-    host: req.body.host,
     image: req.body.image,
     link: req.body.link,
-    status: req.body.status,
   })
     .then((createdModel) => {
       console.log("Model created successfully:", createdModel);
@@ -129,11 +124,8 @@ router.post("/add", (req, res, next) => {
     {
       name: req.body.name,
       updateDate: req.body.updateDate,
-      language: req.body.language,
-      host: req.body.host,
       image: req.body.image,
       link: req.body.link,
-      status: req.body.status,
     }, //new plant to add
     (err, newPlant) => {
       res.redirect("/plants");
@@ -143,24 +135,31 @@ router.post("/add", (req, res, next) => {
 
 //note: NEED TO COMBINE THESE 2 FUNCTIONS TO RENDER ASYNCHRONOUSLY (see below)
 //TODO U > Update given plant
-// GET /plants/edit/ID
-// router.get("/edit/:_id", (req, res, next) => {
-//   Plant.findById(req.params._id)
-//     .then((plantObj) =>
-//       Language.find().then((languageList) => ({ plantObj, languageList }))
-//     )
-//     .then(({ plantObj, languageList }) => {
-//       res.render("plants/edit", {
-//         title: "Edit a Plant",
-//         plant: plantObj,
-//         languages: languageList,
-//         user: req.user,
-//       });
-//     })
-//     .catch((err) => {
-//       console.error(err);
-//     });
-// });
+//GET /plants/edit/ID
+router.get("/edit/:_id", (req, res, next) => {
+  res.render("plants/edit", {
+    title: "Edit a Plant",
+    //plant: plantObj,
+    //languages: languageList,
+    //user: req.user,
+  });
+
+  // Plant.findById(req.params._id)
+  //   .then((plantObj) =>
+  //     Language.find().then((languageList) => ({ plantObj, languageList }))
+  //   )
+  //   .then(({ plantObj, languageList }) => {
+  //     res.render("plants/edit", {
+  //       title: "Edit a Plant",
+  //       plant: plantObj,
+  //       //languages: languageList,
+  //       //user: req.user,
+  //     });
+  //   })
+  //   .catch((err) => {
+  //     console.error(err);
+  //   });
+});
 // // GET /plants/edit/ID
 // router.get("/edit/:_id", (req, res, next) => {
 //   Plant.findById(req.params._id)
@@ -180,25 +179,23 @@ router.post("/add", (req, res, next) => {
 //     });
 // });
 
-router.get("/edit/:_id", async (req, res, next) => {
-  try {
-    const plantObj = await Plant.findById(req.params._id).exec();
-    const [languageList, hostList] = await Promise.all([
-      Language.find().exec(),
-      Host.find().exec(),
-    ]);
-    res.render("plants/edit", {
-      title: "Edit a Plant Entry",
-      plant: plantObj,
-      languages: languageList,
-      hosting: hostList,
-      //user: req.user,
-    });
-  } catch (err) {
-    console.error(err);
-    // Handle the error appropriately
-  }
-});
+// router.get("/edit/:_id", async (req, res, next) => {
+//   try {
+//     const plantObj = await Plant.findById(req.params._id).exec();
+//     const [languageList, hostList] = await Promise.all([
+//       Language.find().exec(),
+//       Host.find().exec(),
+//     ]);
+//     res.render("plants/edit", {
+//       title: "Edit a Plant Entry",
+//       plant: plantObj
+//       //user: req.user,
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     // Handle the error appropriately
+//   }
+// });
 
 // POST /plants/editID
 router.post("/edit/:_id", (req, res, next) => {
@@ -207,11 +204,8 @@ router.post("/edit/:_id", (req, res, next) => {
     {
       name: req.body.name,
       updateDate: req.body.updateDate,
-      language: req.body.language,
-      host: req.body.host,
       image: req.body.image,
       link: req.body.link,
-      status: req.body.status,
       issue: req.body.issue,
     }
   )
