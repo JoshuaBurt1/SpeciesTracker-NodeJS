@@ -1,17 +1,14 @@
 <!-- views/index.ejs -->
-
-    <div class="container">
-        <%- include('partials/header') %>
-        <!--Jumbotron HTML/Bootstrap header-->
-        <div class="jumbotron" id="indexHeader">
-          <h1 class="display-3"><%= title %></h1>
-          <p class="lead">All about where to find species and their characteristics</p>
+<%- include('partials/header') %>
+<!--Jumbotron HTML/Bootstrap header-->
+<div class="jumbotron" id="indexHeader">
+<h1 class="display-3"><%= title %></h1>
+<p class="lead">All about where to find species and their characteristics</p>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="list-group">
         </div>
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="list-group">
-                </div>
-            </div>
-        </div>
-        <%- include('partials/footer') %>
     </div>
+</div>
+<%- include('partials/footer') %>

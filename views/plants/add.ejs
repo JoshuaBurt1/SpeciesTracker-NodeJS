@@ -1,12 +1,10 @@
-<div class="container">
-<title><%= title %></title>
 <%- include('../partials/header') %>
 <h1><%= title %></h1>
+<p>Welcome to <%= title %></p>
     
 <!-- available to req.body object -->
 <p>note: separate issues by period followed by space (. )</p>
-<div id="editFormOuter">
-  <div id="editFormInner">
+
     <form method="POST">
       <!-- Input names have to match the name of the fields in the mongo schema object -->
       <!-- Mapping is not automatic, but it's best practices -->
@@ -48,7 +46,5 @@
       <!-- Button needs to be inside <form> element to trigger POST -->
       <button class="offset-3 btn btn-primary">Save</button>
     </form>
-  </div>
-</div>
+
 <%- include('../partials/footer') %>
-</div>

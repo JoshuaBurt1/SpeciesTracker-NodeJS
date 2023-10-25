@@ -19,29 +19,53 @@
       crossorigin="anonymous"
       defer
     ></script>
-    <script defer src="/javascripts/scripts.js"></script>
+    <script defer src="/javascripts/delete.js"></script>
+    <script defer src="/javascripts/activeTab.js"></script>
+
 </head>
 
-<!-- views/partials/header.ejs -->
-<div class="header clearfix">
-    <!--Nav-bar-->
-    <nav class="navbar navbar-expand-sm bg-light navbar-light">
+<!-- carousel background -->
+<div id="carouselBackground" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="15000">
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="/images/site_images/background0.png">
+    </div>
+    <div class="carousel-item">
+      <img src="/images/site_images/background1.png">
+    </div>
+    <div class="carousel-item">
+      <img src="/images/site_images/background2.jpg">
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselBackground" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="false"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselBackground" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="false"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+<div class="container"> <!--smaller information view-->
+<div class="header clearfix"> <!--Nav-bar-->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
         <ul class="nav nav-tabs">
-          <li class="nav-item">
-            <a class="nav-link" id="linkColor" href="/">Home</a>
+          <li class="nav-item" id="linkColor">
+            <a class="nav-link" id="homeTab" href="/">Home</a>
           </li>
           <li class="nav-item">
-              <a class="nav-link" id="linkColor" href="/plants"><img class="navImage" src="images/tab_images/plant.png"/> Plants</a>
+              <a class="nav-link" id="plantsTab" href="/plants"><img class="navImage" src="/images/tab_images/plant.png"/> Plants</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" id="linkColor" href="/fungi"><img class="navImage" src="images/tab_images/mushroom.jpg"/> Fungi</a>
+            <a class="nav-link" id="fungiTab" href="/fungi"><img class="navImage" src="/images/tab_images/mushroom.jpg"/> Fungi</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" id="linkColor" href="/protists"><img class="navImage" src="images/tab_images/protist.jpg"/> Protists</a>
+            <a class="nav-link" id="protistsTab" href="/protists"><img class="navImage" src="/images/tab_images/protist.jpg"/> Protists</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" id="linkColor" href="/animals"><img class="navImage" src="images/tab_images/animal.png"/> Animals</a>
+            <a class="nav-link" id="animalsTab" href="/animals"><img class="navImage" src="/images/tab_images/animal.png"/> Animals</a>
           </li>
         </ul>
           <ul class="nav nav-tabs">
@@ -64,5 +88,5 @@
     </nav>
 </div>
 <body>
-    <div id="container">
+  <div id="containerInner">
       
