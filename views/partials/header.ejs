@@ -21,20 +21,21 @@
     ></script>
     <script defer src="/javascripts/delete.js"></script>
     <script defer src="/javascripts/activeTab.js"></script>
+    <script defer src="/javascripts/activeCarousel.js"></script>
 
 </head>
 
 <!-- carousel background -->
-<div id="carouselBackground" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="15000">
+<div id="carouselBackground" class="carousel slide carousel-fade" data-bs-ride="false" data-bs-interval="15000">
   <div class="carousel-inner">
     <div class="carousel-item active">
-      <img src="/images/site_images/background0.png">
+      <img src="/images/site_images/background0.png" id="0">
     </div>
     <div class="carousel-item">
-      <img src="/images/site_images/background1.png">
+      <img src="/images/site_images/background1.png" id="1">
     </div>
     <div class="carousel-item">
-      <img src="/images/site_images/background2.jpg">
+      <img src="/images/site_images/background2.jpg" id="2">
     </div>
   </div>
   <button class="carousel-control-prev" type="button" data-bs-target="#carouselBackground" data-bs-slide="prev">
@@ -48,7 +49,7 @@
 </div>
 
 <div class="container"> <!--smaller information view-->
-<div class="header clearfix"> <!--Nav-bar-->
+  <div class="header clearfix"> <!--Nav-bar-->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
         <ul class="nav nav-tabs">
@@ -86,7 +87,7 @@
           </ul>
       </div>
     </nav>
-</div>
-<body>
-  <div id="containerInner">
+  </div>
+  <body>
+    <div id="containerInner">
       

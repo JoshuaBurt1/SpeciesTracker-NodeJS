@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const Fungus = require("../models/animal");
+//const Animal = require("../models/animal");
+var logMiddleware = require('../logMiddleware'); //route logging middleware
 
 // GET /hosting/
-router.get("/", (req, res, next) => {
+router.get("/", logMiddleware, (req, res, next) => {
   res.render("animals/index", { title: "Animals Index" });
 });
 

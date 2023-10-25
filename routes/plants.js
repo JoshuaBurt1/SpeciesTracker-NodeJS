@@ -1,8 +1,8 @@
 // Import express and create a router object
 const express = require("express");
 const router = express.Router();
-// Import mongoose model to be used
-const Plant = require("../models/plant");
+var logMiddleware = require('../logMiddleware'); //route logging middleware
+const Plant = require("../models/plant"); // Import mongoose model to be used
 
 // add reusable middleware function to inject it in our handlers below that need authorization
 //   1. prevents non-logged in viewer from seeing add button in plants
@@ -27,7 +27,7 @@ const Plant = require("../models/plant");
 //Configure GET/POST handlers
 //GET handler for index /plants/ <<landing/root page of my section
 //R > Retrieve/Read usually shows a list (filtered/unfiltered)
-router.get("/", (req, res, next) => {
+router.get("/", logMiddleware, (req, res, next) => {
   //res.render("plants/index", { title: "Plant Tracker" });
   //renders data in table
   Plant.find() //sorting function (alphabetically)
@@ -45,8 +45,8 @@ router.get("/", (req, res, next) => {
 
 //note: NEED TO COMBINE THESE 2 FUNCTIONS TO RENDER ASYNCHRONOUSLY (see below)
 //GET handler for index /plants/add
-router.get("/add", (req, res, next) => {
-  res.render("plants/add", { title: "Add a New Plant" });
+//router.get("/add", (req, res, next) => {
+//  res.render("plants/add", { title: "Add a New Plant" });
   // Language.find()
   //   .then((languageList) => {
   //     res.render("plants/add", {
@@ -58,7 +58,7 @@ router.get("/add", (req, res, next) => {
   //   .catch((err) => {
   //     console.log(err);
   //   });
-});
+//});
 // //GET handler for index /plants/add
 // router.get("/add", (req, res, next) => {
 //   //res.render("plants/add", { title: "Add a New Plant" });
@@ -75,8 +75,8 @@ router.get("/add", (req, res, next) => {
 //     });
 // });
 
-router.get("/add", async (req, res, next) => {
-  res.render("plant/add", { title: "Add Plant" });
+//router.get("/add", async (req, res, next) => {
+//  res.render("plant/add", { title: "Add Plant" });
   // try {
   //   const [languageList, hostList] = await Promise.all([
   //     Language.find().exec(),
@@ -90,7 +90,7 @@ router.get("/add", async (req, res, next) => {
   //   console.log(err);
   //   // Handle the error appropriately
   // }
-});
+//});
 
 //POST handler (save button action)
 router.post("/add", (req, res, next) => {
@@ -114,7 +114,7 @@ router.post("/add", (req, res, next) => {
 
 //TODO C > Create new plant
 //GET handler for /plants/add (loads)
-router.get("/add", (req, res, next) => {
+router.get("/add", logMiddleware, (req, res, next) => {
   res.render("plants/add", { title: "Add a new Plant" });
 });
 
@@ -136,7 +136,7 @@ router.post("/add", (req, res, next) => {
 //note: NEED TO COMBINE THESE 2 FUNCTIONS TO RENDER ASYNCHRONOUSLY (see below)
 //TODO U > Update given plant
 //GET /plants/edit/ID
-router.get("/edit/:_id", (req, res, next) => {
+router.get("/edit/:_id", logMiddleware, (req, res, next) => {
   res.render("plants/edit", {
     title: "Edit a Plant",
     //plant: plantObj,

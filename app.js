@@ -39,18 +39,20 @@ mongoose
 
 //3. ROUTER
 var indexRouter = require('./routes/index');
-var plantsRouter = require("./routes/plants");
-var fungiRouter = require("./routes/fungi");
-var animalsRouter = require("./routes/animals");
-var protistsRouter = require("./routes/protists");
+var plantsRouter = require("./routes/plants"); //required for add, edit, delete route changes
+var fungiRouter = require("./routes/fungi"); //required for add, edit, delete route changes
+var animalsRouter = require("./routes/animals"); //required for add, edit, delete route changes
+var protistsRouter = require("./routes/protists"); //required for add, edit, delete route 
+
 // var languagesRouter = require("./routes/languages");
 // var hostingRouter = require("./routes/hosting");
 // var usersRouter = require('./routes/users');
 app.use('/', indexRouter);
-app.use('/plants', plantsRouter);
-app.use("/fungi", fungiRouter);
-app.use('/animals', animalsRouter);
-app.use("/protists", protistsRouter);
+app.use('/plants', plantsRouter); //required for add, edit, delete route changes
+app.use("/fungi", fungiRouter); //required for add, edit, delete route changes
+app.use('/animals', animalsRouter); //required for add, edit, delete route changes
+app.use("/protists", protistsRouter); //required for add, edit, delete route changes
+
 // app.use("/languages", languagesRouter);
 // app.use("/hosting", hostingRouter);
 // app.use('/users', usersRouter);

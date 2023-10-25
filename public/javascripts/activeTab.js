@@ -1,3 +1,4 @@
+//UPDATE BASED ON ROUTE CHANGE VALUE (front-end only)
 // since the browser reloads after each route change, changing class using on-click function will not keep active tab (resets on browser reload)
 // fix: if the url/route = current link id -> class nav-link active
 const currentRoute = window.location.pathname;
