@@ -12,17 +12,3 @@ var idNum = carousel.addEventListener('slid.bs.carousel', () => {
 });
 
 console.log(idNum);
-
-
-//Server-Side Storage (Back-end):
-//If you are working with a server-side framework like Express.js, you can store variables on the server, 
-//typically in a session or a database, to maintain state across routes. 
-//This would require server-side code to manage and retrieve the variables.
-
-//For example, in Express.js, you might use sessions to store user-specific data across routes:
-
-// Storing a variable in a session
-//req.session.myVariable = 'myValue';
-
-// Accessing the variable in another route
-//const myValue = req.session.myVariable;
