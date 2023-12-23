@@ -3,7 +3,7 @@ concept biological catalogue
 
 # To Start: <br>
 Download zip, open in code editor <br>
-nodemon
+In terminal: nodemon
 
 # Additions: <br>
 image upload - multer (jpg/png only) <br>
