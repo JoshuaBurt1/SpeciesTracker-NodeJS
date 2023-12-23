@@ -7,6 +7,6 @@ https://speciestracker.azurewebsites.net/
 nodemon
 
 # Additions: <br>
-image upload - multer (jpg/png only)
-search bar -> at nav partial
-large image view, separate wiki link
+image upload - multer (jpg/png only) <br>
+search bar -> at nav partial <br>
+large image view, separate wiki link <br>
