@@ -99,6 +99,7 @@ router.post("/add", (req, res, next) => {
   Animal.create({
     name: req.body.name,
     updateDate: req.body.updateDate,
+    location: req.body.location,
     image: req.body.image,
     link: req.body.link,
   })
