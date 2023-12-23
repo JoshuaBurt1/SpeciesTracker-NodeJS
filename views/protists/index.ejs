@@ -14,7 +14,6 @@
   <thead>
     <th>Name</th>
     <th>Last Updated</th>
-    <th>Status</th>
     <th>Location</th>
     <th>Image / Link</th>
     <!--{{#if ./user}}-->
@@ -28,13 +27,12 @@
         <td id="td2">
           <ul id="cellList"><%= item.updateDate %></ul>
         </td>
-        <td><%= item.status %></td>
         <td id="td5">
-          <ul id="cellList"><%= item.issue %></ul>
+          <ul id="cellList"><%= item.location %></ul>
         </td>
         <td class="col-md-3">
           <a href="<%= item.link %>" target="_blank">
-            <img class="w-50" src="images/<%= item.image %>" />
+            <img class="w-50" src="images/protist_images/<%= item.image %>" />
           </a>
         </td>
             <td id="action">

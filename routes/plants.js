@@ -99,6 +99,7 @@ router.post("/add", (req, res, next) => {
   Plant.create({
     name: req.body.name,
     updateDate: req.body.updateDate,
+    location: req.body.location,
     image: req.body.image,
     link: req.body.link,
   })
@@ -124,6 +125,7 @@ router.post("/add", (req, res, next) => {
     {
       name: req.body.name,
       updateDate: req.body.updateDate,
+      location: req.body.location,
       image: req.body.image,
       link: req.body.link,
     }, //new plant to add
@@ -204,9 +206,9 @@ router.post("/edit/:_id", (req, res, next) => {
     {
       name: req.body.name,
       updateDate: req.body.updateDate,
+      location: req.body.location,
       image: req.body.image,
-      link: req.body.link,
-      issue: req.body.issue,
+      link: req.body.link
     }
   )
     .then((updatedPlant) => {

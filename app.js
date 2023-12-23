@@ -55,9 +55,9 @@ app.post('/messages', (req, res) =>{
 io.on('connection', (socket) => {
     console.log('a user connected');
 });
-// var server = http.listen(3000, () => {
-//     console.log('server is listening on port', server.address().port);
-// });
+var server = http.listen(3000, () => {
+    console.log('server is listening on port', server.address().port);
+});
 
 
 
