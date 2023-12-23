@@ -1,8 +1,6 @@
 # speciesTracker
 concept biological catalogue
 
-https://speciestracker.azurewebsites.net/
-
 # To Start: <br>
 nodemon
 
