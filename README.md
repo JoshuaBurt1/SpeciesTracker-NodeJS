@@ -2,6 +2,7 @@
 concept biological catalogue
 
 # To Start: <br>
+Download zip, open in code editor
 nodemon
 
 # Additions: <br>
