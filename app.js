@@ -55,11 +55,10 @@ app.post('/messages', (req, res) =>{
 io.on('connection', (socket) => {
     console.log('a user connected');
 });
+//
 var server = http.listen(3000, () => {
     console.log('server is listening on port', server.address().port);
 });
-
-
 
 
 //4. ROUTER
@@ -69,18 +68,11 @@ var fungiRouter = require("./routes/fungi"); //required for add, edit, delete ro
 var animalsRouter = require("./routes/animals"); //required for add, edit, delete route changes
 var protistsRouter = require("./routes/protists"); //required for add, edit, delete route 
 
-// var languagesRouter = require("./routes/languages");
-// var hostingRouter = require("./routes/hosting");
-// var usersRouter = require('./routes/users');
 app.use('/', indexRouter);
 app.use('/plants', plantsRouter); //required for add, edit, delete route changes
 app.use("/fungi", fungiRouter); //required for add, edit, delete route changes
 app.use('/animals', animalsRouter); //required for add, edit, delete route changes
 app.use("/protists", protistsRouter); //required for add, edit, delete route changes
-
-// app.use("/languages", languagesRouter);
-// app.use("/hosting", hostingRouter);
-// app.use('/users', usersRouter);
 
 //ROUTING ERRORS
 // catch 404 and forward to error handler
