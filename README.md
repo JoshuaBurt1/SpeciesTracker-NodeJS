@@ -8,7 +8,5 @@ In terminal: nodemon
 
 # Additions: <br>
 image upload - multer (jpg/png only) <br>
-search bar -> at nav partial <br>
+search bar -> at right of index partial <br>
 large image view, separate wiki link <br>
-visible footer <br>
-scrollable database, static background

@@ -1,3 +1,24 @@
+/*SCROLL*/
+.page-container {
+  background-color: #f8f9fa; /* Set your desired background color */
+  height: 59vh; /* Set the height of the background to the full viewport height */
+  overflow: auto; /* Enable vertical scrolling if the content overflows */
+}
+
+.table-container {
+  max-height: 525px; /* Set a maximum height for the table container */
+  overflow-y: auto; /* Enable vertical scrolling if the content overflows */
+}
+
+/* Optionally, you can style the header to make it fixed */
+.table-container thead {
+  position: sticky;
+  top: 0;
+  background-color: #ffffff; /* Set your desired background color for the header */
+  z-index: 1; /* Ensure the header stays above the scrolling content */
+}
+
+
 /*CAROUSEL */
 #carouselBackground {
   position: absolute; /*in order to use z-index*/
