@@ -14,12 +14,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-//2. DATABASE MongoDB CONNECTIONS
-// Option 1) Hardcode connection string and connect
-//let userName = "userName";
-//let password = "password";
-//let connectionString = `mongodb+srv://${userName}:${password}@week5example.gbih2ue.mongodb.net/week5example`;
-// Option 2) Add connection string to Config file
+//DATABASE MongoDB CONNECTIONS
+//Add connection string from Config file
 const config = require("./config/globals");
 let connectionString = config.db;
 var mongoose = require("mongoose");
@@ -35,31 +31,6 @@ mongoose
   .catch((error) => {
     console.log(`Error while connecting! ${error}`);
   }); //catch any errors
-
-//3. MESSAGES
-var bodyParser = require('body-parser');
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
-//app.use(express.static(__dirname));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
-var messages = [];
-app.get('/messages', (req, res) =>{
-    res.send(messages);
-});
-app.post('/messages', (req, res) =>{
-    messages.push(req.body);
-    io.emit('message', req.body);
-    res.sendStatus(200);
-});
-io.on('connection', (socket) => {
-    console.log('a user connected');
-});
-//
-var server = http.listen(3000, () => {
-    console.log('server is listening on port', server.address().port);
-});
-
 
 //4. ROUTER
 var indexRouter = require('./routes/index');

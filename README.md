@@ -1,8 +1,9 @@
 # speciesTracker
 concept biological catalogue
+https://speciestracker1.azurewebsites.net/
 
 # To Start: <br>
-nodemon
+In terminal: nodemon
 
 # Additions: <br>
 image upload - multer (jpg/png only) <br>
