@@ -32,10 +32,13 @@
         <label for="location" class="col-2">Location:</label>
         <input name="location" id="location" class="form-control"/>
       </fieldset>
-      <fieldset class="form-group">
+     <!--file upload-->
+      <fieldset method="POST" enctype="multipart/form-data">
         <label for="image" class="col-2">Image:</label>
-        <input name="image" id="image" class="form-control" />
+        <input type="file" name="image" id="image"  accept=".jpg, .jpeg, .png"  required>
+        <button type="submit">Upload Image</button>
       </fieldset>
+    <!--file upload-->
       <fieldset class="form-group">
         <label for="link" class="col-2">Link:</label>
         <input name="link" id="link" class="form-control"/>

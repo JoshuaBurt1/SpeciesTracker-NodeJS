@@ -32,4 +32,9 @@ router.get("/identification", logMiddleware,  (req, res, next) => {
   res.render("identification", { title: "Identification" });
 });
 
+router.get("/error", logMiddleware,  (req, res, next) => {
+  res.render("error", { title: "Error" });
+});
+
+
 module.exports = router;
