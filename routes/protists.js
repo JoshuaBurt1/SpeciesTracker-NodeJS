@@ -43,54 +43,6 @@ router.get("/", logMiddleware, (req, res, next) => {
     });
 });
 
-//note: NEED TO COMBINE THESE 2 FUNCTIONS TO RENDER ASYNCHRONOUSLY (see below)
-//GET handler for index /protists/add
-//router.get("/add", (req, res, next) => {
-//  res.render("protists/add", { title: "Add a New Protist" });
-  // Language.find()
-  //   .then((languageList) => {
-  //     res.render("protists/add", {
-  //       title: "Add a new Protist",
-  //       languages: languageList,
-  //       //user: req.user,
-  //     });
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
-//});
-// //GET handler for index /protists/add
-// router.get("/add", (req, res, next) => {
-//   //res.render("protists/add", { title: "Add a New Protist" });
-//   Host.find()
-//     .then((hostList) => {
-//       res.render("protists/add", {
-//         title: "Add a new Protist",
-//         hosting: hostList,
-//         user: req.user,
-//       });
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// });
-
-//router.get("/add", async (req, res, next) => {
-//  res.render("protist/add", { title: "Add Protist" });
-  // try {
-  //   const [languageList, hostList] = await Promise.all([
-  //     Language.find().exec(),
-  //     Host.find().exec(),
-  //   ]);
-  //   res.render("protists/add", {
-  //     title: "Add a new Protist Entry",
-  //     //user: req.user,
-  //   });
-  // } catch (err) {
-  //   console.log(err);
-  //   // Handle the error appropriately
-  // }
-//});
 
 //POST handler (save button action)
 router.post("/add", (req, res, next) => {
@@ -136,68 +88,19 @@ router.post("/add", (req, res, next) => {
 });
 
 //note: NEED TO COMBINE THESE 2 FUNCTIONS TO RENDER ASYNCHRONOUSLY (see below)
-//TODO U > Update given protist
-//GET /protists/edit/ID
-router.get("/edit/:_id", logMiddleware, (req, res, next) => {
-  res.render("protists/edit", {
-    title: "Edit a Protist",
-    //protist: protistObj,
-    //languages: languageList,
-    //user: req.user,
-  });
-
-  // Protist.findById(req.params._id)
-  //   .then((protistObj) =>
-  //     Language.find().then((languageList) => ({ protistObj, languageList }))
-  //   )
-  //   .then(({ protistObj, languageList }) => {
-  //     res.render("protists/edit", {
-  //       title: "Edit a Protist",
-  //       protist: protistObj,
-  //       //languages: languageList,
-  //       //user: req.user,
-  //     });
-  //   })
-  //   .catch((err) => {
-  //     console.error(err);
-  //   });
+router.get("/edit/:_id", logMiddleware, async (req, res, next) => {
+  try {
+    const protistObj = await Protist.findById(req.params._id).exec();
+    res.render("protists/edit", {
+      title: "Edit a Protist Entry",
+      protist: protistObj
+      //user: req.user,
+    });
+  } catch (err) {
+    console.error(err);
+    // Handle the error appropriately
+  }
 });
-// // GET /protists/edit/ID
-// router.get("/edit/:_id", (req, res, next) => {
-//   Protist.findById(req.params._id)
-//     .then((protistObj) =>
-//       Host.find().then((hostList) => ({ protistObj, hostList }))
-//     )
-//     .then(({ protistObj, hostList }) => {
-//       res.render("protists/edit", {
-//         title: "Edit a Protist",
-//         protist: protistObj,
-//         hosting: hostList,
-//         user: req.user,
-//       });
-//     })
-//     .catch((err) => {
-//       console.error(err);
-//     });
-// });
-
-// router.get("/edit/:_id", async (req, res, next) => {
-//   try {
-//     const protistObj = await Protist.findById(req.params._id).exec();
-//     const [languageList, hostList] = await Promise.all([
-//       Language.find().exec(),
-//       Host.find().exec(),
-//     ]);
-//     res.render("protists/edit", {
-//       title: "Edit a Protist Entry",
-//       protist: protistObj
-//       //user: req.user,
-//     });
-//   } catch (err) {
-//     console.error(err);
-//     // Handle the error appropriately
-//   }
-// });
 
 // POST /protists/editID
 router.post("/edit/:_id", (req, res, next) => {

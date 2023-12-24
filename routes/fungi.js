@@ -4,11 +4,6 @@ const router = express.Router();
 var logMiddleware = require('../logMiddleware'); //route logging middleware
 const Fungus = require("../models/fungus"); // Import mongoose model to be used
 
-// add reusable middleware function to inject it in our handlers below that need authorization
-//   1. prevents non-logged in viewer from seeing add button in fungus
-//   2. does not stop non-logged in viewer from entering URL to view: 
-//   http://localhost:3000/Fungis/add
-//   3. Adding to route prevents users from accessing page by URL modification: 
 //   function IsLoggedIn(req,res,next) {
 //     if (req.isAuthenticated()) {
 //         return next();
@@ -42,55 +37,6 @@ router.get("/", logMiddleware, (req, res, next) => {
       console.log(err);
     });
 });
-
-//note: NEED TO COMBINE THESE 2 FUNCTIONS TO RENDER ASYNCHRONOUSLY (see below)
-//GET handler for index /fungi/add
-//router.get("/add", (req, res, next) => {
-//  res.render("fungi/add", { title: "Add a New Fungus" });
-  // Language.find()
-  //   .then((languageList) => {
-  //     res.render("fungi/add", {
-  //       title: "Add a new Fungus",
-  //       languages: languageList,
-  //       //user: req.user,
-  //     });
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
-//});
-// //GET handler for index /fungi/add
-// router.get("/add", (req, res, next) => {
-//   //res.render("fungi/add", { title: "Add a New Fungus" });
-//   Host.find()
-//     .then((hostList) => {
-//       res.render("fungi/add", {
-//         title: "Add a new Fungus",
-//         hosting: hostList,
-//         user: req.user,
-//       });
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// });
-
-//router.get("/add", async (req, res, next) => {
-//  res.render("fungus/add", { title: "Add Fungus" });
-  // try {
-  //   const [languageList, hostList] = await Promise.all([
-  //     Language.find().exec(),
-  //     Host.find().exec(),
-  //   ]);
-  //   res.render("fungi/add", {
-  //     title: "Add a new Fungus Entry",
-  //     //user: req.user,
-  //   });
-  // } catch (err) {
-  //   console.log(err);
-  //   // Handle the error appropriately
-  // }
-//});
 
 //POST handler (save button action)
 router.post("/add", (req, res, next) => {
@@ -135,69 +81,19 @@ router.post("/add", (req, res, next) => {
   );
 });
 
-//note: NEED TO COMBINE THESE 2 FUNCTIONS TO RENDER ASYNCHRONOUSLY (see below)
-//TODO U > Update given fungus
-//GET /fungi/edit/ID
-router.get("/edit/:_id", logMiddleware, (req, res, next) => {
-  res.render("fungi/edit", {
-    title: "Edit a Fungus",
-    //fungus: fungusObj,
-    //languages: languageList,
-    //user: req.user,
-  });
-
-  // Fungus.findById(req.params._id)
-  //   .then((fungusObj) =>
-  //     Language.find().then((languageList) => ({ fungusObj, languageList }))
-  //   )
-  //   .then(({ fungusObj, languageList }) => {
-  //     res.render("fungi/edit", {
-  //       title: "Edit a Fungus",
-  //       fungus: fungusObj,
-  //       //languages: languageList,
-  //       //user: req.user,
-  //     });
-  //   })
-  //   .catch((err) => {
-  //     console.error(err);
-  //   });
+router.get("/edit/:_id", logMiddleware, async (req, res, next) => {
+  try {
+    const fungusObj = await Fungus.findById(req.params._id).exec();
+    res.render("fungi/edit", {
+      title: "Edit a Fungus Entry",
+      fungus: fungusObj
+      //user: req.user,
+    });
+  } catch (err) {
+    console.error(err);
+    // Handle the error appropriately
+  }
 });
-// // GET /fungi/edit/ID
-// router.get("/edit/:_id", (req, res, next) => {
-//   Fungus.findById(req.params._id)
-//     .then((fungusObj) =>
-//       Host.find().then((hostList) => ({ fungusObj, hostList }))
-//     )
-//     .then(({ fungusObj, hostList }) => {
-//       res.render("fungi/edit", {
-//         title: "Edit a Fungus",
-//         fungus: fungusObj,
-//         hosting: hostList,
-//         user: req.user,
-//       });
-//     })
-//     .catch((err) => {
-//       console.error(err);
-//     });
-// });
-
-// router.get("/edit/:_id", async (req, res, next) => {
-//   try {
-//     const fungusObj = await Fungus.findById(req.params._id).exec();
-//     const [languageList, hostList] = await Promise.all([
-//       Language.find().exec(),
-//       Host.find().exec(),
-//     ]);
-//     res.render("fungi/edit", {
-//       title: "Edit a Fungus Entry",
-//       fungus: fungusObj
-//       //user: req.user,
-//     });
-//   } catch (err) {
-//     console.error(err);
-//     // Handle the error appropriately
-//   }
-// });
 
 // POST /fungi/editID
 router.post("/edit/:_id", (req, res, next) => {
