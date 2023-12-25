@@ -2,7 +2,7 @@
 const mongoose = require("mongoose");
 
 // Create schema definition object using mapping notation
-const plantsSchemaDefinition = {
+const plantsSchemaObj = {
   // add each element and its properties
   // note: changing updateDate type to String = 2010-10-10 format)
   name: { type: String, required: true },
@@ -13,7 +13,7 @@ const plantsSchemaDefinition = {
 };
 
 // Create new mongoose schema using the definition object
-var plantsSchema = new mongoose.Schema(plantsSchemaDefinition);
+var plantsSchema = new mongoose.Schema(plantsSchemaObj);
 
 // Create new mongoose model using the schema object and
 // Import new model > provide name and schema

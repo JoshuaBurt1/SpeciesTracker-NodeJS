@@ -17,23 +17,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// add reusable middleware function to inject it in our handlers below that need authorization
-//   1. prevents non-logged in viewer from seeing add button in plants
-//   function IsLoggedIn(req,res,next) {
-//     if (req.isAuthenticated()) {
-//         return next();
-//     }
-//     res.redirect('/login');
-//   }
-
-//LOGIN
-// function IsLoggedIn(req,res,next) {
-//   if (req.isAuthenticated()) {
-//       return next();
-//   }
-//   res.redirect('/login');
-// }
-
 //Configure GET/POST handlers
 //GET handler for index /plants/ <<landing/root page of my section
 //R > Retrieve/Read usually shows a list (filtered/unfiltered)
@@ -61,6 +44,7 @@ router.post("/add", upload.single('image'), (req, res, next) => {
   imagePath = path.basename(imagePath);
   console.log(imagePath); // Print the path of the uploaded image to the console)
 
+
   // Create a new Plant with the uploaded image path
   Plant.create({
     name: req.body.name,
@@ -84,12 +68,30 @@ router.get("/add", logMiddleware, (req, res, next) => {
   res.render("plants/add", { title: "Add a new Plant" });
 });
 
-router.get("/edit/:_id", logMiddleware, async (req, res, next) => {
+//POST handler for /plants/add (receives input data)
+router.post("/add", (req, res, next) => {
+  Plant.create(
+    {
+      name: req.body.name,
+      updateDate: req.body.updateDate,
+      location: req.body.location,
+      image: req.body.image,
+      link: req.body.link,
+    }, //new plant to add
+    (err, newPlant) => {
+      res.redirect("/plants");
+    } // callback function
+  );
+});
+
+
+router.get("/edit/:_id", logMiddleware, async  (req, res, next) => {
   try {
-    const plantObj = await Plant.findById(req.params._id).exec();
+    const animalObj = await Plant.findById(req.params._id).exec();
+    console.log(animalObj);
     res.render("plants/edit", {
       title: "Edit a Plant Entry",
-      plant: plantObj
+      plant: animalObj
       //user: req.user,
     });
   } catch (err) {
@@ -110,7 +112,6 @@ router.post("/edit/:_id", upload.single('image'), (req, res, next) => {
     // No file was uploaded, use the existing image path
     var imagePath = req.body.image;
   }
-
   // Continue with the update logic
   Plant.findOneAndUpdate(
     { _id: req.params._id },
@@ -122,7 +123,7 @@ router.post("/edit/:_id", upload.single('image'), (req, res, next) => {
       link: req.body.link,
     }
   )
-    .then((updatedPlant) => {
+    .then((updatedAnimal) => {
       res.redirect("/plants");
     })
     .catch((err) => {
@@ -130,11 +131,12 @@ router.post("/edit/:_id", upload.single('image'), (req, res, next) => {
     });
 });
 
+
 //TODO D > Delete a plant
 // GET /plants/delete/652f1cb7740320402d9ba04d
 router.get("/delete/:_id", (req, res, next) => {
-  let plantId = req.params._id;
-  Plant.deleteOne({ _id: plantId })
+  let animalId = req.params._id;
+  Plant.deleteOne({ _id: animalId })
     .then(() => {
       res.redirect("/plants");
     })
