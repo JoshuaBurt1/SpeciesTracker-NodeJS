@@ -1,4 +1,4 @@
-# speciesTracker
+# SpeciesTracker
 concept biological catalogue <br>
 https://speciestracker2.azurewebsites.net/
 
