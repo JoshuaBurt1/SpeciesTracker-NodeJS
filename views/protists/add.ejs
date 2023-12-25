@@ -1,51 +1,48 @@
 <%- include('../partials/header') %>
 <h1><%= title %></h1>
 <p>Welcome to <%= title %></p>
-    
-<!-- available to req.body object -->
-    <form method="POST">
-      <!-- Input names have to match the name of the fields in the mongo schema object -->
-      <!-- Mapping is not automatic, but it's best practices -->
-      <fieldset class="form-group">
-        <label for="name" class="col-2">Name:</label>
-        <input name="name" id="name" class="form-control"/>
-      </fieldset>
-      <fieldset class="form-group">
-        <label for="updateDate" class="col-2">Last Update:</label>
-        <input
-          name="updateDate"
-          id="updateDate"
-          required
-          type="date"
-          class="form-control"
-        />
-        <input
-          name="updateDate"
-          id="updateDate"
-          required
-          type="time"
-          class="form-control"
-        />
-      </fieldset>
-      <!-- -->
-      <fieldset class="form-group">
-        <label for="location" class="col-2">Location:</label>
-        <input name="location" id="location" class="form-control"/>
-      </fieldset>
-     <!--file upload-->
-      <fieldset method="POST" enctype="multipart/form-data">
-        <label for="image" class="col-2">Image:</label>
-        <input type="file" name="image" id="image"  accept=".jpg, .jpeg, .png"  required>
-        <button type="submit">Upload Image</button>
-      </fieldset>
-    <!--file upload-->
-      <fieldset class="form-group">
-        <label for="link" class="col-2">Link:</label>
-        <input name="link" id="link" class="form-control"/>
-      </fieldset>
-      
-      <!-- Button needs to be inside <form> element to trigger POST -->
-      <button class="offset-3 btn btn-primary">Save</button>
-    </form>
+
+<form method="POST" enctype="multipart/form-data">
+  <!-- ... other form fields ... -->
+  <fieldset class="form-group">
+    <label for="name" class="col-2">Name:</label>
+    <input name="name" id="name" class="form-control"/>
+  </fieldset>
+  <fieldset class="form-group">
+    <label for="updateDate" class="col-2">Last Update Date:</label>
+    <input
+      name="updateDate"
+      id="updateDate"
+      required
+      type="date"
+      class="form-control"
+    />
+    <label for="updateTime" class="col-2">Last Update Time:</label>
+    <input
+      name="updateTime"
+      id="updateTime"
+      required
+      type="time"
+      class="form-control"
+    />
+  </fieldset>
+  <fieldset class="form-group">
+    <label for="location" class="col-2">Location:</label>
+    <input name="location" id="location" class="form-control"/>
+  </fieldset>
+  <!-- File upload -->
+  <fieldset class="form-group">
+      <label for="image" class="col-2">Image:</label>
+      <input type="file" name="image" id="image" class="form-control" accept=".jpg, .jpeg, .png" required>
+  </fieldset>
+  <!-- File upload -->
+  <fieldset class="form-group">
+    <label for="link" class="col-2">Link:</label>
+    <input name="link" id="link" class="form-control"/>
+  </fieldset>
+
+  <!-- Button needs to be inside <form> element to trigger POST -->
+  <button class="offset-3 btn btn-primary" type="submit">Save</button>
+</form>
 
 <%- include('../partials/footer') %>

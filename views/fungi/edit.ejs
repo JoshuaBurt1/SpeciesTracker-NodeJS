@@ -5,7 +5,7 @@
 <!--available to req.body object-->
 <div id="editFormOuter">
   <div id="editFormInner">
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
       <!-- Input names have to match the name of the fields in the mongo schema object -->
       <!-- Mapping is not automatic, but it's best practices -->
       <fieldset class="form-group">
@@ -23,7 +23,7 @@
       </fieldset>
       <fieldset class="form-group">
         <label for="image" class="col-2">Image:</label>
-        <input name="image" id="image" class="form-control" value="<%= fungus.image %>"/>
+        <input type="file" name="image" id="image" class="form-control" accept=".jpg, .jpeg, .png" >
       </fieldset>
       <fieldset class="form-group">
         <label for="link" class="col-2">Link:</label>

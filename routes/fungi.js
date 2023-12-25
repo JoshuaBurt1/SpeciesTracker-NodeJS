@@ -1,8 +1,21 @@
 // Import express and create a router object
 const express = require("express");
+const multer = require('multer');
+const path = require('path');
 const router = express.Router();
 var logMiddleware = require('../logMiddleware'); //route logging middleware
 const Fungus = require("../models/fungus"); // Import mongoose model to be used
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/images/fungus_images');
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
 
 //   function IsLoggedIn(req,res,next) {
 //     if (req.isAuthenticated()) {
@@ -38,20 +51,24 @@ router.get("/", logMiddleware, (req, res, next) => {
     });
 });
 
-//POST handler (save button action)
-router.post("/add", (req, res, next) => {
-  //res.redirect("/fungi");
-  //use the fungus module to save data to DB
+//ADD view POST
+router.post("/add", upload.single('image'), (req, res, next) => {
+
+  // Use req.file.path to get the path of the uploaded image
+  var imagePath = req.file.path;
+  imagePath = path.basename(imagePath);
+  console.log(imagePath); // Print the path of the uploaded image to the console)
+
+  // Create a new Fungus with the uploaded image path
   Fungus.create({
     name: req.body.name,
     updateDate: req.body.updateDate,
     location: req.body.location,
-    image: req.body.image,
+    image: imagePath, // Save the path to the uploaded image
     link: req.body.link,
   })
     .then((createdModel) => {
       console.log("Model created successfully:", createdModel);
-      // We can show a successful message by redirecting them to index
       res.redirect("/fungi");
     })
     .catch((error) => {
@@ -63,22 +80,6 @@ router.post("/add", (req, res, next) => {
 //GET handler for /fungi/add (loads)
 router.get("/add", logMiddleware, (req, res, next) => {
   res.render("fungi/add", { title: "Add a new Fungus" });
-});
-
-//POST handler for /fungi/add (receives input data)
-router.post("/add", (req, res, next) => {
-  Fungus.create(
-    {
-      name: req.body.name,
-      updateDate: req.body.updateDate,
-      location: req.body.location,
-      image: req.body.image,
-      link: req.body.link,
-    }, //new fungus to add
-    (err, newFungus) => {
-      res.redirect("/fungi");
-    } // callback function
-  );
 });
 
 router.get("/edit/:_id", logMiddleware, async (req, res, next) => {
@@ -96,23 +97,32 @@ router.get("/edit/:_id", logMiddleware, async (req, res, next) => {
 });
 
 // POST /fungi/editID
-router.post("/edit/:_id", (req, res, next) => {
+router.post("/edit/:_id", upload.single('image'), (req, res, next) => {
+  // Check if a file was uploaded
+  if (req.file) {
+    // Use req.file.path to get the path of the uploaded image
+    var imagePath = req.file.path;
+    imagePath = path.basename(imagePath);
+    console.log(imagePath); // Print the path of the uploaded image to the console)
+  } else {
+    // No file was uploaded, use the existing image path
+    var imagePath = req.body.image;
+  }
+  // Continue with the update logic
   Fungus.findOneAndUpdate(
     { _id: req.params._id },
     {
       name: req.body.name,
       updateDate: req.body.updateDate,
       location: req.body.location,
-      image: req.body.image,
-      link: req.body.link
+      image: imagePath,
+      link: req.body.link,
     }
   )
     .then((updatedFungus) => {
       res.redirect("/fungi");
     })
     .catch((err) => {
-      // handle any potential errors here
-      // For example, you can redirect to an error page
       res.redirect("/error");
     });
 });

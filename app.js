@@ -7,10 +7,6 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var app = express();
 
-// Set up Multer for handling file uploads
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
-
 // view engine setup - Serve static files from the 'public' directory
 app.use(express.static('public'));
 app.set('views', path.join(__dirname, 'views'));
@@ -39,35 +35,7 @@ mongoose
     console.log(`Error while connecting! ${error}`);
   }); //catch any errors
 
-//3. File
-// // Set up a route to handle file uploads
-// app.post('/upload', upload.single('pdf'), (req, res) => {
-//   // Get the uploaded PDF file from the request
-//   const pdfBuffer = req.file.buffer;
 
-//   // Save the buffer to a public directory
-//   const pdfPath = path.join(__dirname, 'public', 'uploads', `${Date.now()}.pdf`);
-//   require('fs').writeFileSync(pdfPath, pdfBuffer);
-
-//   // Redirect to the homepage
-//   res.redirect('/');
-// });
-
-// // Set up a route to view a specific PDF file
-// app.get('/view/:filename', (req, res) => {
-//   const filename = req.params.filename;
-//   const filePath = path.join(__dirname, 'public', 'uploads', filename);
-
-//   // Send the PDF file for viewing
-//   res.sendFile(filePath);
-// });
-
-// // Helper function to get a list of uploaded files
-// function getUploadedFiles() {
-//   const uploadDir = path.join(__dirname, 'public', 'uploads');
-//   const fileList = require('fs').readdirSync(uploadDir);
-//   return fileList;
-// }
 
 //4. ROUTER
 var indexRouter = require('./routes/index');

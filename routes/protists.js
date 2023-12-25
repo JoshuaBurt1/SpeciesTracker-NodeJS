@@ -1,8 +1,21 @@
 // Import express and create a router object
 const express = require("express");
+const multer = require('multer');
+const path = require('path');
 const router = express.Router();
 var logMiddleware = require('../logMiddleware'); //route logging middleware
 const Protist = require("../models/protist"); // Import mongoose model to be used
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/images/protist_images');
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
 
 // add reusable middleware function to inject it in our handlers below that need authorization
 //   1. prevents non-logged in viewer from seeing add button in protists
@@ -24,9 +37,8 @@ const Protist = require("../models/protist"); // Import mongoose model to be use
 //   res.redirect('/login');
 // }
 
-//Configure GET/POST handlers
-//GET handler for index /protists/ <<landing/root page of my section
-//R > Retrieve/Read usually shows a list (filtered/unfiltered)
+
+//INDEX view
 router.get("/", logMiddleware, (req, res, next) => {
   //res.render("protists/index", { title: "Protist Tracker" });
   //renders data in table
@@ -43,21 +55,24 @@ router.get("/", logMiddleware, (req, res, next) => {
     });
 });
 
+//ADD view POST
+router.post("/add", upload.single('image'), (req, res, next) => {
 
-//POST handler (save button action)
-router.post("/add", (req, res, next) => {
-  //res.redirect("/protists");
-  //use the protist module to save data to DB
+  // Use req.file.path to get the path of the uploaded image
+  var imagePath = req.file.path;
+  imagePath = path.basename(imagePath);
+  console.log(imagePath); // Print the path of the uploaded image to the console)
+
+  // Create a new Protist with the uploaded image path
   Protist.create({
     name: req.body.name,
     updateDate: req.body.updateDate,
     location: req.body.location,
-    image: req.body.image,
+    image: imagePath, // Save the path to the uploaded image
     link: req.body.link,
   })
     .then((createdModel) => {
       console.log("Model created successfully:", createdModel);
-      // We can show a successful message by redirecting them to index
       res.redirect("/protists");
     })
     .catch((error) => {
@@ -65,29 +80,13 @@ router.post("/add", (req, res, next) => {
     });
 });
 
-//TODO C > Create new protist
-//GET handler for /protists/add (loads)
+
+//ADD view GET
 router.get("/add", logMiddleware, (req, res, next) => {
   res.render("protists/add", { title: "Add a new Protist" });
 });
 
-//POST handler for /protists/add (receives input data)
-router.post("/add", (req, res, next) => {
-  Protist.create(
-    {
-      name: req.body.name,
-      updateDate: req.body.updateDate,
-      location: req.body.location,
-      image: req.body.image,
-      link: req.body.link,
-    }, //new protist to add
-    (err, newProtist) => {
-      res.redirect("/protists");
-    } // callback function
-  );
-});
-
-//note: NEED TO COMBINE THESE 2 FUNCTIONS TO RENDER ASYNCHRONOUSLY (see below)
+//EDIT view GET
 router.get("/edit/:_id", logMiddleware, async (req, res, next) => {
   try {
     const protistObj = await Protist.findById(req.params._id).exec();
@@ -98,20 +97,30 @@ router.get("/edit/:_id", logMiddleware, async (req, res, next) => {
     });
   } catch (err) {
     console.error(err);
-    // Handle the error appropriately
   }
 });
 
-// POST /protists/editID
-router.post("/edit/:_id", (req, res, next) => {
+router.post("/edit/:_id", upload.single('image'), (req, res, next) => {
+  // Check if a file was uploaded
+  if (req.file) {
+    // Use req.file.path to get the path of the uploaded image
+    var imagePath = req.file.path;
+    imagePath = path.basename(imagePath);
+    console.log(imagePath); // Print the path of the uploaded image to the console)
+  } else {
+    // No file was uploaded, use the existing image path
+    var imagePath = req.body.image;
+  }
+
+  // Continue with the update logic
   Protist.findOneAndUpdate(
     { _id: req.params._id },
     {
       name: req.body.name,
       updateDate: req.body.updateDate,
       location: req.body.location,
-      image: req.body.image,
-      link: req.body.link
+      image: imagePath,
+      link: req.body.link,
     }
   )
     .then((updatedProtist) => {
