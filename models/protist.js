@@ -6,7 +6,7 @@ const protistsSchemaObj = {
   // add each element and its properties
   // note: changing updateDate type to String = 2010-10-10 format)
   name: { type: String, required: true },
-  updateDate: { type: Date, required: true },
+  updateDate: { type: String, required: true },
   location: { type: String, required: true },
   image: { type: String, required: true },
   link: { type: String },

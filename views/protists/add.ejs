@@ -9,33 +9,23 @@
     <input name="name" id="name" class="form-control"/>
   </fieldset>
   <fieldset class="form-group">
-    <label for="updateDate" class="col-2">Last Update Date:</label>
+    <label for="image" class="col-2">Image:</label>
+    <input type="file" name="image" id="image" class="form-control" accept=".jpg, .jpeg, .png" required>
+  </fieldset>
+  <fieldset class="form-group">
+    <label for="updateDate" class="col-2">Last Update:</label>
     <input
       name="updateDate"
       id="updateDate"
       required
-      type="date"
-      class="form-control"
-    />
-    <label for="updateTime" class="col-2">Last Update Time:</label>
-    <input
-      name="updateTime"
-      id="updateTime"
-      required
-      type="time"
       class="form-control"
     />
   </fieldset>
+  <!-- -->
   <fieldset class="form-group">
     <label for="location" class="col-2">Location:</label>
     <input name="location" id="location" class="form-control"/>
   </fieldset>
-  <!-- File upload -->
-  <fieldset class="form-group">
-      <label for="image" class="col-2">Image:</label>
-      <input type="file" name="image" id="image" class="form-control" accept=".jpg, .jpeg, .png" required>
-  </fieldset>
-  <!-- File upload -->
   <fieldset class="form-group">
     <label for="link" class="col-2">Link:</label>
     <input name="link" id="link" class="form-control"/>

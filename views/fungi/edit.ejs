@@ -10,20 +10,19 @@
       <!-- Mapping is not automatic, but it's best practices -->
       <fieldset class="form-group">
         <label for="name" class="col-2">Name:</label>
-        <input name="name" id="name" class="form-control" value="<%= fungus.name %>" />
-      </fieldset>
-      <fieldset class="form-group">
-        <label for="updateDate" class="col-2">Last Update:</label>
-        <input name="updateDate" id="updateDate" required type="date" class="form-control" />
-        <input name="updateDate" id="updateDate" required type="time" class="form-control" />
-      </fieldset>
-      <fieldset class="form-group">
-        <label for="location" class="col-2">Location:</label>
-        <input name="location" id="location" class="form-control" value="<%= fungus.location %>"/>
+        <input name="name" id="name" class="form-control" value="<%= fungus.name %>"/>
       </fieldset>
       <fieldset class="form-group">
         <label for="image" class="col-2">Image:</label>
         <input type="file" name="image" id="image" class="form-control" accept=".jpg, .jpeg, .png" >
+      </fieldset>
+      <fieldset class="form-group">
+        <label for="updateDate" class="col-2">Last Update:</label>
+        <input name="updateDate" id="updateDate" class="form-control" value="<%= fungus.updateDate %>"/>
+      </fieldset>
+      <fieldset class="form-group">
+        <label for="location" class="col-2">Location:</label>
+        <input name="location" id="location" class="form-control" value="<%= fungus.location %>"/>
       </fieldset>
       <fieldset class="form-group">
         <label for="link" class="col-2">Link:</label>
