@@ -1,6 +1,5 @@
 <%- include('../partials/header') %>
 <h1><%= title %></h1>
-<p>Welcome to <%= title %></p>
   
 <!--available to req.body object-->
 <div id="editFormOuter">
@@ -24,10 +23,11 @@
         <label for="location" class="col-2">Location:</label>
         <input name="location" id="location" class="form-control" value="<%= plant.location %>"/>
       </fieldset>
-      <fieldset class="form-group">
-        <label for="link" class="col-2">Link:</label>
-        <input name="link" id="link" class="form-control" value="<%= plant.link %>"/>
-      </fieldset>
+      <!-- Display the selected location's coordinates -->
+      <div id="coordinates"></div>
+      <!-- Display the selected location's coordinates using Leaflet -->
+      <div id="map" style="height: 300px;"></div>
+
       <!-- Button needs to be inside <form> element to trigger POST -->
       <button class="offset-3 btn btn-primary">Save</button>
     </form>

@@ -19,11 +19,21 @@
       crossorigin="anonymous"
       defer
     ></script>
+
+    <!--Maps - Image Location -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script defer src="/javascripts/createMap.js"></script> <!--index map-->
+    <script defer src="/javascripts/mapLocationToCoordinate.js"></script> <!--add map-->
+
+    <!--Image date, time, gps coordinates-->
     <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+    <script defer src="/javascripts/image-date-gps.js"></script>
+
+    <!-- Information display-->
     <script defer src="/javascripts/delete.js"></script>
     <script defer src="/javascripts/activeTab.js"></script>
     <script defer src="/javascripts/activeCarousel.js"></script>
-    <script defer src="/javascripts/imageDateTaken.js"></script>
     
 </head>
 

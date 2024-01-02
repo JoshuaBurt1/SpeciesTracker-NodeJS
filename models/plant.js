@@ -9,7 +9,6 @@ const plantsSchemaObj = {
   updateDate: { type: String, required: true },
   location: { type: String, required: true },
   image: { type: String, required: true },
-  link: { type: String },
 };
 
 // Create new mongoose schema using the definition object

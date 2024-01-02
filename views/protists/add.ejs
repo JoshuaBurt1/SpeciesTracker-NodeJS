@@ -1,6 +1,5 @@
 <%- include('../partials/header') %>
 <h1><%= title %></h1>
-<p>Welcome to <%= title %></p>
 
 <form method="POST" enctype="multipart/form-data">
   <!-- ... other form fields ... -->
@@ -19,18 +18,18 @@
       id="updateDate"
       required
       class="form-control"
+      placeholder="YYYY:MM:DD HH:mm:ss"
     />
   </fieldset>
   <!-- -->
   <fieldset class="form-group">
     <label for="location" class="col-2">Location:</label>
-    <input name="location" id="location" class="form-control"/>
+    <input name="location" id="location" class="form-control" placeholder="Latitude, Longitude (e.g., 45.0000, -45.0000)"/>
   </fieldset>
-  <fieldset class="form-group">
-    <label for="link" class="col-2">Link:</label>
-    <input name="link" id="link" class="form-control"/>
-  </fieldset>
-
+  <!-- Display the selected location's coordinates -->
+  <div id="coordinates"><span id="help">If unsure of coordinates - enter name of location, then copy map coordinates</span></div>
+  <!-- Display the selected location's coordinates using Leaflet -->
+  <div id="map" style="height: 300px;"></div>
   <!-- Button needs to be inside <form> element to trigger POST -->
   <button class="offset-3 btn btn-primary" type="submit">Save</button>
 </form>

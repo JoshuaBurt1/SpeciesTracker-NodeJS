@@ -20,20 +20,55 @@ const upload = multer({ storage: storage });
 //Configure GET/POST handlers
 //GET handler for index /animals/ <<landing/root page of my section
 //R > Retrieve/Read usually shows a list (filtered/unfiltered)
-router.get("/", logMiddleware, (req, res, next) => {
-  //res.render("animals/index", { title: "Animal Tracker" });
-  //renders data in table
-  Animal.find() //sorting function (alphabetically)
-    .then((animals) => {
-      res.render("animals/index", {
-        title: "Animal Tracker Dataset",
-        dataset: animals,
-        //user: req.user,
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+// router.get("/", logMiddleware, (req, res, next) => {
+//   //res.render("animals/index", { title: "Animal Tracker" });
+//   //renders data in table
+//   Animal.find() //sorting function (alphabetically)
+//     .then((animals) => {
+//       res.render("animals/index", {
+//         title: "Animal Tracker Dataset",
+//         dataset: animals,
+//         //user: req.user,
+//       });
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     });
+// });
+
+const pageSize = 4;
+router.get('/', logMiddleware, async (req, res, next) => {
+    try {
+        // create variable for storing page number
+        // extract value from query string
+        // Expected ?page=1
+        let page = parseInt(req.query.page) || 1; // default to page 1 
+        // calculate how many records to skip
+        // page 1 shows records 1 to 10 so skip 0
+        // page 2 shows records 11 to 20 so skip 10
+        let skipSize = pageSize * (page - 1);
+
+        // Modify find() to accept query
+        const animals = await Animal.find()
+            // implement pagination
+            .sort({ name: 1 }) // to achieve a consistent result, sort by name A to Z
+            .limit(pageSize) // set page size limit
+            .skip(skipSize);
+        // Count total number of records for pagination
+        const totalRecords = await Animal.countDocuments();
+
+        const totalPages = Math.ceil(totalRecords / pageSize);
+
+        res.render("animals/index", {
+            title: "Animal Dataset",
+            dataset: animals,
+            totalPages: totalPages,
+            currentPage: page,
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("Internal Server Error");
+    }
 });
 
 //ADD view POST
@@ -50,7 +85,6 @@ router.post("/add", upload.single('image'), (req, res, next) => {
     updateDate: req.body.updateDate,
     location: req.body.location,
     image: imagePath, // Save the path to the uploaded image
-    link: req.body.link,
   })
     .then((createdModel) => {
       console.log("Model created successfully:", createdModel);
@@ -75,7 +109,6 @@ router.post("/add", (req, res, next) => {
       updateDate: req.body.updateDate,
       location: req.body.location,
       image: req.body.image,
-      link: req.body.link,
     }, //new animal to add
     (err, newAnimal) => {
       res.redirect("/animals");
@@ -119,7 +152,6 @@ router.post("/edit/:_id", upload.single('image'), (req, res, next) => {
       updateDate: req.body.updateDate,
       location: req.body.location,
       image: imagePath,
-      link: req.body.link,
     }
   )
     .then((updatedAnimal) => {
