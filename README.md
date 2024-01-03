@@ -14,6 +14,7 @@ coordinates to map & map to coordinates: npm i leaflet <br>
 search bar (by name only) <br>
 
 # To be Added: <br>
+*alert if not all add or edit entries filled <br>
 *convert bootstrap to newest version, update views/nav <br>
 <br>
 

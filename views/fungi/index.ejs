@@ -1,11 +1,35 @@
 <%- include('../partials/header') %>
-<div id="rowFlex">
+<div class="mb-3">
   <h1>Your <%= title %></h1>
-  <!--{{#if user}}-->
-  <a class="btn btn-info" id="buttonPad" href="/fungi/add">Add a new fungus</a>
-  <!--{{/if}}-->
-<!--{{! Add links to CRUD operations }}
-{{!commented out to not allow viewers to edit/ user can add when editing}}-->
+</div>  
+<div id="rowFlex" class="mb-3"> <!-- Adding margin-bottom for spacing -->
+  <div class="container mt-5">
+    <form id="search-form" action="/fungi" method="GET">
+      <div class="input-group">
+        <input type="text" class="form-control" id="search-bar" name="searchBar" placeholder="Search...">
+        <button type="submit" class="btn btn-primary">Search</button>
+      </div>
+    </form>
+  </div>
+    <!-- Dropdown Menu -->
+    <div class="dropdown" id="buttonPad">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="searchDropdown" data-bs-toggle="dropdown" data-bs-target="#" aria-haspopup="true" aria-expanded="false">
+        Order by
+      </button>
+      <div class="dropdown-menu" aria-labelledby="searchDropdown">
+        <a class="dropdown-item" href="#">Default (Alphabetical)</a>
+        <a class="dropdown-item" href="#">Taxonomy</a>
+        <a class="dropdown-item" href="#">Conservation Status</a>
+        <a class="dropdown-item" href="#">Invasiveness</a>
+        <a class="dropdown-item" href="#">Industrial Usage</a>
+        <a class="dropdown-item" href="#">Nutrition</a>
+        <a class="dropdown-item" href="#">Toxicity</a>
+        <!-- Dropdown items go here -->
+      </div>
+   </div>
+    <!--{{#if user}}-->
+    <a class="btn btn-info" id="buttonPad" href="/fungi/add">Add Specimen</a>
+    <!--{{/if}}-->
 </div>
 
 <!--{{! To Show data }}-->
@@ -49,24 +73,27 @@
         <% }); %>
       </tbody>
     </table>
+    <!-- Pagination -->
   </div> <!-- Line Changed -->
   <!-- Pagination -->
   <div class="pagination">
     <% if (currentPage > 1) { %>
-      <a href="/fungi?page=1">&lt;&lt;</a> <!-- Rewind to first page -->
-      <a href="/fungi?page=<%= currentPage - 1 %>">&lt;</a> <!-- Previous page -->
+      <a href="/fungi?page=1&searchBar=<%= searchQuery %>">&lt;&lt;</a>
+      <a href="/fungi?page=<%= currentPage - 1 %>&searchBar=<%= searchQuery %>">&lt;</a>
     <% } %>
 
     <% for (let i = 1; i <= totalPages; i++) { %>
-      <a href="/fungi?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>">
+      <a href="/fungi?page=<%= i %>&searchBar=<%= searchQuery %>" class="<%= currentPage === i ? 'active' : '' %>">
         <%= i %>
       </a>
     <% } %>
 
     <% if (currentPage < totalPages) { %>
-      <a href="/fungi?page=<%= currentPage + 1 %>">&gt;</a> <!-- Next page -->
-      <a href="/fungi?page=<%= totalPages %>">&gt;&gt;</a> <!-- Fast forward to last page -->
+      <a href="/fungi?page=<%= currentPage + 1 %>&searchBar=<%= searchQuery %>">&gt;</a>
+      <a href="/fungi?page=<%= totalPages %>&searchBar=<%= searchQuery %>">&gt;&gt;</a>
     <% } %>
   </div>
 </div> <!-- Line Changed -->
+
 <%- include('../partials/footer') %>
+

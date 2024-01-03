@@ -20,37 +20,42 @@ const upload = multer({ storage: storage });
 //Configure GET/POST handlers
 const pageSize = 4;
 router.get('/', logMiddleware, async (req, res, next) => {
-    try {
-        // create variable for storing page number
-        // extract value from query string
-        // Expected ?page=1
-        let page = parseInt(req.query.page) || 1; // default to page 1 
-        // calculate how many records to skip
-        // page 1 shows records 1 to 10 so skip 0
-        // page 2 shows records 11 to 20 so skip 10
-        let skipSize = pageSize * (page - 1);
-
-        // Modify find() to accept query
-        const plants = await Plant.find()
-            // implement pagination
-            .sort({ name: 1 }) // to achieve a consistent result, sort by name A to Z
-            .limit(pageSize) // set page size limit
-            .skip(skipSize);
-        // Count total number of records for pagination
-        const totalRecords = await Plant.countDocuments();
-
-        const totalPages = Math.ceil(totalRecords / pageSize);
-
-        res.render("plants/index", {
-            title: "Plant Dataset",
-            dataset: plants,
-            totalPages: totalPages,
-            currentPage: page,
-        });
-    } catch (err) {
-        console.log(err);
-        res.status(500).send("Internal Server Error");
+  try {
+    //SearchBar query parameter
+    let searchQuery = req.query.searchBar;
+    if (!searchQuery) {
+      searchQuery = '';
     }
+
+    // Use a case-insensitive regular expression to match part of the name
+    let query = {};
+    if (searchQuery) {
+      query = { name: { $regex: new RegExp(searchQuery, 'i') } };
+      console.log(query);
+    }
+
+    let page = parseInt(req.query.page) || 1;
+    let skipSize = pageSize * (page - 1);
+
+    const plants = await Plant.find(query)
+      .sort({ name: 1 })
+      .limit(pageSize)
+      .skip(skipSize);
+
+    const totalRecords = await Plant.countDocuments(query);
+    const totalPages = Math.ceil(totalRecords / pageSize);
+
+    res.render("plants", {
+      title: "Plant Dataset",
+      dataset: plants,
+      searchQuery: searchQuery,
+      totalPages: totalPages,
+      currentPage: page,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 //ADD view POST
@@ -102,11 +107,11 @@ router.post("/add", (req, res, next) => {
 
 router.get("/edit/:_id", logMiddleware, async  (req, res, next) => {
   try {
-    const animalObj = await Plant.findById(req.params._id).exec();
-    console.log(animalObj);
+    const plantObj = await Plant.findById(req.params._id).exec();
+    console.log(plantObj);
     res.render("plants/edit", {
       title: "Edit a Plant Entry",
-      plant: animalObj
+      plant: plantObj
       //user: req.user,
     });
   } catch (err) {
@@ -137,7 +142,7 @@ router.post("/edit/:_id", upload.single('image'), (req, res, next) => {
       image: imagePath,
     }
   )
-    .then((updatedAnimal) => {
+    .then((updatedPlant) => {
       res.redirect("/plants");
     })
     .catch((err) => {
@@ -149,8 +154,8 @@ router.post("/edit/:_id", upload.single('image'), (req, res, next) => {
 //TODO D > Delete a plant
 // GET /plants/delete/652f1cb7740320402d9ba04d
 router.get("/delete/:_id", (req, res, next) => {
-  let animalId = req.params._id;
-  Plant.deleteOne({ _id: animalId })
+  let plantId = req.params._id;
+  Plant.deleteOne({ _id: plantId })
     .then(() => {
       res.redirect("/plants");
     })

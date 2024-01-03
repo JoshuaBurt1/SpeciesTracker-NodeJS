@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Perform AJAX request with the search query
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', `/animals?searchBar=${searchValue}`, true);
+    xhr.open('GET', `${currentRoute}?searchBar=${searchValue}`, true);
 
     xhr.onload = function () {
       if (xhr.status >= 200 && xhr.status < 400) {
