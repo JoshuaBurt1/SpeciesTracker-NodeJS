@@ -12,8 +12,6 @@
       integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
       crossorigin="anonymous"
     />
-    <!--remove for input/button to attach-->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
@@ -22,14 +20,12 @@
     ></script>
 
     <!-- Bootstrap 5 JS - Order Button Dropdown -->
-
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 
     <!--Search Bar-->
     <script defer src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script defer src="/javascripts/searchBar.js"></script> 
     
-
     <!--Maps - Image Location -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -72,39 +68,43 @@
 
 <div class="container"> <!--smaller information view-->
   <div class="header clearfix"> <!--Nav-bar-->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-sm bg-light navbar-light">
       <div class="container-fluid">
-        <ul class="nav nav-tabs">
+        <ul class="navbar-nav">
           <li class="nav-item" id="linkColor">
             <a class="nav-link" id="homeTab" href="/">Home</a>
           </li>
-          <li class="nav-item">
-              <a class="nav-link" id="plantsTab" href="/plants"><img class="navImage" src="/images/nav_images/plant.png"/> Plants</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" id="fungiTab" href="/fungi"><img class="navImage" src="/images/nav_images/mushroom.jpg"/> Fungi</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" id="protistsTab" href="/protists"><img class="navImage" src="/images/nav_images/protist.jpg"/> Protists</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" id="animalsTab" href="/animals"><img class="navImage" src="/images/nav_images/animal.png"/> Animals</a>
-          </li>
         </ul>
-          <ul class="nav nav-tabs">
-            <li class="dropdown-menu-end">
-                  <a
-                    class="nav-link dropdown-toggle"
-                    href="#"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                    id="linkColor"
-                  >User Portal </a>
-                  <ul class="dropdown-menu" id="developerDropdown">
-                    <a class="dropdown-item" href="/identification">Identification</a>
-                    <a class="dropdown-item" href="/forum">Forum</a>
-                  </ul>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false" 
+              id="linkColor"
+            >Datasets </a>
+            <ul class="dropdown-menu" id="developerDropdown">
+              <a class="dropdown-item" id="plantsTab" href="/plants"><img class="navImage" src="/images/nav_images/plant.png"/> Plants</a>
+              <a class="dropdown-item" id="fungiTab" href="/fungi"><img class="navImage" src="/images/nav_images/mushroom.jpg"/> Fungi</a>
+              <a class="dropdown-item" id="protistsTab" href="/protists"><img class="navImage" src="/images/nav_images/protist.jpg"/> Protists</a>
+              <a class="dropdown-item" id="animalsTab" href="/animals"><img class="navImage" src="/images/nav_images/animal.png"/> Animals</a>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false" 
+              id="linkColor"
+              >User Portal </a>
+              <ul class="dropdown-menu" id="developerDropdown">
+                <a class="dropdown-item" href="/identification">Identification</a>
+                <a class="dropdown-item" href="/forum">Forum</a>
+              </ul>
             </li>
           </ul>
       </div>

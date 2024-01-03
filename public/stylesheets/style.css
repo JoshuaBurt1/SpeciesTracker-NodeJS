@@ -42,18 +42,19 @@
 }
 .container{
   z-index:1;
+  padding-left: 2.5%;
+  padding-right: 2.5%;
 }
 
 /*NAVIGATION*/
+.navbar {
+  border-top-left-radius: 7px;
+  border-top-right-radius: 7px;
+}
+
 .navImage{
   width:20%;
   height:20%;
-}
-
-.nav-item{
-  display: flex;
-  flex-direction: row;
-  width: 15%;
 }
 
 .nav-tabs .nav-link {
@@ -67,8 +68,12 @@
 
 #containerInner{
   background-color: rgba(255, 255, 255, 0.85);
-  padding:2%;
-  border-radius: 7px;
+  padding-top:1em;
+  padding-bottom:1em;
+  padding-left:2em;
+  padding-right:2em;
+  border-bottom-left-radius: 7px;
+  border-bottom-right-radius: 7px;
 }
 
 /* Content container*/
@@ -77,19 +82,44 @@
   overflow: hidden;
 }
 
+.lead{
+  margin-bottom: 100px;
+}
+
 #rowFlex {
   display: flex; 
   justify-content: space-between; 
   align-items: flex-end;
 }
 
+#rowFlex .container {
+  margin-top: 0 !important;
+}
+
 #buttonPad {
   margin-left:1%;
+}
+
+.btn-info{
+  white-space: nowrap;
+}
+
+.container.mt-5{
+  padding-left: 0em;
+  padding-right: 0em;
 }
 
 body {
   padding: 1%;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+label {
+  display: inline-block;
+  max-width: 100%;
+  margin-top: 1em;
+  margin-bottom: 0.2em;
+  font-weight: 700;
 }
 
 #help{
@@ -121,7 +151,6 @@ button.offset-3.btn.btn-primary {
   background-color: rgba(255, 255, 255, 0);
 }
 
-
 footer {
   display: flex;
   justify-content: space-between;
@@ -130,10 +159,16 @@ footer {
   flex-shrink: 0;
 }
 
+footer p {
+  margin-top: 1em;
+  margin-bottom: 0; /* Set margin-bottom to 0 to remove the space below the paragraphs */
+}
+
 /*Pagination*/
 .pagination {
   display: flex;
   justify-content: center;
+  margin-top:1em;
 }
 
 .pagination a {

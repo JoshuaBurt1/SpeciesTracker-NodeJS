@@ -7,11 +7,11 @@
       <!-- Mapping is not automatic, but it's best practices -->
       <fieldset class="form-group">
         <label for="name" class="col-2">Name:</label>
-        <input name="name" id="name" class="form-control"/>
+        <input name="name" id="name" class="form-control" required/>
       </fieldset>
       <fieldset class="form-group">
         <label for="image" class="col-2">Image:</label>
-        <input type="file" name="image" id="image" class="form-control" accept=".jpg, .jpeg, .png" required>
+        <input type="file" name="image" id="image" class="form-control" accept=".jpg, .jpeg, .png" required/>
       </fieldset>
       <fieldset class="form-group">
         <label for="updateDate" class="col-2">Date Identified:</label>
@@ -26,7 +26,7 @@
       <!-- -->
       <fieldset class="form-group">
         <label for="location" class="col-2">Location:</label>
-        <input name="location" id="location" class="form-control" placeholder="Latitude, Longitude (e.g., 45.0000, -45.0000)"/>
+        <input name="location" id="location" class="form-control" placeholder="Latitude, Longitude (e.g., 45.0000, -45.0000)" required/>
       </fieldset>
       <!-- Display the selected location's coordinates -->
       <div id="coordinates"><span id="help">If unsure of coordinates - enter name of location, then copy map coordinates</span></div>
