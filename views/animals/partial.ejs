@@ -1,14 +1,12 @@
 <%- include('../partials/header') %>
 <div class="mb-3">
   <h1>Your <%= title %></h1>
-</div>  
+</div>
 <div id="rowFlex" class="mb-3"> <!-- Adding margin-bottom for spacing -->
   <div class="container mt-5">
     <form id="search-form" action="/animals/partial" method="GET">
-      <div class="input-group">
-        <input type="text" class="form-control" id="search-bar" name="searchBar" placeholder="Search...">
-        <button type="submit" class="btn btn-primary">Search</button>
-      </div>
+      <input type="text" id="search-bar" name="searchBar" placeholder="Search...">
+      <button type="submit">Search</button>
     </form>
   </div>
     <!-- Dropdown Menu -->
@@ -28,7 +26,7 @@
       </div>
    </div>
     <!--{{#if user}}-->
-    <a class="btn btn-info" id="buttonPad" href="/animals/add">Add Specimen</a>
+    <a class="btn btn-info" id="buttonPad" href="/animals/add">Add a new animal</a>
     <!--{{/if}}-->
 </div>
 
@@ -58,7 +56,7 @@
             </td>
             <td class="col-md-3">
               <div class="gallery-item">
-                  <img class="thumbnail w-75" src="images/animal_images/<%= item.image %>" onclick="showImage(this)" />
+                    <img class="thumbnail w-75" src="/images/animal_images/<%= item.image %>" onclick="showImage(this)" />
                 <div class="overlay" onclick="hideImage()">
                   <span class="close" onclick="hideImage()">&times;</span>
                   <img class="enlarged-image" id="enlarged-image" />
@@ -75,25 +73,30 @@
     </table>
     <!-- Pagination -->
   </div> <!-- Line Changed -->
-  <!-- Pagination -->
-  <div class="pagination">
-    <% if (currentPage > 1) { %>
-      <a href="/animals?page=1">&lt;&lt;</a> <!-- Rewind to first page -->
-      <a href="/animals?page=<%= currentPage - 1 %>">&lt;</a> <!-- Previous page -->
-    <% } %>
 
-    <% for (let i = 1; i <= totalPages; i++) { %>
-      <a href="/animals?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>">
-        <%= i %>
-      </a>
-    <% } %>
+<div class="page-container">
+  <div class="table-container">
+    <!-- Table structure remains the same -->
 
-    <% if (currentPage < totalPages) { %>
-      <a href="/animals?page=<%= currentPage + 1 %>">&gt;</a> <!-- Next page -->
-      <a href="/animals?page=<%= totalPages %>">&gt;&gt;</a> <!-- Fast forward to last page -->
-    <% } %>
+    <!-- Pagination -->
+    <div class="pagination">
+      <% if (currentPage > 1) { %>
+        <a href="/animals/partial?page=1&searchBar=<%= searchQuery %>">&lt;&lt;</a>
+        <a href="/animals/partial?page=<%= currentPage - 1 %>&searchBar=<%= searchQuery %>">&lt;</a>
+      <% } %>
+
+      <% for (let i = 1; i <= totalPages; i++) { %>
+        <a href="/animals/partial?page=<%= i %>&searchBar=<%= searchQuery %>" class="<%= currentPage === i ? 'active' : '' %>">
+          <%= i %>
+        </a>
+      <% } %>
+
+      <% if (currentPage < totalPages) { %>
+        <a href="/animals/partial?page=<%= currentPage + 1 %>&searchBar=<%= searchQuery %>">&gt;</a>
+        <a href="/animals/partial?page=<%= totalPages %>&searchBar=<%= searchQuery %>">&gt;&gt;</a>
+      <% } %>
+    </div>
   </div>
-</div> <!-- Line Changed -->
+</div>
 
 <%- include('../partials/footer') %>
-

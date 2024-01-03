@@ -33,9 +33,13 @@
               <div class="map" style="height: 200px; width: 200px;"></div>
             </td>
             <td class="col-md-3">
-              <a href="<%= item.link %>" target="_blank">
-                <img class="w-75" src="images/fungus_images/<%= item.image %>" />
-              </a>
+              <div class="gallery-item">
+                  <img class="thumbnail w-75" src="images/fungus_images/<%= item.image %>" onclick="showImage(this)" />
+                <div class="overlay" onclick="hideImage()">
+                  <span class="close" onclick="hideImage()">&times;</span>
+                  <img class="enlarged-image" id="enlarged-image" />
+                </div>
+              </div>
             </td>
             <td id="action">
               <a class="btn btn-primary" href="/fungi/edit/<%= item._id %>">Edit</a>
