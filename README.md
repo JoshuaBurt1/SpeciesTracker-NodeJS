@@ -14,7 +14,6 @@ coordinates to map & map to coordinates: npm i leaflet <br>
 search bar (by name only) <br>
 
 # To be Added: <br>
-*is partial necessary? just use index <br>
 *convert bootstrap to newest version, update views/nav <br>
 <br>
 

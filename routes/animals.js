@@ -19,45 +19,10 @@ const upload = multer({ storage: storage });
 
 // Configure GET/POST handlers
 // GET handler for index /animals/ <<landing/root page of my sections
-
 const pageSize = 4;
 router.get('/', logMiddleware, async (req, res, next) => {
   try {
-    // create variable for storing page number
-    // extract value from query string
-    // Expected ?page=1
-    let page = parseInt(req.query.page) || 1; // default to page 1 
-    // calculate how many records to skip
-    // page 1 shows records 1 to 10 so skip 0
-    // page 2 shows records 11 to 20 so skip 10
-    let skipSize = pageSize * (page - 1);
-
-    // Modify find() to accept query
-    const animals = await Animal.find()
-      // implement pagination
-      .sort({ name: 1 }) // to achieve a consistent result, sort by name A to Z
-      .limit(pageSize) // set page size limit
-      .skip(skipSize);
-    // Count total number of records for pagination
-    const totalRecords = await Animal.countDocuments();
-
-    const totalPages = Math.ceil(totalRecords / pageSize);
-
-    res.render("animals/index", {
-      title: "Animal Dataset",
-      dataset: animals,
-      totalPages: totalPages,
-      currentPage: page,
-    });
-  } catch (err) {
-    console.log(err);
-    res.status(500).send("Internal Server Error");
-  }
-});
-
-//for SEARCH results, return a partial HTML view
-router.get('/partial', logMiddleware, async (req, res, next) => {
-  try {
+    //SearchBar query parameter
     let searchQuery = req.query.searchBar;
     if (!searchQuery) {
       searchQuery = '';
@@ -81,7 +46,7 @@ router.get('/partial', logMiddleware, async (req, res, next) => {
     const totalRecords = await Animal.countDocuments(query);
     const totalPages = Math.ceil(totalRecords / pageSize);
 
-    res.render("animals/partial", {
+    res.render("animals", {
       title: "Animal Dataset",
       dataset: animals,
       searchQuery: searchQuery,

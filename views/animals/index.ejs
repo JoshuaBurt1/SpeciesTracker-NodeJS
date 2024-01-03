@@ -4,7 +4,7 @@
 </div>  
 <div id="rowFlex" class="mb-3"> <!-- Adding margin-bottom for spacing -->
   <div class="container mt-5">
-    <form id="search-form" action="/animals/partial" method="GET">
+    <form id="search-form" action="/animals" method="GET">
       <div class="input-group">
         <input type="text" class="form-control" id="search-bar" name="searchBar" placeholder="Search...">
         <button type="submit" class="btn btn-primary">Search</button>
@@ -78,19 +78,19 @@
   <!-- Pagination -->
   <div class="pagination">
     <% if (currentPage > 1) { %>
-      <a href="/animals?page=1">&lt;&lt;</a> <!-- Rewind to first page -->
-      <a href="/animals?page=<%= currentPage - 1 %>">&lt;</a> <!-- Previous page -->
+      <a href="/animals?page=1&searchBar=<%= searchQuery %>">&lt;&lt;</a>
+      <a href="/animals?page=<%= currentPage - 1 %>&searchBar=<%= searchQuery %>">&lt;</a>
     <% } %>
 
     <% for (let i = 1; i <= totalPages; i++) { %>
-      <a href="/animals?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>">
+      <a href="/animals?page=<%= i %>&searchBar=<%= searchQuery %>" class="<%= currentPage === i ? 'active' : '' %>">
         <%= i %>
       </a>
     <% } %>
 
     <% if (currentPage < totalPages) { %>
-      <a href="/animals?page=<%= currentPage + 1 %>">&gt;</a> <!-- Next page -->
-      <a href="/animals?page=<%= totalPages %>">&gt;&gt;</a> <!-- Fast forward to last page -->
+      <a href="/animals?page=<%= currentPage + 1 %>&searchBar=<%= searchQuery %>">&gt;</a>
+      <a href="/animals?page=<%= totalPages %>&searchBar=<%= searchQuery %>">&gt;&gt;</a>
     <% } %>
   </div>
 </div> <!-- Line Changed -->
