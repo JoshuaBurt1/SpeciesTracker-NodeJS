@@ -9,6 +9,7 @@ const animalsSchemaObj = {
   updateDate: { type: Array, required: true },
   location: { type: Array, required: true },
   image: { type: Array, required: true },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 };
 
 // Create new mongoose schema using the definition object

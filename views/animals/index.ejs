@@ -46,7 +46,11 @@
         <!--{{/if}} -->
       </thead>
       <tbody>
-        <% dataset.forEach(function(item) { %>
+        <% 
+          const userDataset = dataset.filter(item => item.user && item.user._id && item.user._id.toString() === user._id.toString());
+          
+          userDataset.forEach(function(item) { 
+        %>
           <tr>
             <td class="names"><%= item.name %></td>
             <td id="td2">
@@ -57,7 +61,7 @@
               <div class="map" style="height: 200px; width: 200px;"></div>
             </td>
             <td class="col-md-3">
-              <img class="thumbnail w-75" src="images/animal_images/<%= item.image %>" onclick="showImage(this)" />
+              <img class="thumbnail w-75" src="images/<%= user._id %>/animal_images/<%= item.image %>" onclick="showImage(this)" />
               <div class="overlay" onclick="hideImage()">
                 <span class="close" onclick="hideImage()">&times;</span>
                 <img class="enlarged-image" id="enlarged-image" />
@@ -79,13 +83,13 @@
       <a href="/animals?page=1&searchBar=<%= searchQuery %>">&lt;&lt;</a>
       <a href="/animals?page=<%= currentPage - 1 %>&searchBar=<%= searchQuery %>">&lt;</a>
     <% } %>
-
+  
     <% for (let i = 1; i <= totalPages; i++) { %>
       <a href="/animals?page=<%= i %>&searchBar=<%= searchQuery %>" class="<%= currentPage === i ? 'active' : '' %>">
         <%= i %>
       </a>
     <% } %>
-
+  
     <% if (currentPage < totalPages) { %>
       <a href="/animals?page=<%= currentPage + 1 %>&searchBar=<%= searchQuery %>">&gt;</a>
       <a href="/animals?page=<%= totalPages %>&searchBar=<%= searchQuery %>">&gt;&gt;</a>
