@@ -82,10 +82,6 @@
   overflow: hidden;
 }
 
-.lead{
-  margin-bottom: 100px;
-}
-
 #rowFlex {
   display: flex; 
   justify-content: space-between; 

@@ -15,7 +15,7 @@ const Fungus = require("../models/fungus"); // Import mongoose model to be used
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const userId = req.user._id; // Assuming user object is available after authentication
-    const userImagesPath = `public/images/${userId}/fungus_images`;
+    const userImagesPath = `public/images/fungus_images`;
 
     // Ensure the user's folder exists, create if not
     fs.mkdirSync(path.join(__dirname, '..', userImagesPath), { recursive: true });

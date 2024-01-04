@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const animalsSchemaObj = {
   // add each element and its properties
   // note: changing updateDate type to String = 2010-10-10 format)
+  kingdom: { type: String, required: true, default: "animalia" },
   name: { type: String, required: true },
   updateDate: { type: Array, required: true },
   location: { type: Array, required: true },

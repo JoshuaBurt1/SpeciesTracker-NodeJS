@@ -1,0 +1,93 @@
+<%- include('./partials/header') %>
+
+<h1 class="display-5"><%= title %></h1>
+<div class="mb-3">
+<p class="lead">View all species uploaded by users</p>
+</div>  
+<div id="rowFlex" class="mb-3">
+<div class="container mt-5">
+    <form id="search-form" action="/dataViewer" method="GET">
+    <div class="input-group">
+        <input type="text" class="form-control" id="search-bar" name="searchBar" placeholder="Search">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+    </form>
+</div>
+<div class="dropdown" id="buttonPad">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="searchDropdown" data-bs-toggle="dropdown" data-bs-target="#" aria-haspopup="true" aria-expanded="false">
+    Order by
+    </button>
+    <div class="dropdown-menu" aria-labelledby="searchDropdown">
+    <a class="dropdown-item" href="#">Default (Alphabetical)</a>
+    <a class="dropdown-item" href="#">Taxonomy</a>
+    <a class="dropdown-item" href="#">Conservation Status</a>
+    <a class="dropdown-item" href="#">Invasiveness</a>
+    <a class="dropdown-item" href="#">Industrial Usage</a>
+    <a class="dropdown-item" href="#">Nutrition</a>
+    <a class="dropdown-item" href="#">Toxicity</a>
+    </div>
+</div>
+</div>
+<!-- To Show data -->
+<!-- To Show data -->
+<div class="page-container">
+    <div class="table-container">
+      <table class="table table-striped table-hover">
+        <thead>
+          <th>Name</th>
+          <th>Date Identified</th>
+          <th>Location</th>
+          <th>Image</th>
+        </thead>
+        <tbody>
+          <% dataset.forEach(function(item) { %>
+            <tr>
+              <td class="names"><%= item.name %></td>
+              <td id="td2">
+                <ul id="cellList"><%= item.updateDate %></ul>
+              </td>
+              <td id="td5" class="map-container">
+                <ul id="cellList" class="coordinates"><%= item.location %></ul>
+                <div class="map" style="height: 200px; width: 200px;"></div>
+              </td>
+              <td class="col-md-3">
+                <% if (item.kingdom === 'animalia') { %>
+                  <img class="thumbnail w-75" src="images/animal_images/<%= item.image %>" onclick="showImage(this)" />
+                <% } else if (item.kingdom === 'plantae') { %>
+                  <img class="thumbnail w-75" src="images/plant_images/<%= item.image %>" onclick="showImage(this)" />
+                <% } else if (item.kingdom === 'fungi') { %>
+                  <img class="thumbnail w-75" src="images/fungus_images/<%= item.image %>" onclick="showImage(this)" />
+                <% } else if (item.kingdom === 'protista') { %>
+                  <img class="thumbnail w-75" src="images/protist_images/<%= item.image %>" onclick="showImage(this)" />
+                <% } %>
+  
+                <div class="overlay" onclick="hideImage()">
+                  <span class="close" onclick="hideImage()">&times;</span>
+                  <img class="enlarged-image" id="enlarged-image" />
+                </div>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+      <!-- Pagination -->
+    </div>
+    <!-- Pagination -->
+    <div class="pagination">
+      <% if (currentPage > 1) { %>
+        <a href="/dataViewer?page=1&searchBar=<%= searchQuery %>">&lt;&lt;</a>
+        <a href="/dataViewer?page=<%= currentPage - 1 %>&searchBar=<%= searchQuery %>">&lt;</a>
+      <% } %>
+      <% for (let i = 1; i <= totalPages; i++) { %>
+        <a href="/dataViewer?page=<%= i %>&searchBar=<%= searchQuery %>" class="<%= currentPage === i ? 'active' : '' %>">
+          <%= i %>
+        </a>
+      <% } %>
+      <% if (currentPage < totalPages) { %>
+        <a href="/dataViewer?page=<%= currentPage + 1 %>&searchBar=<%= searchQuery %>">&gt;</a>
+        <a href="/dataViewer?page=<%= totalPages %>&searchBar=<%= searchQuery %>">&gt;&gt;</a>
+      <% } %>
+    </div>
+  </div>
+
+<%- include('./partials/footer') %>
