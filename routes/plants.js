@@ -4,6 +4,9 @@ const multer = require('multer');
 const path = require('path');
 const router = express.Router();
 var logMiddleware = require('../logMiddleware'); //route logging middleware
+const IsLoggedIn = require("../extensions/authentication");
+
+//Mongoose models
 const Plant = require("../models/plant"); // Import mongoose model to be used
 
 const storage = multer.diskStorage({
@@ -19,7 +22,7 @@ const upload = multer({ storage: storage });
 
 //Configure GET/POST handlers
 const pageSize = 4;
-router.get('/', logMiddleware, async (req, res, next) => {
+router.get('/', IsLoggedIn, logMiddleware, async (req, res, next) => {
   try {
     //SearchBar query parameter
     let searchQuery = req.query.searchBar;
@@ -46,6 +49,7 @@ router.get('/', logMiddleware, async (req, res, next) => {
     const totalPages = Math.ceil(totalRecords / pageSize);
 
     res.render("plants", {
+      user: req.user,
       title: "Plant Dataset",
       dataset: plants,
       searchQuery: searchQuery,
@@ -59,7 +63,7 @@ router.get('/', logMiddleware, async (req, res, next) => {
 });
 
 //ADD view POST
-router.post("/add", upload.single('image'), (req, res, next) => {
+router.post("/add", IsLoggedIn, upload.single('image'), (req, res, next) => {
 
   // Use req.file.path to get the path of the uploaded image
   var imagePath = req.file.path;
@@ -85,12 +89,12 @@ router.post("/add", upload.single('image'), (req, res, next) => {
 
 //TODO C > Create new plant
 //GET handler for /plants/add (loads)
-router.get("/add", logMiddleware, (req, res, next) => {
-  res.render("plants/add", { title: "Add a new Plant" });
+router.get("/add", IsLoggedIn, logMiddleware, (req, res, next) => {
+  res.render("plants/add", { user: req.user, title: "Add a new Plant" });
 });
 
 //POST handler for /plants/add (receives input data)
-router.post("/add", (req, res, next) => {
+router.post("/add", IsLoggedIn, (req, res, next) => {
   Plant.create(
     {
       name: req.body.name,
@@ -105,11 +109,12 @@ router.post("/add", (req, res, next) => {
 });
 
 
-router.get("/edit/:_id", logMiddleware, async  (req, res, next) => {
+router.get("/edit/:_id", IsLoggedIn, logMiddleware, async  (req, res, next) => {
   try {
     const plantObj = await Plant.findById(req.params._id).exec();
     console.log(plantObj);
     res.render("plants/edit", {
+      user: req.user,
       title: "Edit a Plant Entry",
       plant: plantObj
       //user: req.user,
@@ -121,7 +126,7 @@ router.get("/edit/:_id", logMiddleware, async  (req, res, next) => {
 });
 
 // POST /plants/editID
-router.post("/edit/:_id", upload.single('image'), (req, res, next) => {
+router.post("/edit/:_id", IsLoggedIn, upload.single('image'), (req, res, next) => {
   // Check if a file was uploaded
   if (req.file) {
     // Use req.file.path to get the path of the uploaded image
@@ -153,7 +158,7 @@ router.post("/edit/:_id", upload.single('image'), (req, res, next) => {
 
 //TODO D > Delete a plant
 // GET /plants/delete/652f1cb7740320402d9ba04d
-router.get("/delete/:_id", (req, res, next) => {
+router.get("/delete/:_id", IsLoggedIn, (req, res, next) => {
   let plantId = req.params._id;
   Plant.deleteOne({ _id: plantId })
     .then(() => {

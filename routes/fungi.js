@@ -4,6 +4,9 @@ const multer = require('multer');
 const path = require('path');
 const router = express.Router();
 var logMiddleware = require('../logMiddleware'); //route logging middleware
+const IsLoggedIn = require("../extensions/authentication");
+
+//Mongoose models
 const Fungus = require("../models/fungus"); // Import mongoose model to be used
 
 const storage = multer.diskStorage({
@@ -36,7 +39,7 @@ const upload = multer({ storage: storage });
 //GET handler for index /fungis/ <<landing/root page of my section
 //R > Retrieve/Read usually shows a list (filtered/unfiltered)
 const pageSize = 4;
-router.get('/', logMiddleware, async (req, res, next) => {
+router.get('/', IsLoggedIn, logMiddleware, async (req, res, next) => {
   try {
     //SearchBar query parameter
     let searchQuery = req.query.searchBar;
@@ -63,6 +66,7 @@ router.get('/', logMiddleware, async (req, res, next) => {
     const totalPages = Math.ceil(totalRecords / pageSize);
 
     res.render("fungi", {
+      user: req.user,
       title: "Fungus Dataset",
       dataset: fungi,
       searchQuery: searchQuery,
@@ -76,7 +80,7 @@ router.get('/', logMiddleware, async (req, res, next) => {
 });
 
 //ADD view POST
-router.post("/add", upload.single('image'), (req, res, next) => {
+router.post("/add", IsLoggedIn, upload.single('image'), (req, res, next) => {
 
   // Use req.file.path to get the path of the uploaded image
   var imagePath = req.file.path;
@@ -101,14 +105,15 @@ router.post("/add", upload.single('image'), (req, res, next) => {
 
 //TODO C > Create new fungus
 //GET handler for /fungi/add (loads)
-router.get("/add", logMiddleware, (req, res, next) => {
-  res.render("fungi/add", { title: "Add Fungus" });
+router.get("/add", IsLoggedIn, logMiddleware, (req, res, next) => {
+  res.render("fungi/add", { user: req.user, title: "Add Fungus" });
 });
 
-router.get("/edit/:_id", logMiddleware, async (req, res, next) => {
+router.get("/edit/:_id", IsLoggedIn, logMiddleware, async (req, res, next) => {
   try {
     const fungusObj = await Fungus.findById(req.params._id).exec();
     res.render("fungi/edit", {
+      user: req.user,
       title: "Edit a Fungus Entry",
       fungus: fungusObj
       //user: req.user,
@@ -120,7 +125,7 @@ router.get("/edit/:_id", logMiddleware, async (req, res, next) => {
 });
 
 // POST /fungi/editID
-router.post("/edit/:_id", upload.single('image'), (req, res, next) => {
+router.post("/edit/:_id", IsLoggedIn, upload.single('image'), (req, res, next) => {
   // Check if a file was uploaded
   if (req.file) {
     // Use req.file.path to get the path of the uploaded image
@@ -151,7 +156,7 @@ router.post("/edit/:_id", upload.single('image'), (req, res, next) => {
 
 //TODO D > Delete a fungus
 // GET /fungi/delete/652f1cb7740320402d9ba04d
-router.get("/delete/:_id", (req, res, next) => {
+router.get("/delete/:_id", IsLoggedIn, (req, res, next) => {
   let fungusId = req.params._id;
   Fungus.deleteOne({ _id: fungusId })
     .then(() => {

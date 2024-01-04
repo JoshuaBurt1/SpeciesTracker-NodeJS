@@ -34,7 +34,54 @@ mongoose
     console.log(`Error while connecting! ${error}`);
   }); //catch any errors
 
+//3. AUTHENTICATION
+var passport = require("passport");
+var session = require("express-session");
+const githubStrategy = require("passport-github2").Strategy;
+var User = require("./models/user"); 
 
+//Configure session handling
+app.use(
+  session({
+    secret: "speciesTracker",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+//Configure passport module
+app.use(passport.initialize());
+app.use(passport.session());
+//Configure local strategy method
+passport.use(User.createStrategy()); 
+// Configure passport-github2 with the API keys and user model
+passport.use(
+  new githubStrategy(
+    {
+      clientID: config.github.clientId,
+      clientSecret: config.github.clientSecret,
+      callbackURL: config.github.callbackUrl,
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      const user = await User.findOne({ oauthId: profile.id });
+      if (user) {
+        return done(null, user);
+      } else {
+        const newUser = new User({
+          username: profile.username,
+          oauthId: profile.id,
+          oauthProvider: "Github",
+          created: Date.now(),
+        });
+        // add to DB
+        const savedUser = await newUser.save();
+        return done(null, savedUser);
+      }
+    }
+  )
+);
+//Set passport to write/read user data to/from session object 
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 //4. ROUTER
 var indexRouter = require('./routes/index');

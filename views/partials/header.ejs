@@ -70,43 +70,56 @@
   <div class="header clearfix"> <!--Nav-bar-->
     <nav class="navbar navbar-expand-sm bg-light navbar-light">
       <div class="container-fluid">
-        <ul class="navbar-nav">
+        <ul class="navbar-nav ml-auto">
           <li class="nav-item" id="linkColor">
             <a class="nav-link" id="homeTab" href="/">Home</a>
           </li>
+          <li class="nav-item" id="linkColor">
+            <a class="nav-link" href="/forum">Forum</a>
+          </li>
+          <li class="nav-item" id="linkColor">
+            <a class="nav-link" href="/identification">Identification</a>
+          </li>
         </ul>
         <ul class="navbar-nav ml-auto">
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false" 
-              id="linkColor"
-            >Datasets </a>
-            <ul class="dropdown-menu" id="developerDropdown">
-              <a class="dropdown-item" id="plantsTab" href="/plants"><img class="navImage" src="/images/nav_images/plant.png"/> Plants</a>
-              <a class="dropdown-item" id="fungiTab" href="/fungi"><img class="navImage" src="/images/nav_images/mushroom.jpg"/> Fungi</a>
-              <a class="dropdown-item" id="protistsTab" href="/protists"><img class="navImage" src="/images/nav_images/protist.jpg"/> Protists</a>
-              <a class="dropdown-item" id="animalsTab" href="/animals"><img class="navImage" src="/images/nav_images/animal.png"/> Animals</a>
-            </ul>
-          </li>
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false" 
-              id="linkColor"
-              >User Portal </a>
-              <ul class="dropdown-menu" id="developerDropdown">
-                <a class="dropdown-item" href="/identification">Identification</a>
-                <a class="dropdown-item" href="/forum">Forum</a>
+          <% if (user) { %>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false" 
+                id="linkColor"
+              >Your Datasets </a>
+              <ul class="dropdown-menu">
+                <a class="dropdown-item" id="plantsTab" href="/plants"><img class="navImage" src="/images/nav_images/plant.png"/> Plants</a>
+                <a class="dropdown-item" id="fungiTab" href="/fungi"><img class="navImage" src="/images/nav_images/mushroom.jpg"/> Fungi</a>
+                <a class="dropdown-item" id="protistsTab" href="/protists"><img class="navImage" src="/images/nav_images/protist.jpg"/> Protists</a>
+                <a class="dropdown-item" id="animalsTab" href="/animals"><img class="navImage" src="/images/nav_images/animal.png"/> Animals</a>
               </ul>
             </li>
-          </ul>
+            <% } %>
+          <% if (user) { %>
+            <li class="nav-item"><a
+                class="nav-link"
+                href="#"
+              ><%= user.username %></a></li>
+            <li class="nav-item"><a
+                class="nav-link"
+                href="/Logout"
+              >Logout</a></li>
+          <% } else { %>
+            <li class="nav-item"><a
+                class="nav-link"
+                href="/Register"
+              >Register</a></li>
+            <li class="nav-item"><a
+                class="nav-link"
+                href="/Login"
+              >Login</a></li>
+          <% } %>
+        </ul>
       </div>
     </nav>
   </div>

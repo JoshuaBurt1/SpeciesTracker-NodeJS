@@ -4,8 +4,12 @@ const multer = require('multer');
 const path = require('path');
 const router = express.Router();
 var logMiddleware = require('../logMiddleware'); //route logging middleware
+const IsLoggedIn = require("../extensions/authentication");
+
+//Mongoose models
 const Animal = require("../models/animal"); // Import mongoose model to be used
 
+//File storage
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'public/images/animal_images');
@@ -14,40 +18,35 @@ const storage = multer.diskStorage({
     cb(null, file.originalname);
   },
 });
-
 const upload = multer({ storage: storage });
 
 // Configure GET/POST handlers
 // GET handler for index /animals/ <<landing/root page of my sections
 const pageSize = 4;
-router.get('/', logMiddleware, async (req, res, next) => {
+router.get('/', IsLoggedIn, logMiddleware, async (req, res, next) => {
   try {
     //SearchBar query parameter
     let searchQuery = req.query.searchBar;
     if (!searchQuery) {
       searchQuery = '';
     }
-
     // Use a case-insensitive regular expression to match part of the name
     let query = {};
     if (searchQuery) {
       query = { name: { $regex: new RegExp(searchQuery, 'i') } };
       console.log(query);
     }
-
     let page = parseInt(req.query.page) || 1;
     let skipSize = pageSize * (page - 1);
-
     const animals = await Animal.find(query)
       .sort({ name: 1 })
       .limit(pageSize)
       .skip(skipSize);
-
     const totalRecords = await Animal.countDocuments(query);
     const totalPages = Math.ceil(totalRecords / pageSize);
-
     res.render("animals", {
       title: "Animal Dataset",
+      user: req.user,
       dataset: animals,
       searchQuery: searchQuery,
       totalPages: totalPages,
@@ -60,8 +59,7 @@ router.get('/', logMiddleware, async (req, res, next) => {
 });
 
 //ADD view POST
-router.post("/add", upload.single('image'), (req, res, next) => {
-
+router.post("/add", IsLoggedIn, upload.single('image'), (req, res, next) => {
   // Use req.file.path to get the path of the uploaded image
   var imagePath = req.file.path;
   imagePath = path.basename(imagePath);
@@ -85,8 +83,8 @@ router.post("/add", upload.single('image'), (req, res, next) => {
 
 //TODO C > Create new animal
 //GET handler for /animals/add (loads)
-router.get("/add", logMiddleware, (req, res, next) => {
-  res.render("animals/add", { title: "Add a new Animal" });
+router.get("/add", IsLoggedIn, logMiddleware, (req, res, next) => {
+  res.render("animals/add", { user: req.user, title: "Add a new Animal" });
 });
 
 //POST handler for /animals/add (receives input data)
@@ -105,11 +103,12 @@ router.post("/add", (req, res, next) => {
 });
 
 
-router.get("/edit/:_id", logMiddleware, async  (req, res, next) => {
+router.get("/edit/:_id", IsLoggedIn, logMiddleware, async  (req, res, next) => {
   try {
     const animalObj = await Animal.findById(req.params._id).exec();
     console.log(animalObj);
     res.render("animals/edit", {
+      user: req.user,
       title: "Edit a Animal Entry",
       animal: animalObj
       //user: req.user,
@@ -121,7 +120,7 @@ router.get("/edit/:_id", logMiddleware, async  (req, res, next) => {
 });
 
 // POST /animals/editID
-router.post("/edit/:_id", upload.single('image'), (req, res, next) => {
+router.post("/edit/:_id", IsLoggedIn, upload.single('image'), (req, res, next) => {
   // Check if a file was uploaded
   if (req.file) {
     // Use req.file.path to get the path of the uploaded image
@@ -153,7 +152,7 @@ router.post("/edit/:_id", upload.single('image'), (req, res, next) => {
 
 //TODO D > Delete a animal
 // GET /animals/delete/652f1cb7740320402d9ba04d
-router.get("/delete/:_id", (req, res, next) => {
+router.get("/delete/:_id", IsLoggedIn, (req, res, next) => {
   let animalId = req.params._id;
   Animal.deleteOne({ _id: animalId })
     .then(() => {

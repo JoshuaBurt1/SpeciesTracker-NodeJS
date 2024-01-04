@@ -4,6 +4,9 @@ const multer = require('multer');
 const path = require('path');
 const router = express.Router();
 var logMiddleware = require('../logMiddleware'); //route logging middleware
+const IsLoggedIn = require("../extensions/authentication");
+
+//Mongoose models
 const Protist = require("../models/protist"); // Import mongoose model to be used
 
 const storage = multer.diskStorage({
@@ -40,7 +43,7 @@ const upload = multer({ storage: storage });
 
 //INDEX view
 const pageSize = 4;
-router.get('/', logMiddleware, async (req, res, next) => {
+router.get('/', IsLoggedIn, logMiddleware, async (req, res, next) => {
   try {
     //SearchBar query parameter
     let searchQuery = req.query.searchBar;
@@ -67,6 +70,7 @@ router.get('/', logMiddleware, async (req, res, next) => {
     const totalPages = Math.ceil(totalRecords / pageSize);
 
     res.render("protists", {
+      user: req.user,
       title: "Protist Dataset",
       dataset: protists,
       searchQuery: searchQuery,
@@ -80,7 +84,7 @@ router.get('/', logMiddleware, async (req, res, next) => {
 });
 
 //ADD view POST
-router.post("/add", upload.single('image'), (req, res, next) => {
+router.post("/add", IsLoggedIn, upload.single('image'), (req, res, next) => {
 
   // Use req.file.path to get the path of the uploaded image
   var imagePath = req.file.path;
@@ -105,15 +109,16 @@ router.post("/add", upload.single('image'), (req, res, next) => {
 
 
 //ADD view GET
-router.get("/add", logMiddleware, (req, res, next) => {
-  res.render("protists/add", { title: "Add a new Protist" });
+router.get("/add", IsLoggedIn, logMiddleware, (req, res, next) => {
+  res.render("protists/add", { user: req.user, title: "Add a new Protist" });
 });
 
 //EDIT view GET
-router.get("/edit/:_id", logMiddleware, async (req, res, next) => {
+router.get("/edit/:_id", IsLoggedIn, logMiddleware, async (req, res, next) => {
   try {
     const protistObj = await Protist.findById(req.params._id).exec();
     res.render("protists/edit", {
+      user: req.user,
       title: "Edit a Protist Entry",
       protist: protistObj
       //user: req.user,
@@ -123,7 +128,7 @@ router.get("/edit/:_id", logMiddleware, async (req, res, next) => {
   }
 });
 
-router.post("/edit/:_id", upload.single('image'), (req, res, next) => {
+router.post("/edit/:_id", IsLoggedIn, upload.single('image'), (req, res, next) => {
   // Check if a file was uploaded
   if (req.file) {
     // Use req.file.path to get the path of the uploaded image
@@ -157,7 +162,7 @@ router.post("/edit/:_id", upload.single('image'), (req, res, next) => {
 
 //TODO D > Delete a protist
 // GET /protists/delete/652f1cb7740320402d9ba04d
-router.get("/delete/:_id", (req, res, next) => {
+router.get("/delete/:_id", IsLoggedIn, (req, res, next) => {
   let protistId = req.params._id;
   Protist.deleteOne({ _id: protistId })
     .then(() => {
