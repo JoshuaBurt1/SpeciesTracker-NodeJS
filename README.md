@@ -19,12 +19,13 @@ In terminal: nodemon
 # To be Added: <br>
 *2 formats: <br>
 A. Your Dataset (user) <br>
-* Identification button for each view (animals, fungi, plants, protists) <br>
+* Identification (on image upload) - should be able to autofill species name; feedback if wrong kingdom/no upload
 & B. Browse all users entries <br>
-* (-- search by kingdom (plantae, animalia, etc.)
-* all locations & time on a single map ->if name same -->add to date, location, image array); GOAL 1
-* further information links: wiki, genetic profile, etc.; up-vote pictures <br>
-* upvoting action -> 4 highest rated by morphology show in row -> button to view other high rated photos; $get cash for good photo if people download <br>
+* (-- search by kingdom (plantae, animalia, etc.) GOAL 1
+* API paths based on search results (~all, ~by kingdom, ~by name); test json output GOAL 2
+* all locations & time on a single map ->if name same -->add to date, location, image array); GOAL 3    
+* further information links: wiki, genetic profile, etc.; up-vote pictures
+* upvoting action -> 4 highest rated by morphology show in row -> button to view other high rated photos; $get cash for good photo if people download
 * add blog code to forum <br>
 <br>
 ~Machine learning species identifier (within add.ejs view) <br>

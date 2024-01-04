@@ -16,6 +16,9 @@ const animalsSchemaObj = {
 // Create new mongoose schema using the definition object
 var animalsSchema = new mongoose.Schema(animalsSchemaObj);
 
+// Create index for the 'name' field
+animalsSchema.index({ name: 1 });
+
 // Create new mongoose model using the schema object and
 // Import new model > provide name and schema
 module.exports = mongoose.model("Animal", animalsSchema);

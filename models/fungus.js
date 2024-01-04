@@ -17,6 +17,9 @@ const fungiSchemaObj = {
 // Create new mongoose schema using the definition object
 var fungiSchema = new mongoose.Schema(fungiSchemaObj);
 
+// Create index for the 'name' field
+fungiSchema.index({ name: 1 });
+
 // Create new mongoose model using the schema object and
 // Import new model > provide name and schema
 module.exports = mongoose.model("Fungus", fungiSchema);

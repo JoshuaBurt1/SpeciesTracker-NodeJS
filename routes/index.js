@@ -88,49 +88,59 @@ const Plant = require("../models/plant");
 const Protist = require("../models/protist");
 
 const pageSize = 4;
-
 router.get("/dataViewer", logMiddleware, async (req, res, next) => {
   try {
-    // SearchBar query parameter
     let searchQuery = req.query.searchBar || '';
+    //let kingdomQuery = req.query.kingdom || '';  // Assuming 'kingdom' is the query parameter for kingdom
 
-    let page = parseInt(req.query.page) || 1;  // Define the page variable
+    let page = parseInt(req.query.page) || 1;
     let skipSize = pageSize * (page - 1);
+
+    // Create a function to fetch data from a specific model
+    const fetchData = async (model) => {
+      return await model.find({
+        $or: [
+          { name: { $regex: new RegExp(searchQuery, 'i') } },
+          //{ kingdom: { $regex: new RegExp(kingdomQuery, 'i') } },
+        ],
+      }).sort({ name: 1 });
+    };
 
     // Fetch data from each model without pagination
     const [animalData, fungusData, plantData, protistData] = await Promise.all([
-      Animal.find({ name: { $regex: new RegExp(searchQuery, 'i') } }).sort({ name: 1 }),
-      Fungus.find({ name: { $regex: new RegExp(searchQuery, 'i') } }).sort({ name: 1 }),
-      Plant.find({ name: { $regex: new RegExp(searchQuery, 'i') } }).sort({ name: 1 }),
-      Protist.find({ name: { $regex: new RegExp(searchQuery, 'i') } }).sort({ name: 1 }),
+      fetchData(Animal),
+      fetchData(Fungus),
+      fetchData(Plant),
+      fetchData(Protist),
       // Add queries for other models (Plant, Protist) if needed
     ]);
 
     // Combine data from different models into a single array
     const combinedData = [...animalData, ...fungusData, ...plantData, ...protistData];
-    // Add data from other models if needed
-// Sort the combined data by name
-combinedData.sort((a, b) => a.name.localeCompare(b.name));
 
-const totalRecords = combinedData.length;
-const totalPages = Math.ceil(totalRecords / pageSize);
+    // Sort the combined data by name (Alphabetically)
+    //combinedData.sort((a, b) => a.name.localeCompare(b.name));
 
-// Fetch paginated data after combining and sorting
-const paginatedData = combinedData.slice(skipSize, skipSize + pageSize);
+    const totalRecords = combinedData.length;
+    const totalPages = Math.ceil(totalRecords / pageSize);
 
-// Render the dataViewer page with the paginated data
-res.render("dataViewer", {
-  title: "Data Viewer",
-  user: req.user,
-  dataset: paginatedData,
-  searchQuery: searchQuery,
-  totalPages: totalPages,
-  currentPage: page,
-});
-} catch (err) {
-console.log(err);
-res.status(500).send("Internal Server Error");
-}
+    // Fetch paginated data after combining and sorting
+    const paginatedData = combinedData.slice(skipSize, skipSize + pageSize);
+
+    // Render the dataViewer page with the paginated data
+    res.render("dataViewer", {
+      title: "Data Viewer",
+      user: req.user,
+      dataset: paginatedData,
+      searchQuery: searchQuery,
+      //kingdomQuery: kingdomQuery,  // Pass kingdomQuery to the view if needed
+      totalPages: totalPages,
+      currentPage: page,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 router.get("/error", logMiddleware,  (req, res, next) => {
