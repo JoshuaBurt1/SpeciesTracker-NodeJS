@@ -17,15 +17,15 @@ In terminal: nodemon
 ~All users entries view; no login required
 
 # To be Added: <br>
-*2 formats: 
-A. Your Dataset (user) 
-* Identification button for each view (animals, fungi, plants, protists)
-& B. Browse all users entries 
+*2 formats: <br>
+A. Your Dataset (user) <br>
+* Identification button for each view (animals, fungi, plants, protists) <br>
+& B. Browse all users entries <br>
 * (-- search by kingdom (plantae, animalia, etc.)
 * all locations & time on a single map ->if name same -->add to date, location, image array); GOAL 1
-*further information links: wiki, genetic profile, etc.; up-vote pictures <br>
-*upvoting action -> 4 highest rated by morphology show in row -> button to view other high rated photos; $get cash for good photo if people download <br>
-*add blog code to forum <br>
+* further information links: wiki, genetic profile, etc.; up-vote pictures <br>
+* upvoting action -> 4 highest rated by morphology show in row -> button to view other high rated photos; $get cash for good photo if people download <br>
+* add blog code to forum <br>
 <br>
 ~Machine learning species identifier (within add.ejs view) <br>
 ~identification info: added via chatgpt --> orderby button: Taxonomy, Conservation Status, Invasiveness, Industrial Usage, Nutrition, Toxicity (Developer does not hardcode, chatgpt adds info to mongoDB) <br>
