@@ -91,7 +91,7 @@ const pageSize = 4;
 router.get("/dataViewer", logMiddleware, async (req, res, next) => {
   try {
     let searchQuery = req.query.searchBar || '';
-    //let kingdomQuery = req.query.kingdom || '';  // Assuming 'kingdom' is the query parameter for kingdom
+    let kingdomQuery = req.query.searchBar || ''; 
 
     let page = parseInt(req.query.page) || 1;
     let skipSize = pageSize * (page - 1);
@@ -101,7 +101,7 @@ router.get("/dataViewer", logMiddleware, async (req, res, next) => {
       return await model.find({
         $or: [
           { name: { $regex: new RegExp(searchQuery, 'i') } },
-          //{ kingdom: { $regex: new RegExp(kingdomQuery, 'i') } },
+          { kingdom: { $regex: new RegExp(kingdomQuery, 'i') } },
         ],
       }).sort({ name: 1 });
     };
@@ -133,7 +133,7 @@ router.get("/dataViewer", logMiddleware, async (req, res, next) => {
       user: req.user,
       dataset: paginatedData,
       searchQuery: searchQuery,
-      //kingdomQuery: kingdomQuery,  // Pass kingdomQuery to the view if needed
+      kingdomQuery: kingdomQuery,  // Pass kingdomQuery to the view if needed
       totalPages: totalPages,
       currentPage: page,
     });
