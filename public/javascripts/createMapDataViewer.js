@@ -1,14 +1,14 @@
 document.addEventListener("DOMContentLoaded", function () {
   var coordinatesElements = document.querySelectorAll('.coordinates');
 
-  coordinatesElements.forEach(function (coordinatesElement) {
+  coordinatesElements.forEach(function (coordinatesElement, index) {
     try {
       // Parse the data-species attribute as JSON
       var locations = JSON.parse(coordinatesElement.dataset.species);
+      console.log(locations);
 
       // Find the common parent container for coordinates and the map
-      var commonContainer = coordinatesElement.closest('.map-container');
-
+      var commonContainer = coordinatesElement.closest('tr');
       // Create a Leaflet map
       var map = L.map(commonContainer.querySelector('.map')).setView([0, 0], 2);
 

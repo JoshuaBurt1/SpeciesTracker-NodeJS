@@ -21,7 +21,7 @@ In terminal: nodemon
 A. Your Dataset (user) <br>
 * Identification (on image upload) - should be able to autofill species name; feedback if wrong kingdom/no upload
 & B. Browse all users entries <br>
-* click to enlarge map, limit to 0.00001 degree
+* click to enlarge map
 * API paths based on search results (~all, ~by kingdom, ~by name); test json output GOAL 1
 * Within DataViewer chart, each entry has "View More" button --> goes to presentation view with all pictures, data, etc. GOAL 2
 

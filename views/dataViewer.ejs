@@ -36,6 +36,7 @@
         <th>Name</th>
         <th>Date Identified</th>
         <th>Location</th>
+        <th>Map</th>
         <th>Image</th>
       </thead>
       <tbody>
@@ -53,7 +54,7 @@
                 <% } %>
               </ul>
             </td>
-            <td id="td5" class="map-container">
+            <td id="td5">
               <div class="container">
                 <div class="coordinates" data-species="<%= JSON.stringify(item.locations) %>">
                   <ul id="cellList">
@@ -66,8 +67,11 @@
                     <% } %>
                   </ul>
                 </div>
-                <div class="map" style="height: 200px; width: 200px;"></div>
               </div>
+            </td>
+            <td id="td5" class="map-container">
+              <div class="map" style="height: 200px; width: 200px;"></div>
+            </td>
             <td class="col-md-3">
               <% if (item.images && item.images.length > 0) { %>
                 <% if (item.images.length === 1) { %>
