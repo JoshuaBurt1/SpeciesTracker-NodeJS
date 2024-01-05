@@ -21,9 +21,11 @@ In terminal: nodemon
 A. Your Dataset (user) <br>
 * Identification (on image upload) - should be able to autofill species name; feedback if wrong kingdom/no upload
 & B. Browse all users entries <br>
-* all locations & time on a single map ->if name same -->add to date, location, image array); GOAL 1 
-* API paths based on search results (~all, ~by kingdom, ~by name); test json output GOAL 2
-* further information links: wiki, genetic profile, etc.; up-vote pictures
+* click to enlarge map, limit to 0.00001 degree
+* API paths based on search results (~all, ~by kingdom, ~by name); test json output GOAL 1
+* Within DataViewer chart, each entry has "View More" button --> goes to presentation view with all pictures, data, etc. GOAL 2
+
+* further information links: wiki, genetic profile, etc.; up-vote pictures (if logged in and in View More presentation view)
 * upvoting action -> 4 highest rated by morphology show in row -> button to view other high rated photos; $get cash for good photo if people download
 * add blog code to forum <br>
 <br>

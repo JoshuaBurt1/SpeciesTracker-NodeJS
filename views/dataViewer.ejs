@@ -54,11 +54,20 @@
               </ul>
             </td>
             <td id="td5" class="map-container">
-              <div class="coordinates" data-species="<%= JSON.stringify(item.locations) %>">
-                <%= item.locations.join('; ') %>
+              <div class="container">
+                <div class="coordinates" data-species="<%= JSON.stringify(item.locations) %>">
+                  <ul id="cellList">
+                    <% if (item.locations && item.locations.length > 0) { %>
+                      <% item.locations.forEach(function(location, index) { %>
+                        <li><%= location %></li>
+                      <% }); %>
+                    <% } else { %>
+                      <li>No date available</li>
+                    <% } %>
+                  </ul>
+                </div>
+                <div class="map" style="height: 200px; width: 200px;"></div>
               </div>
-              <div class="map" style="height: 200px; width: 200px;"></div>
-            </td>
             <td class="col-md-3">
               <% if (item.images && item.images.length > 0) { %>
                 <% if (item.images.length === 1) { %>
