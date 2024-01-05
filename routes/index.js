@@ -91,10 +91,7 @@ const pageSize = 4;
 router.get("/dataViewer", logMiddleware, async (req, res, next) => {
   try {
     let searchQuery = req.query.searchBar || '';
-    let kingdomQuery = req.query.searchBar || ''; 
-
-    let page = parseInt(req.query.page) || 1;
-    let skipSize = pageSize * (page - 1);
+    let kingdomQuery = req.query.searchBar || '';
 
     // Create a function to fetch data from a specific model
     const fetchData = async (model) => {
@@ -118,14 +115,38 @@ router.get("/dataViewer", logMiddleware, async (req, res, next) => {
     // Combine data from different models into a single array
     const combinedData = [...animalData, ...fungusData, ...plantData, ...protistData];
 
-    // Sort the combined data by name (Alphabetically)
-    //combinedData.sort((a, b) => a.name.localeCompare(b.name));
+    // Group entries by name and collect locations, update dates, and images into arrays
+    const groupedData = combinedData.reduce((acc, item) => {
+      const existingItem = acc.find((groupedItem) => groupedItem.name === item.name);
 
-    const totalRecords = combinedData.length;
+      if (existingItem) {
+        existingItem.locations.push(item.location);
+        existingItem.updateDates.push(item.updateDate);
+        existingItem.images.push(item.image);
+        console.log(existingItem);
+      } else {
+        acc.push({
+          name: item.name,
+          kingdom: item.kingdom,
+          locations: [item.location],
+          updateDates: [item.updateDate],
+          images: [item.image],
+        });
+      }
+
+      return acc;
+    }, []);
+
+    // Sort the grouped data by name (Alphabetically)
+    groupedData.sort((a, b) => a.name.localeCompare(b.name));
+
+    const totalRecords = groupedData.length;
     const totalPages = Math.ceil(totalRecords / pageSize);
 
-    // Fetch paginated data after combining and sorting
-    const paginatedData = combinedData.slice(skipSize, skipSize + pageSize);
+    // Paginate the grouped data
+    const page = parseInt(req.query.page) || 1;
+    const skipSize = pageSize * (page - 1);
+    const paginatedData = groupedData.slice(skipSize, skipSize + pageSize);
 
     // Render the dataViewer page with the paginated data
     res.render("dataViewer", {
