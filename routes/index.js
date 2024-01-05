@@ -138,7 +138,7 @@ router.get("/dataViewer", logMiddleware, async (req, res, next) => {
     }, []);
 
     // Sort the grouped data by name (Alphabetically)
-    groupedData.sort((a, b) => a.name.localeCompare(b.name));
+    //groupedData.sort((a, b) => a.name.localeCompare(b.name));
 
     const totalRecords = groupedData.length;
     const totalPages = Math.ceil(totalRecords / pageSize);
@@ -154,7 +154,7 @@ router.get("/dataViewer", logMiddleware, async (req, res, next) => {
       user: req.user,
       dataset: paginatedData,
       searchQuery: searchQuery,
-      kingdomQuery: kingdomQuery,  // Pass kingdomQuery to the view if needed
+      kingdomQuery: kingdomQuery,
       totalPages: totalPages,
       currentPage: page,
     });
