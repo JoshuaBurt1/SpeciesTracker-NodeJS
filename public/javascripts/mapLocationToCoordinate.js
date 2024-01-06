@@ -29,8 +29,8 @@ input.addEventListener('input', function () {
         .then(response => response.json())
         .then(data => {
             if (data.length > 0) {
-                var lat = parseFloat(data[0].lat).toFixed(5); // Round to 5 decimal places
-                var lon = parseFloat(data[0].lon).toFixed(5); // Round to 5 decimal places
+                var lat = parseFloat(data[0].lat).toFixed(6); // Round to 6 decimal places
+                var lon = parseFloat(data[0].lon).toFixed(6); // Round to 6 decimal places
 
                 if (!marker) {
                     marker = L.marker([lat, lon]).addTo(map);

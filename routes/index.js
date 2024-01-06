@@ -123,14 +123,16 @@ router.get("/dataViewer", logMiddleware, async (req, res, next) => {
         existingItem.locations.push(item.location);
         existingItem.updateDates.push(item.updateDate);
         existingItem.images.push(item.image);
-        console.log(existingItem);
+        //API source
+        //console.log(existingItem);
+        //
       } else {
         acc.push({
           name: item.name,
           kingdom: item.kingdom,
           locations: [item.location],
           updateDates: [item.updateDate],
-          images: [item.image],
+          images: [item.image]
         });
       }
 
@@ -148,6 +150,10 @@ router.get("/dataViewer", logMiddleware, async (req, res, next) => {
     const skipSize = pageSize * (page - 1);
     const paginatedData = groupedData.slice(skipSize, skipSize + pageSize);
 
+    //API source
+    console.log(groupedData);
+    
+
     // Render the dataViewer page with the paginated data
     res.render("dataViewer", {
       title: "Data Viewer",
@@ -158,6 +164,7 @@ router.get("/dataViewer", logMiddleware, async (req, res, next) => {
       totalPages: totalPages,
       currentPage: page,
     });
+    
   } catch (err) {
     console.log(err);
     res.status(500).send("Internal Server Error");

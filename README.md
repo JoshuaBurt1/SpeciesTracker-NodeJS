@@ -21,9 +21,8 @@ In terminal: nodemon
 A. Your Dataset (user) <br>
 * Identification (on image upload) - should be able to autofill species name; feedback if wrong kingdom/no upload
 & B. Browse all users entries <br>
-* click to enlarge map
-* API paths based on search results (~all, ~by kingdom, ~by name); test json output GOAL 1
-* Within DataViewer chart, each entry has "View More" button --> goes to presentation view with all pictures, data, etc. GOAL 2
+* have a pagination limit of 10 before next fast forward; sort species (name) specific data by date, scroll images; combine 2 createMap.js;delete photo on record deletion action --> GOAL 1
+* API paths --> routes/index.js --> console.log(existingItem); test json output; create .csv file for download -->  GOAL 2
 
 * further information links: wiki, genetic profile, etc.; up-vote pictures (if logged in and in View More presentation view)
 * upvoting action -> 4 highest rated by morphology show in row -> button to view other high rated photos; $get cash for good photo if people download

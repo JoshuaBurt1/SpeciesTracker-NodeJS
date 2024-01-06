@@ -39,10 +39,10 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       // Calculate the bounding box with padding (0.1 degrees in this example)
-      var minLat = Math.min(...latitudes) - 0.1;
-      var maxLat = Math.max(...latitudes) + 0.1;
-      var minLng = Math.min(...longitudes) - 0.1;
-      var maxLng = Math.max(...longitudes) + 0.1;
+      var minLat = Math.min(...latitudes) - 0.2;
+      var maxLat = Math.max(...latitudes) + 0.2;
+      var minLng = Math.min(...longitudes) - 0.2;
+      var maxLng = Math.max(...longitudes) + 0.2;
 
       // Set the map view to center and fit the bounding box
       map.fitBounds([
