@@ -10,7 +10,7 @@ const configurations = {  <br>
   github: { <br>
     clientId: "your_id", <br>
     clientSecret: "your_secret", <br>
-    callbackUrl: "https://speciestracker2.azurewebsites.net/github/callback", <br>
+    callbackUrl: "callback_url", <br>
   }, <br>
 }; <br>
 * In terminal: nodemon
