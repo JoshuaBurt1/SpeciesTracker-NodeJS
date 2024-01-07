@@ -77,6 +77,9 @@
 }
 
 /* Content container*/
+#downloadCsvLink{
+width: 10%;
+}
 .container {
   position: relative;
   overflow: hidden;

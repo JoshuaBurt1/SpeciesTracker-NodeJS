@@ -1,7 +1,9 @@
 var express = require('express');
+const path = require('path');
 var router = express.Router();
 var User = require("../models/user");
 var passport = require("passport");
+const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 var logMiddleware = require('../logMiddleware'); //route logging middleware
 
 // GET handler for /login
@@ -245,6 +247,94 @@ router.get("/api", async (req, res) => {
     console.log(err);
     res.status(500).json({ error: "Internal Server Error" });
   }
+});
+
+// Download data as CSV endpoint
+router.get("/api/download-csv", async (req, res) => {
+    // ... (your existing code to fetch and process data)
+    try {
+      let searchQuery = req.query.searchBar || "";
+      let kingdomQuery = req.query.searchBar || "";
+  
+      // Create a function to fetch data from a specific model
+      const fetchData = async (model) => {
+        return await model.find({
+          $or: [
+            { name: { $regex: new RegExp(searchQuery, 'i') } },
+            { kingdom: { $regex: new RegExp(kingdomQuery, 'i') } },
+          ],
+        }).sort({ name: 1 });
+      };
+  
+      // Fetch data from each model without pagination
+      const [animalData, fungusData, plantData, protistData] = await Promise.all([
+        fetchData(Animal),
+        fetchData(Fungus),
+        fetchData(Plant),
+        fetchData(Protist),
+        // Add queries for other models (Plant, Protist) if needed
+      ]);
+  
+      // Combine data from different models into a single array
+      const combinedData = [...animalData, ...fungusData, ...plantData, ...protistData];
+  
+      // Group entries by name and collect locations, update dates into arrays
+      const groupedData = combinedData.reduce((acc, item) => {
+        const existingItem = acc.find((groupedItem) => groupedItem.name === item.name);
+  
+        if (existingItem) {
+          existingItem.locations.push(item.location);
+          existingItem.updateDates.push(item.updateDate);
+          // Exclude pushing item.image into the images array
+        } else {
+          acc.push({
+            name: item.name,
+            kingdom: item.kingdom,
+            locations: [item.location],
+            updateDates: [item.updateDate],
+            // Exclude creating images array and pushing item.image
+          });
+        }
+  
+        return acc;
+      }, []);
+  
+      // Sort each named entry by updateDate keeping association to location
+      groupedData.forEach((group) => {
+        const zippedData = group.updateDates.map((updateDate, index) => ({
+          updateDate,
+          location: group.locations[index],
+          // Exclude including image in zippedData
+        }));
+        zippedData.sort((a, b) => a.updateDate.localeCompare(b.updateDate));
+        group.locations = zippedData.map((item) => item.location);
+        group.updateDates = zippedData.map((item) => item.updateDate);
+        // Exclude creating and mapping the images array
+      });
+  
+
+// Create a CSV writer
+const csvWriter = createCsvWriter({
+  path: path.join(__dirname, "groupedData.csv"), // Use an absolute path
+  header: [
+    { id: "name", title: "Name" },
+    { id: "kingdom", title: "Kingdom" },
+    { id: "locations", title: "Locations" },
+    { id: "updateDates", title: "Update Dates" },
+    // Exclude "images" from the CSV output
+  ],
+});
+
+// Write the groupedData to the CSV file
+await csvWriter.writeRecords(groupedData);
+
+// Send the CSV file as a response
+res.attachment("groupedData.csv");
+res.sendFile(path.join(__dirname, "groupedData.csv")); // Use an absolute path
+} catch (err) {
+console.log(err);
+res.status(500).json({ error: "Internal Server Error" });
+}
 });
 
 router.get("/error", logMiddleware,  (req, res, next) => {

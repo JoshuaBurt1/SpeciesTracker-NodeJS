@@ -28,7 +28,7 @@ const configurations = {  <br>
 # To be Added: <br>
 *2 formats: A. Your Dataset (user) & B. Browse all users entries <br>
 * Identification (on image upload) - should be able to autofill species name; feedback if wrong kingdom/no upload
-* API paths --> (all data, filtered data) test json output; create .csv file for download -->  GOAL 1
+* API paths --> (all data, filtered data); standardize .csv output; test API data in Python program -->  GOAL 1
 * further information links: wiki, genetic profile, etc.; up-vote pictures (if logged in and in View More presentation view)
 * upvoting action -> 4 highest rated by morphology show in row -> button to view other high rated photos; $get cash for good photo if people download;  scroll images (view all button @ dataViewer view --> presentation view)
 * add blog code to forum

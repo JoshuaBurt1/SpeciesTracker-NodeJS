@@ -1,17 +1,21 @@
-<!-- views/index.ejs -->
 <%- include('./partials/header') %>
-<!--Jumbotron HTML/Bootstrap header-->
+<!-- Jumbotron HTML/Bootstrap header -->
 <div class="jumbotron" id="indexHeader">
-<h1 class="display-3"><%= title %></h1>
-<p class="lead">All about where to find species and their characteristics</p>
+  <h1 class="display-3"><%= title %></h1>
+  <p class="lead">All about where to find species and their characteristics</p>
 </div>
+
 <div class="row">
-    <div class="col-lg-12">
-        <div class="list-group">
-            <p>Browse database or login to upload your data</p>
-            <p>API path (testing): http://localhost:3000/api</p>
-            <p>API path: https://speciestracker2.azurewebsites.net/api</p>
-        </div>
+  <div class="col-lg-12">
+    <div class="list-group">
+      <p>Browse database or login to upload your data</p>
+      <p>API path (testing): http://localhost:3000/api</p>
+      <p>API path: https://speciestracker2.azurewebsites.net/api</p> <br>
+      <!-- Add the download link for the CSV file -->
+      <a href="#" id="downloadCsvLink" class="btn btn-primary btn-sm">Download CSV</a>
+
     </div>
+  </div>
 </div>
+
 <%- include('./partials/footer') %>
