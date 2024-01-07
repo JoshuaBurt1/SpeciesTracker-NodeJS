@@ -22,8 +22,8 @@ const configurations = {  <br>
 ~Date, time, gps autofill: npm/exif-js <br>
 ~Coordinates to map & map to coordinates: npm i leaflet <br>
 ~User authentication & github auth: npm i passport express-session passport-local-mongoose passport-github2 <br>
-~Your Dataset view - visible on login & All users' entries view - no login required <br>
-~API (all data) <br>
+~Your Dataset view (login) & All data view <br>
+~API & csv download <br>
 
 # To be Added: <br>
 *2 formats: A. Your Dataset (user) & B. Browse all users entries <br>
