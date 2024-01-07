@@ -22,13 +22,13 @@ const configurations = {  <br>
 ~Date, time, gps autofill: npm/exif-js <br>
 ~Coordinates to map & map to coordinates: npm i leaflet <br>
 ~User authentication & github auth: npm i passport express-session passport-local-mongoose passport-github2 <br>
-~Your Dataset view - visible on login <br>
-~All users entries view; no login required
+~Your Dataset view - visible on login & All users' entries view - no login required <br>
+~API (all data) <br>
 
 # To be Added: <br>
 *2 formats: A. Your Dataset (user) & B. Browse all users entries <br>
 * Identification (on image upload) - should be able to autofill species name; feedback if wrong kingdom/no upload
-* API paths --> routes/index.js --> console.log(existingItem); test json output; create .csv file for download -->  GOAL 1
+* API paths --> (all data, filtered data) test json output; create .csv file for download -->  GOAL 1
 * further information links: wiki, genetic profile, etc.; up-vote pictures (if logged in and in View More presentation view)
 * upvoting action -> 4 highest rated by morphology show in row -> button to view other high rated photos; $get cash for good photo if people download;  scroll images (view all button @ dataViewer view --> presentation view)
 * add blog code to forum
