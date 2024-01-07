@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
           // Create a temporary link and trigger a download
           const link = document.createElement('a');
           link.href = window.URL.createObjectURL(blob);
-          link.download = 'groupedData.csv';
+          link.download = 'speciesData.csv';
           link.click();
         })
         .catch(error => console.error('Error downloading CSV:', error));

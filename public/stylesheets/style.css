@@ -136,6 +136,11 @@ button.offset-3.btn.btn-primary {
   margin: 1% auto 0; /* 1% top margin, auto for horizontal centering */
 }
 
+.active {
+  background: #ced4da; /* Light grey dashed border */
+  color: #007bff;
+}
+
 /*Scroll issue with map appearing above table header <th>*/
 .table-container thead {
   z-index: 2; /* Set a higher z-index for the fixed thead */

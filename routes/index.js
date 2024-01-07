@@ -6,10 +6,24 @@ var passport = require("passport");
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 var logMiddleware = require('../logMiddleware'); //route logging middleware
 
+// Constants
+const MODEL_NAMES = ['Animal', 'Fungus', 'Plant', 'Protist'];
+const pageSize = 4;
+
+// Helper function to fetch data from a specific model
+const fetchData = async (model, searchQuery, kingdomQuery) => {
+  return await model.find({
+    $or: [
+      { name: { $regex: new RegExp(searchQuery, 'i') } },
+      { kingdom: { $regex: new RegExp(kingdomQuery, 'i') } },
+    ],
+  }).sort({ name: 1 });
+};
+
 // GET handler for /login
 router.get("/login", logMiddleware, (req, res, next) => {
-  let messages = req.session.messages || []; //if null set an empty list
-  req.session.messages = []; //clear messages
+  let messages = req.session.messages || [];
+  req.session.messages = [];
   res.render("login", {user: req.user, title: "Login to the App", messages: messages });
 });
 
@@ -89,33 +103,16 @@ const Fungus = require("../models/fungus");
 const Plant = require("../models/plant");
 const Protist = require("../models/protist");
 
-const pageSize = 4;
 router.get("/dataViewer", logMiddleware, async (req, res, next) => {
   try {
     let searchQuery = req.query.searchBar || '';
     let kingdomQuery = req.query.searchBar || '';
 
-    // Create a function to fetch data from a specific model
-    const fetchData = async (model) => {
-      return await model.find({
-        $or: [
-          { name: { $regex: new RegExp(searchQuery, 'i') } },
-          { kingdom: { $regex: new RegExp(kingdomQuery, 'i') } },
-        ],
-      }).sort({ name: 1 });
-    };
-
     // Fetch data from each model without pagination
-    const [animalData, fungusData, plantData, protistData] = await Promise.all([
-      fetchData(Animal),
-      fetchData(Fungus),
-      fetchData(Plant),
-      fetchData(Protist),
-      // Add queries for other models (Plant, Protist) if needed
-    ]);
+    const modelData = await Promise.all(MODEL_NAMES.map(model => fetchData(eval(model), searchQuery, kingdomQuery)));
 
     // Combine data from different models into a single array
-    const combinedData = [...animalData, ...fungusData, ...plantData, ...protistData];
+    const combinedData = modelData.flat();
 
     // Group entries by name and collect locations, update dates, and images into arrays
     const groupedData = combinedData.reduce((acc, item) => {
@@ -256,27 +253,11 @@ router.get("/api/download-csv", async (req, res) => {
       let searchQuery = req.query.searchBar || "";
       let kingdomQuery = req.query.searchBar || "";
   
-      // Create a function to fetch data from a specific model
-      const fetchData = async (model) => {
-        return await model.find({
-          $or: [
-            { name: { $regex: new RegExp(searchQuery, 'i') } },
-            { kingdom: { $regex: new RegExp(kingdomQuery, 'i') } },
-          ],
-        }).sort({ name: 1 });
-      };
-  
       // Fetch data from each model without pagination
-      const [animalData, fungusData, plantData, protistData] = await Promise.all([
-        fetchData(Animal),
-        fetchData(Fungus),
-        fetchData(Plant),
-        fetchData(Protist),
-        // Add queries for other models (Plant, Protist) if needed
-      ]);
-  
-      // Combine data from different models into a single array
-      const combinedData = [...animalData, ...fungusData, ...plantData, ...protistData];
+    const modelData = await Promise.all(MODEL_NAMES.map(model => fetchData(eval(model), searchQuery, kingdomQuery)));
+
+    // Combine data from different models into a single array
+    const combinedData = modelData.flat();
   
       // Group entries by name and collect locations, update dates into arrays
       const groupedData = combinedData.reduce((acc, item) => {
@@ -315,7 +296,7 @@ router.get("/api/download-csv", async (req, res) => {
 
 // Create a CSV writer
 const csvWriter = createCsvWriter({
-  path: path.join(__dirname, "groupedData.csv"), // Use an absolute path
+  path: path.join(__dirname, "speciesData.csv"), // Use an absolute path
   header: [
     { id: "name", title: "Name" },
     { id: "kingdom", title: "Kingdom" },
@@ -329,8 +310,8 @@ const csvWriter = createCsvWriter({
 await csvWriter.writeRecords(groupedData);
 
 // Send the CSV file as a response
-res.attachment("groupedData.csv");
-res.sendFile(path.join(__dirname, "groupedData.csv")); // Use an absolute path
+res.attachment("speciesData.csv");
+res.sendFile(path.join(__dirname, "speciesData.csv")); // Use an absolute path
 } catch (err) {
 console.log(err);
 res.status(500).json({ error: "Internal Server Error" });
