@@ -28,10 +28,10 @@ const configurations = {  <br>
 # To be Added: <br>
 *2 formats: A. Your Dataset (user) & B. Browse all users entries <br>
 * Identification (on image upload) - should be able to autofill species name; feedback if wrong kingdom/no upload
-* have a pagination limit of 10 before next fast forward; sort species (name) specific data by date, scroll images; combine 2 createMap.js;delete photo on record deletion action --> GOAL 1
+* add altitude column --> GOAL 1
 * API paths --> routes/index.js --> console.log(existingItem); test json output; create .csv file for download -->  GOAL 2
 * further information links: wiki, genetic profile, etc.; up-vote pictures (if logged in and in View More presentation view)
-* upvoting action -> 4 highest rated by morphology show in row -> button to view other high rated photos; $get cash for good photo if people download
+* upvoting action -> 4 highest rated by morphology show in row -> button to view other high rated photos; $get cash for good photo if people download;  scroll images (view all button @ dataViewer view --> presentation view)
 * add blog code to forum
 <br>
 ~Machine learning species identifier (within add.ejs view) <br>

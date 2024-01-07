@@ -118,14 +118,11 @@ router.get("/dataViewer", logMiddleware, async (req, res, next) => {
     // Group entries by name and collect locations, update dates, and images into arrays
     const groupedData = combinedData.reduce((acc, item) => {
       const existingItem = acc.find((groupedItem) => groupedItem.name === item.name);
-
+    
       if (existingItem) {
         existingItem.locations.push(item.location);
         existingItem.updateDates.push(item.updateDate);
         existingItem.images.push(item.image);
-        //API source
-        //console.log(existingItem);
-        //
       } else {
         acc.push({
           name: item.name,
@@ -135,9 +132,25 @@ router.get("/dataViewer", logMiddleware, async (req, res, next) => {
           images: [item.image]
         });
       }
-
+    
       return acc;
     }, []);
+    
+    // Sort each named entry by updateDate keeping association to location & image
+    groupedData.forEach((group) => {
+      const zippedData = group.updateDates.map((updateDate, index) => ({
+        updateDate,
+        location: group.locations[index],
+        image: group.images[index]
+      }));
+      zippedData.sort((a, b) => a.updateDate.localeCompare(b.updateDate));
+      group.locations = zippedData.map((item) => item.location);
+      group.updateDates = zippedData.map((item) => item.updateDate);
+      group.images = zippedData.map((item) => item.image);
+    });
+
+    //API source
+    console.log(groupedData);
 
     // Sort the grouped data by name (Alphabetically)
     //groupedData.sort((a, b) => a.name.localeCompare(b.name));
@@ -150,8 +163,7 @@ router.get("/dataViewer", logMiddleware, async (req, res, next) => {
     const skipSize = pageSize * (page - 1);
     const paginatedData = groupedData.slice(skipSize, skipSize + pageSize);
 
-    //API source
-    console.log(groupedData);
+    
     
 
     // Render the dataViewer page with the paginated data

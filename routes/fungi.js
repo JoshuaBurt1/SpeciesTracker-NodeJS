@@ -151,15 +151,27 @@ router.post("/edit/:_id", IsLoggedIn, upload.single('image'), (req, res, next) =
 
 //TODO D > Delete a fungus
 // GET /fungi/delete/652f1cb7740320402d9ba04d
-router.get("/delete/:_id", IsLoggedIn, (req, res, next) => {
-  let fungusId = req.params._id;
-  Fungus.deleteOne({ _id: fungusId })
-    .then(() => {
-      res.redirect("/fungi");
-    })
-    .catch((err) => {
-      res.redirect("/error");
-    });
+router.get("/delete/:_id", IsLoggedIn, async (req, res, next) => {
+  try {
+    let fungusId = req.params._id;
+    
+    // Find the fungus to be deleted
+    const fungusToDelete = await Fungus.findById(fungusId).exec();
+
+    // Delete the image file associated with the fungus
+    if (fungusToDelete && fungusToDelete.image) {
+      const imagePath = path.join(__dirname, '..', 'public/images/fungi_images', fungusToDelete.image);
+      fs.unlinkSync(imagePath); // Delete the file
+    }
+
+    // Delete the fungus from the database
+    await Fungus.deleteOne({ _id: fungusId });
+
+    res.redirect("/fungi");
+  } catch (err) {
+    console.error(err);
+    res.redirect("/error");
+  }
 });
 
 // Export this router module

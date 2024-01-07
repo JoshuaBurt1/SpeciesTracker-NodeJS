@@ -53,11 +53,11 @@
           userDataset.forEach(function(item) { 
         %>
           <tr>
-            <td class="names"><%= item.name %></td>
-            <td id="td2">
+            <td class="col-2"><%= item.name %></td>
+            <td>
               <ul id="cellList"><%= item.updateDate %></ul>
             </td>
-            <td id="td5">
+            <td>
               <ul id="cellList" class="coordinates"><%= item.location %></ul>
             </td>
             <td class="map-container">
@@ -84,17 +84,21 @@
   <div class="pagination">
     <% if (currentPage > 1) { %>
       <a href="/protists?page=1&searchBar=<%= searchQuery %>">&lt;&lt;</a>
-      <a href="/protists?page=<%= currentPage - 1 %>&searchBar=<%= searchQuery %>">&lt;</a>
+      <a href="/protists?page=<%= Math.max(currentPage - 10, 1) %>&searchBar=<%= searchQuery %>">&lt;</a>
     <% } %>
   
-    <% for (let i = 1; i <= totalPages; i++) { %>
+    <% const maxPagesToShow = 10; // Adjust this value based on your preference %>
+    <% const startPage = Math.max(currentPage - Math.floor(maxPagesToShow / 2), 1); %>
+    <% const endPage = Math.min(startPage + maxPagesToShow - 1, totalPages); %>
+  
+    <% for (let i = startPage; i <= endPage; i++) { %>
       <a href="/protists?page=<%= i %>&searchBar=<%= searchQuery %>" class="<%= currentPage === i ? 'active' : '' %>">
         <%= i %>
       </a>
     <% } %>
   
     <% if (currentPage < totalPages) { %>
-      <a href="/protists?page=<%= currentPage + 1 %>&searchBar=<%= searchQuery %>">&gt;</a>
+      <a href="/protists?page=<%= Math.min(currentPage + 10, totalPages) %>&searchBar=<%= searchQuery %>">&gt;</a>
       <a href="/protists?page=<%= totalPages %>&searchBar=<%= searchQuery %>">&gt;&gt;</a>
     <% } %>
   </div>

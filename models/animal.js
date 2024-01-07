@@ -7,9 +7,9 @@ const animalsSchemaObj = {
   // note: changing updateDate type to String = 2010-10-10 format)
   kingdom: { type: String, required: true, default: "animalia" },
   name: { type: String, required: true },
-  updateDate: { type: Array, required: true },
-  location: { type: Array, required: true },
-  image: { type: Array, required: true },
+  updateDate: { type: String, required: true },
+  location: { type: String, required: true },
+  image: { type: String, required: true },
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 };
 

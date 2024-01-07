@@ -1,9 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
   var coordinatesElements = document.querySelectorAll('.coordinates');
 
-  coordinatesElements.forEach(function (coordinatesElement, index) {
+  coordinatesElements.forEach(function (coordinatesElement) {
+    // Parse the data-species attribute as JSON [A. READ FROM .coordinates class json data (dataViewer)]
     try {
-      // Parse the data-species attribute as JSON
       var locations = JSON.parse(coordinatesElement.dataset.species);
       console.log(locations);
 
@@ -55,7 +55,32 @@ document.addEventListener("DOMContentLoaded", function () {
         attribution: '© Google Maps'
       }).addTo(map);
     } catch (error) {
+
+      // If parsing fails, fall back to the original code for single coordinates [B. READ FROM text.content (user upload views)]
       console.error("Error parsing coordinates:", error);
+
+      var coordinates = coordinatesElement.textContent;
+      var coordinatesMatch = coordinates.match(/^\s*(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)\s*$/);
+
+      if (coordinatesMatch) {
+        var [latitude, longitude] = coordinates.split(',');
+
+        // Find the common parent container for coordinates and the map
+        var commonContainer = coordinatesElement.closest('tr');
+
+        // Create a Leaflet map
+        var map = L.map(commonContainer.querySelector('.map')).setView([parseFloat(latitude), parseFloat(longitude)], 13);
+
+        // Add a marker to the map
+        L.marker([parseFloat(latitude), parseFloat(longitude)]).addTo(map);
+
+        // Add a tile layer to the map
+        L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+          attribution: '© Google Maps'
+        }).addTo(map);
+      } else {
+        console.log("Invalid coordinates format:", coordinates);
+      }
     }
   });
 });

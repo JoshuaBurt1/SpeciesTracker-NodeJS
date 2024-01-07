@@ -151,15 +151,27 @@ router.post("/edit/:_id", IsLoggedIn, upload.single('image'), (req, res, next) =
 
 //TODO D > Delete a plant
 // GET /plants/delete/652f1cb7740320402d9ba04d
-router.get("/delete/:_id", IsLoggedIn, (req, res, next) => {
-  let plantId = req.params._id;
-  Plant.deleteOne({ _id: plantId })
-    .then(() => {
-      res.redirect("/plants");
-    })
-    .catch((err) => {
-      res.redirect("/error");
-    });
+router.get("/delete/:_id", IsLoggedIn, async (req, res, next) => {
+  try {
+    let plantId = req.params._id;
+    
+    // Find the plant to be deleted
+    const plantToDelete = await Plant.findById(plantId).exec();
+
+    // Delete the image file associated with the plant
+    if (plantToDelete && plantToDelete.image) {
+      const imagePath = path.join(__dirname, '..', 'public/images/plantae_images', plantToDelete.image);
+      fs.unlinkSync(imagePath); // Delete the file
+    }
+
+    // Delete the plant from the database
+    await Plant.deleteOne({ _id: plantId });
+
+    res.redirect("/plants");
+  } catch (err) {
+    console.error(err);
+    res.redirect("/error");
+  }
 });
 
 // Export this router module

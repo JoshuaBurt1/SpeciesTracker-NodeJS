@@ -151,16 +151,29 @@ router.post("/edit/:_id", IsLoggedIn, upload.single('image'), (req, res, next) =
 
 //TODO D > Delete a animal
 // GET /animals/delete/652f1cb7740320402d9ba04d
-router.get("/delete/:_id", IsLoggedIn, (req, res, next) => {
-  let animalId = req.params._id;
-  Animal.deleteOne({ _id: animalId })
-    .then(() => {
-      res.redirect("/animals");
-    })
-    .catch((err) => {
-      res.redirect("/error");
-    });
-});
+router.get("/delete/:_id", IsLoggedIn, async (req, res, next) => {
+  try {
+    let animalId = req.params._id;
+    
+    // Find the animal to be deleted
+    const animalToDelete = await Animal.findById(animalId).exec();
 
+    // Delete the image file associated with the animal
+    if (animalToDelete && animalToDelete.image) {
+      const imagePath = path.join(__dirname, '..', 'public/images/animalia_images', animalToDelete.image);
+      console.log(imagePath); // Print the path of the image file to the console)
+      fs.unlinkSync(imagePath); // Delete the file
+    }
+
+    // Delete the animal from the database
+    await Animal.deleteOne({ _id: animalId });
+    console.log(animalId);
+
+    res.redirect("/animals");
+  } catch (err) {
+    console.error(err);
+    res.redirect("/error");
+  }
+});
 // Export this router module
 module.exports = router;  

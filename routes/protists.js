@@ -151,16 +151,27 @@ router.post("/edit/:_id", IsLoggedIn, upload.single('image'), (req, res, next) =
 
 //TODO D > Delete a protist
 // GET /protists/delete/652f1cb7740320402d9ba04d
-router.get("/delete/:_id", IsLoggedIn, (req, res, next) => {
-  let protistId = req.params._id;
-  Protist.deleteOne({ _id: protistId })
-    .then(() => {
-      res.redirect("/protists");
-    })
-    .catch((err) => {
-      res.redirect("/error");
-    });
-});
+router.get("/delete/:_id", IsLoggedIn, async (req, res, next) => {
+  try {
+    let protistId = req.params._id;
+    
+    // Find the protist to be deleted
+    const protistToDelete = await Protist.findById(protistId).exec();
 
+    // Delete the image file associated with the protist
+    if (protistToDelete && protistToDelete.image) {
+      const imagePath = path.join(__dirname, '..', 'public/images/protista_images', protistToDelete.image);
+      fs.unlinkSync(imagePath); // Delete the file
+    }
+
+    // Delete the protist from the database
+    await Protist.deleteOne({ _id: protistId });
+
+    res.redirect("/protists");
+  } catch (err) {
+    console.error(err);
+    res.redirect("/error");
+  }
+});
 // Export this router module
 module.exports = router;  
