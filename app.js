@@ -83,14 +83,14 @@ passport.use(
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-//4. ROUTER
+//4. ROUTER and API ('/', indexRouter)
 var indexRouter = require('./routes/index');
 var plantsRouter = require("./routes/plants"); //required for add, edit, delete route changes
 var fungiRouter = require("./routes/fungi"); //required for add, edit, delete route changes
 var animalsRouter = require("./routes/animals"); //required for add, edit, delete route changes
 var protistsRouter = require("./routes/protists"); //required for add, edit, delete route 
 
-app.use('/', indexRouter);
+app.use('/', indexRouter); //to view all data, (dataViewer.ejs) view
 app.use('/plants', plantsRouter); //required for add, edit, delete route changes
 app.use("/fungi", fungiRouter); //required for add, edit, delete route changes
 app.use('/animals', animalsRouter); //required for add, edit, delete route changes
