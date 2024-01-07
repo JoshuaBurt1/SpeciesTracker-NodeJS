@@ -205,38 +205,38 @@ router.get("/api", async (req, res) => {
     // Combine data from different models into a single array
     const combinedData = [...animalData, ...fungusData, ...plantData, ...protistData];
 
-    // Group entries by name and collect locations, update dates, and images into arrays
+    // Group entries by name and collect locations, update dates into arrays
     const groupedData = combinedData.reduce((acc, item) => {
       const existingItem = acc.find((groupedItem) => groupedItem.name === item.name);
 
       if (existingItem) {
         existingItem.locations.push(item.location);
         existingItem.updateDates.push(item.updateDate);
-        existingItem.images.push(item.image);
+        // Exclude pushing item.image into the images array
       } else {
         acc.push({
           name: item.name,
           kingdom: item.kingdom,
           locations: [item.location],
           updateDates: [item.updateDate],
-          images: [item.image],
+          // Exclude creating images array and pushing item.image
         });
       }
 
       return acc;
     }, []);
 
-    // Sort each named entry by updateDate keeping association to location & image
+    // Sort each named entry by updateDate keeping association to location
     groupedData.forEach((group) => {
       const zippedData = group.updateDates.map((updateDate, index) => ({
         updateDate,
         location: group.locations[index],
-        image: group.images[index],
+        // Exclude including image in zippedData
       }));
       zippedData.sort((a, b) => a.updateDate.localeCompare(b.updateDate));
       group.locations = zippedData.map((item) => item.location);
       group.updateDates = zippedData.map((item) => item.updateDate);
-      group.images = zippedData.map((item) => item.image);
+      // Exclude creating and mapping the images array
     });
 
     // Respond with the groupedData in JSON format
