@@ -104,7 +104,7 @@
     <% const endPage = Math.min(startPage + maxPagesToShow - 1, totalPages); %>
   
     <% for (let i = startPage; i <= endPage; i++) { %>
-      <a href="/dataViewer?page=<%= i %>&searchBar=<%= searchQuery %>" class="<%= currentPage === i ? 'active' : '' %>">
+      <a href="/dataViewer?page=<%= i %>&searchBar=<%= searchQuery %>" class="<%= currentPage === i ? 'activePagination' : '' %>">
         <%= i %>
       </a>
     <% } %>

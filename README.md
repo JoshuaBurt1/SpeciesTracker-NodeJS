@@ -26,8 +26,6 @@ const configurations = {  <br>
 ~API & csv download <br>
 
 # To be Added: <br>
-*2 formats: A. Your Dataset (user) & B. Browse all users entries <br>
-* Highlight current pagination link; index.js reduce size; 
 * API paths --> (all data, filtered data); standardize .csv output; test API data in Python program -->  GOAL 1
 * further information links: wiki, genetic profile, etc.; up-vote pictures (if logged in and in View More presentation view)
 * upvoting action -> 4 highest rated by morphology show in row -> button to view other high rated photos; $get cash for good photo if people download;  scroll images (view all button @ dataViewer view --> presentation view)

@@ -1,0 +1,14 @@
+<%- include('../partials/header') %>
+
+<%- block('content') { %>
+    <div class="container">
+        <header>
+            <h1>New Blog Post</h1>
+        </header>
+        <div>
+            <%- include('./form') %>
+        </div>
+    </div>
+<%- } %>
+
+<%- include('../partials/footer') %>
