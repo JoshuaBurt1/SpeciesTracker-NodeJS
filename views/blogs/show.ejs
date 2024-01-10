@@ -1,13 +1,11 @@
 <%- include('../partials/header') %>
 
-<%- block('content') { %>
     <div class="container">
         <header>
             <h1><%= blog.title %></h1>
-            <small><%= blog.status.toLowerCase() %></small>
         </header>
         <div><%= blog.content || "Your story is processing..." %></div>
     </div>
-<%- } %>
+
 
 <%- include('../partials/footer') %>

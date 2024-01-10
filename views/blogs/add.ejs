@@ -1,0 +1,16 @@
+<%- include('../partials/header') %>
+    <header>
+        <h1>New Blog Post</h1>
+    </header>
+    <div>
+<form action="/blogs/add" method="POST">
+  <label for="title" class="col-2">Title:</label>
+  <input type="text" id="title" name="title" class="form-control" required>
+
+  <label for="content" class="col-2">Content:</label>
+  <textarea id="content" name="content" class="form-control" required></textarea>
+
+  <button class="offset-3 btn btn-primary">Save</button>
+</form>
+    </div>
+<%- include('../partials/footer') %>

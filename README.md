@@ -27,9 +27,10 @@ const configurations = {  <br>
 
 # To be Added: <br>
 * API paths --> (all data, filtered data); standardize .csv output; test API data in Python program -->  GOAL 1
-* further information links: wiki, genetic profile, etc.; up-vote pictures (if logged in and in View More presentation view)
+* further information via show.ejs --> wiki, genetic profile, etc.; up-vote pictures (if logged in and in View More presentation view)
 * upvoting action -> 4 highest rated by morphology show in row -> button to view other high rated photos; $get cash for good photo if people download;  scroll images (view all button @ dataViewer view --> presentation view)
-* add blog code to forum
+* modify Blog Code to normal forum (only user that made post can edit own post; categories for discussion)
+* OrderBy button functionality
 <br>
 ~Machine learning species identifier (within add.ejs view) <br>
 * Identification (on image upload) - should be able to autofill species name; feedback if wrong kingdom/no upload <br>

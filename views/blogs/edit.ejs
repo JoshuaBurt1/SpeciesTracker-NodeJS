@@ -1,14 +1,16 @@
 <%- include('../partials/header') %>
+<header>
+    <h1>Edit Blog Post</h1>
+</header>
+<div>
+    <form action="/blogs/edit/<%= blog._id %>" method="POST">
+        <label for="name" class="col-2">Name:</label>
+        <input name="name" id="name" class="form-control" value="<%= blog.title %>" required/>
 
-<%- block('content') { %>
-    <div class="container">
-        <header>
-            <h1><%= 'Edit ' + blog.title %></h1>
-        </header>
-        <div>
-            <%- include('./form') %>
-        </div>
-    </div>
-<%- } %>
+        <label for="content" class="col-2">Content:</label>
+        <input name="content" id="content" class="form-control" value="<%= blog.content %>" required/>
 
+      <button class="offset-3 btn btn-primary">Save</button>
+    </form>
+</div>
 <%- include('../partials/footer') %>

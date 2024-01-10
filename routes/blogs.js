@@ -1,99 +1,105 @@
-// Import express and create a router object
-const express = require("express");
+const express = require('express');
+const app = express();
+
+// Add this middleware to parse form data
+app.use(express.urlencoded({ extended: true }));
 const router = express.Router();
-var logMiddleware = require('../logMiddleware'); //route logging middleware
+const Blog = require("../models/blog");
+
+// Middleware for route logging
+const logMiddleware = require("../logMiddleware");
+// Middleware for user authentication
 const IsLoggedIn = require("../extensions/authentication");
 
-//Mongoose models
-const Blog = require('../models/blog');
-router.get('/new', (req, res) => {
-    res.render('blogs/new', {
-        title: 'New Blog Post'
+// User login not required to view
+router.get("/", logMiddleware, async (req, res, next) => {
+    try {
+        const blogs = await Blog.find({ users: req.session.userId });
+        res.render("blogs/index", {
+            user: req.user,
+            blogs: blogs,
+            title: "Species Tracker Forum"
+        });
+    } catch (err) {
+        console.error(`ERROR: ${err}`);
+        res.redirect("/error");
+    }
+});
+
+router.post('/add', IsLoggedIn, (req, res) => {
+    console.log('Form Data:', req.body);
+  
+    Blog.create({
+      title: req.body.title,
+      content: req.body.content,
+      user: req.user._id,
+    })
+    .then((createdModel) => {
+      console.log("Model created successfully:", createdModel);
+      res.redirect("/blogs");
+    })
+    .catch((error) => {
+      console.error("An error occurred:", error);
     });
+  });
+  
+//GET handler for /blogs/add (loads)
+router.get("/add", IsLoggedIn, logMiddleware, (req, res, next) => {
+    res.render("blogs/add", { 
+        user: req.user, 
+        title: "Add a new Blog" });
 });
 
-router.post('/create', async (req, res) => {
+router.get("/edit/:_id", IsLoggedIn, logMiddleware, async  (req, res, next) => {
     try {
-        await Blog.create(req.body.blog);
-        res.redirect('/blogs');
+      const blogObj = await Blog.findById(req.params._id).exec();
+      console.log(blogObj);
+      res.render("blogs/edit", {
+        user: req.user,
+        title: "Edit a Blog Entry",
+        blog: blogObj
+        //user: req.user,
+      });
     } catch (err) {
-        console.log(`ERROR: ${err}`);
-        res.redirect('/error');
+      console.error(err);
+      // Handle the error appropriately
     }
-});
+  });
 
-router.get('/drafts', async (req, res) => {
-    try {
-        const drafts = await Blog.find().drafts();
-        res.render('blogs/index', {
-            blogs: drafts,
-            title: 'Drafts'
+  router.post("/edit/:_id", IsLoggedIn, (req, res, next) => {
+    // Continue with the update logic
+    Blog.findOneAndUpdate(
+        { _id: req.params._id },
+        {
+            title: req.body.name,
+            content: req.body.content,
+            status: req.body.updateDate,
+            user: req.user._id,
+        },
+        { new: true } // to return the updated document
+    )
+        .then((updatedBlog) => {
+            console.log("Updated Blog:", updatedBlog);
+            res.redirect("/blogs/" + req.params._id); // Redirect to the edited blog's page
+        })
+        .catch((err) => {
+            console.error(err);
+            res.redirect("/error");
         });
-    } catch (err) {
-        console.log(`ERROR: ${err}`);
-        res.redirect('/error');
-    }
 });
 
-router.get('/published', async (req, res) => {
+// User login not required to view
+router.get("/:id", logMiddleware, async (req, res) => {
     try {
-        const published = await Blog.find().published();
-        res.render('blogs/index', {
-            blogs: published,
-            title: 'Published'
+        let blogId = req.params.id; // Use req.params.id to get the blog ID
+        
+        const blog = await Blog.findOne({  _id: blogId
         });
-    } catch (err) {
-        console.log(`ERROR: ${err}`);
-        res.redirect('/error');
-    }
-});
 
-router.get('/edit/:id', async (req, res) => {
-    try {
-        const blog = await Blog.findById(req.params.id);
-        res.render('blogs/edit', {
-            blog: blog,
-            title: `Edit ${blog.title}`
-        });
-    } catch (err) {
-        console.log(`ERROR: ${err}`);
-        res.redirect('/error');
-    }
-});
+        console.log("Blog retrieved successfully:", blog);
 
-router.post('/update', async (req, res) => {
-    try {
-        await Blog.updateOne({
-            _id: req.body.id
-        }, req.body.blog, {
-            runValidators: true
-        });
-        res.redirect('/blogs');
-    } catch (err) {
-        console.log(`ERROR: ${err}`);
-        res.redirect('/error');
-    }
-});
-
-router.post('/delete', async (req, res) => {
-    try {
-        await Blog.deleteOne({
-            _id: req.body.id
-        });
-        res.redirect('/blogs');
-    } catch (err) {
-        console.log(`ERROR: ${err}`);
-        res.redirect('/error');
-    }
-});
-
-router.get('/:id', logMiddleware, async (req, res) => {
-    try {
-        const blog = await Blog.findById(req.params.id);
-        if (!blog) {
-            return res.status(404).send('Blog not found');
-        }
-        res.render('blogs/show', {
+        res.render("blogs/show", {
+            user: req.user,
             blog: blog,
             title: blog.title
         });
@@ -103,18 +109,20 @@ router.get('/:id', logMiddleware, async (req, res) => {
     }
 });
 
-router.get('/', logMiddleware, async (req, res, next) => {
+router.get("/delete/:id", IsLoggedIn, async (req, res) => {
     try {
-        const blogs = await Blog.find();
-        res.render('blogs/index', {
-            user: req.user,
-            blogs: blogs,
-            title: 'Archive'
-        });
+        let blogId = req.params.id; // Use req.params.id to get the blog ID
+    
+        // Delete the blog from the database
+        await Blog.deleteOne({ _id: blogId });
+        console.log(blogId);
+    
+        res.redirect("/blogs");
     } catch (err) {
-        console.log(`ERROR: ${err}`);
-        res.redirect('/error');
+        console.error(err);
+        res.redirect("/error");
     }
 });
+
 
 module.exports = router;
