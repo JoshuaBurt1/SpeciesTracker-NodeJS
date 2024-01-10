@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const plm = require("passport-local-mongoose");
 var dataSchemaObj = {
   username: { type: String },
+  email: { type: String },
   password: { type: String }, //Always encrypt pass word, never save as plain text
   oauthId: {type: String}, //id value to identify this user in the third-party system
   oauthProvider: {type: String}, //what auth provider was used?

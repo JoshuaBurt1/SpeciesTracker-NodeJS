@@ -15,8 +15,5 @@ document.addEventListener("DOMContentLoaded", function () {
     truncatedElements.forEach(function (truncateElement) {
       // Apply the truncateWords function to the inner HTML of each element
       truncateElement.innerHTML = truncateWords(truncateElement.innerHTML, 10);
-  
-      // Log the modified content to the console
-      console.log(truncateElement.innerHTML);
     });
   });
