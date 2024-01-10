@@ -109,6 +109,26 @@ router.get("/:id", logMiddleware, async (req, res) => {
     }
 });
 
+router.post("/:id", logMiddleware, async (req, res) => {
+    try {
+        let blogId = req.params.id;
+        let replyContent = req.body.content; // Assuming you send the reply content in the request body
+
+        // Add the reply to the blog post
+        const blog = await Blog.findOneAndUpdate(
+            { _id: blogId },
+            { $push: { replies: { content: replyContent } } }, // Assuming 'replies' is an array in your blog schema
+            { new: true }
+        );
+
+        // Send a response (you can customize this based on your requirements)
+        res.status(200).json({ success: true, blog });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: "Internal Server Error" });
+    }
+});
+
 router.get("/delete/:id", IsLoggedIn, async (req, res) => {
     try {
         let blogId = req.params.id; // Use req.params.id to get the blog ID
