@@ -17,8 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
       truncateElement.innerHTML = truncateWords(truncateElement.innerHTML, 10);
     });
   });
-
-document.addEventListener('DOMContentLoaded', function () {
+  document.addEventListener('DOMContentLoaded', function () {
     var replyButton = document.getElementById('replyButton');
     var replySection = document.getElementById('replySection');
     var isReplyButtonClicked = false;
@@ -33,6 +32,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Set the flag to indicate that the button has been clicked
         isReplyButtonClicked = true;
+
+        // Hide the replyButton
+        replyButton.style.display = 'none';
 
         // Assuming you have a way to get the blogId, for example, from a data attribute
         blogId = replyButton.dataset.blogId;
@@ -57,6 +59,9 @@ document.addEventListener('DOMContentLoaded', function () {
             // Get the value of the reply input
             var replyContent = replyInput.value;
 
+            // Disable the submitButton to prevent multiple clicks
+            submitButton.disabled = true;
+
             // Send the reply content to the server using AJAX
             submitReply(replyContent, currentRoute);
         });
@@ -68,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
         xhr.open('POST', currentRoute, true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
+            if (xhr.readyState === 4) {
                 // Reload the page after successful reply submission
                 window.location.reload();
             }

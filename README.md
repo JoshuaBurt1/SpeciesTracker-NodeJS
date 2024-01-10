@@ -30,7 +30,7 @@ const configurations = {  <br>
 * API paths --> (all data, filtered data); standardize .csv output; test API data in Python program -->  GOAL 1
 * further animal/plant/fungi/protist information via show.ejs --> wiki, genetic profile, etc.; up-vote pictures (if logged in and in View More presentation view) -->  OrderBy button functionality
 * upvoting action -> 4 highest rated by morphology show in row -> button to view other high rated photos; $get cash for good photo if people download;  scroll images (view all button @ dataViewer view --> presentation view)
-* modify Blog Code to normal forum (Reply button and functionality in show view ; categories for discussion)
+* modify Blog Code to normal forum (categories for discussion)
 * Ban user & delete associated info by user email function; AND/OR disassociate with more likely true data until "threshold %" reached
 <br>
 ~Machine learning species identifier (within add.ejs view) <br>
