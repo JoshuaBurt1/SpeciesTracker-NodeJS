@@ -112,12 +112,15 @@ router.get("/:id", logMiddleware, async (req, res) => {
 router.post("/:id", logMiddleware, async (req, res) => {
     try {
         let blogId = req.params.id;
-        let replyContent = req.body.content; // Assuming you send the reply content in the request body
+        let replyContent = req.body.content;
 
-        // Add the reply to the blog post
+        // Get the user ID from the req.user object
+        let userId = req.user._id;
+
+        // Add the reply to the blog post with the user ID
         const blog = await Blog.findOneAndUpdate(
             { _id: blogId },
-            { $push: { replies: { content: replyContent } } }, // Assuming 'replies' is an array in your blog schema
+            { $push: { replies: { content: replyContent, user: userId } } },
             { new: true }
         );
 

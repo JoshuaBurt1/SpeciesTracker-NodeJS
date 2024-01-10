@@ -6,19 +6,24 @@
     </header>
     <div id="blogPost">
         <div><%= blog.content || "Your story is processing..." %></div>
-        <div>Posted by: <%= blog.user._id %> @ <%= blog.createdAt %></div>
+        <div>
+            <span id="bold">Posted by: </span> <%= blog.user._id %> @ <%= blog.createdAt %>
+        </div>
         <br>
+    </div>
+    <div id="replySection">
+        <!-- Include existing replies here -->
+        <% blog.replies.forEach(reply => { %>
+            <div><%= reply.content %></div>
+            <div>
+                <span id="bold">Posted by: </span><%= reply.user ? reply.user._id : "Unknown User" %> @ <%= reply.createdAt %>
+            </div>
+            <br>
+        <% }); %>
     </div>
     <% if (user) { %>
         <a id="replyButton" class="btn btn-primary">Reply</a>
     <% } %>
-    <div id="replySection">
-        <!-- Include existing replies here -->
-        <% blog.replies.forEach(reply => { %>
-            <div><%= reply.content %> - <%= reply.user %> @ <%= reply.createdAt %></div>
-        <% }); %>
-    </div>
 </div>
 
 <%- include('../partials/footer') %>
-
