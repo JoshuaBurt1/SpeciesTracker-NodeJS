@@ -21,9 +21,10 @@ const configurations = {  <br>
 ~Image upload: npm i multer <br>
 ~Date, time, gps autofill: npm/exif-js <br>
 ~Coordinates to map & map to coordinates: npm i leaflet <br>
-~User authentication & github auth: npm i passport express-session passport-local-mongoose passport-github2 <br>
 ~Your Dataset view (login) & All data view <br>
 ~API & csv download <br>
+~User authentication & github auth: npm i passport express-session passport-local-mongoose passport-github2 <br>
+~Message board (Forum) with reply <br>
 
 # To be Added: <br>
 * API paths --> (all data, filtered data); standardize .csv output; test API data in Python program -->  GOAL 1
