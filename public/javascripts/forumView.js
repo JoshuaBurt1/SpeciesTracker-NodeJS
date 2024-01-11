@@ -56,6 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
       // Append textarea and button to replySection
       replySection.appendChild(replyInput);
       replySection.appendChild(submitButton);
+      replySection.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
 
       // Add event listener to the textarea for Enter key presses
       replyInput.addEventListener('keydown', function (event) {
@@ -89,16 +90,17 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   function submitReply(replyContent, currentRoute) {
-      // Use AJAX to send the reply content to the server
-      var xhr = new XMLHttpRequest();
-      xhr.open('POST', currentRoute, true);
-      xhr.setRequestHeader('Content-Type', 'application/json');
-      xhr.onreadystatechange = function () {
-          if (xhr.readyState === 4) {
-              // Reload the page after successful reply submission
-              window.location.reload();
-          }
-      };
-      xhr.send(JSON.stringify({ content: replyContent }));
-  }
+    // Use AJAX to send the reply content to the server
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', currentRoute, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            // Reload the page after successful reply submission
+            window.location.reload();
+        }
+    };
+    xhr.send(JSON.stringify({ content: replyContent }));
+    replySection.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
+}
 });
