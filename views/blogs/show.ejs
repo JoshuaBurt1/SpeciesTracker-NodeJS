@@ -2,7 +2,8 @@
 <header class="mb-4">
     <h1><%= blog.title %></h1>
 </header>
-<h5>Original Post:</h5>
+<div class="page-container">
+    <h5>Original Post:</h5>
 <div id="blogPost" class="card">
     <div class="card-body">
         <p class="card-text"><%= blog.content || "Your story is processing..." %></p>
@@ -13,23 +14,22 @@
 </div>
 <br>
 <h5>Replies:</h5>
-<div class="page-container2">
-    <div id="replySection">
-        <% paginatedReplies.forEach(reply => { %>
-            <div class="card mt-3" id="replyCard">
-                <div class="card-body">
-                    <p class="card-text"><%= reply.content %></p>
-                    <p class="card-text">
-                        <span id="bold">Posted by: </span><%= reply.user ? reply.user._id : "Unknown User" %> @ <%= reply.createdAt %>
-                    </p>
-                </div>
+<div id="replySection">
+    <% paginatedReplies.forEach(reply => { %>
+        <div class="card mt-3" id="replyCard">
+            <div class="card-body">
+                <p class="card-text"><%- reply.content.replace(/\n/g, '<br>') %></p>
+                <p class="card-text">
+                    <span id="bold">Posted by: </span><%= reply.user ? reply.user._id : "Unknown User" %> @ <%= reply.createdAt %>
+                </p>
             </div>
-        <% }); %>
-    </div>
+        </div>
+    <% }); %>
+</div>
 
     <% if (user) { %>
         <div class="mt-4">
-            <a id="replyButton" class="btn btn-primary">Reply</a>
+            <button  id="replyButton" class="offset-3 btn btn-primary">Reply</button>
         </div>
     <% } %>
 

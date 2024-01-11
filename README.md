@@ -27,7 +27,7 @@ const configurations = {  <br>
 ~Message board (Forum) with reply <br>
 
 # To be Added: <br>
-* modify Blog Code to normal forum (categories for discussion)
+* modify Blog Code to normal forum (categories for discussion); allow users to edit replies; allow users to insert attachments/images into post
 * API paths --> (all data, filtered data); standardize .csv output; test API data in Python program -->  GOAL 1
 * further animal/plant/fungi/protist information via show.ejs --> wiki, genetic profile, etc.; up-vote pictures (if logged in and in View More presentation view) -->  OrderBy button functionality
 * upvoting action -> 4 highest rated by morphology show in row -> button to view other high rated photos; $get cash for good photo if people download;  scroll images (view all button @ dataViewer view --> presentation view)

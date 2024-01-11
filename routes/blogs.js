@@ -18,7 +18,7 @@ router.get("/", logMiddleware, async (req, res, next) => {
         res.render("blogs/index", {
             user: req.user,
             blogs: blogs,
-            title: "Species Tracker Forum"
+            title: "Message Board"
         });
     } catch (err) {
         console.error(`ERROR: ${err}`);
@@ -136,14 +136,19 @@ router.post("/:id", logMiddleware, async (req, res) => {
     try {
         let blogId = req.params.id;
         let replyContent = req.body.content;
-
-        // Get the user ID from the req.user object
         let userId = req.user._id;
 
         // Add the reply to the blog post with the user ID
         const blog = await Blog.findOneAndUpdate(
             { _id: blogId },
-            { $push: { replies: { content: replyContent, user: userId } } },
+            {
+                $push: {
+                    replies: {
+                        content: replyContent,
+                        user: userId
+                    }
+                }
+            },
             { new: true }
         );
 
