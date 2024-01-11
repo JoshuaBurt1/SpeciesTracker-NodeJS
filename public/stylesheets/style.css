@@ -5,6 +5,12 @@
   overflow: auto; /* Enable vertical scrolling if the content overflows */
 }
 
+.page-container2 {
+  background-color: #f8f9fa; /* Set your desired background color */
+  height: 60vh; /* Set the height of the background to the full viewport height */
+  overflow: auto; /* Enable vertical scrolling if the content overflows */
+}
+
 .table-container {
   height: 58vh; 
   overflow-y: auto; /* Enable vertical scrolling if the content overflows */

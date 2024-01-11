@@ -13,7 +13,7 @@
 </div>
 <br>
 <h5>Replies:</h5>
-<div class="page-container">
+<div class="page-container2">
     <div id="replySection">
         <% paginatedReplies.forEach(reply => { %>
             <div class="card mt-3" id="replyCard">
@@ -26,35 +26,35 @@
             </div>
         <% }); %>
     </div>
+
     <% if (user) { %>
         <div class="mt-4">
             <a id="replyButton" class="btn btn-primary">Reply</a>
         </div>
     <% } %>
-    
+
     <!-- Pagination -->
     <div class="pagination">
         <% if (currentPage > 1) { %>
             <a href="/blogs/<%= blog._id %>?page=1">&lt;&lt;</a>
             <a href="/blogs/<%= blog._id %>?page=<%= Math.max(currentPage - 1, 1) %>">&lt;</a>
         <% } %>
-      
+
         <% const maxPagesToShow = 10; // Adjust this value based on your preference %>
         <% const startPage = Math.max(currentPage - Math.floor(maxPagesToShow / 2), 1); %>
         <% const endPage = Math.min(startPage + maxPagesToShow - 1, totalPages); %>
-      
+
         <% for (let i = startPage; i <= endPage; i++) { %>
             <a href="/blogs/<%= blog._id %>?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>">
                 <%= i %>
             </a>
         <% } %>
-      
+
         <% if (currentPage < totalPages) { %>
             <a href="/blogs/<%= blog._id %>?page=<%= Math.min(currentPage + 1, totalPages) %>">&gt;</a>
             <a href="/blogs/<%= blog._id %>?page=<%= totalPages %>">&gt;&gt;</a>
         <% } %>
     </div>
 </div> <!-- Line Changed -->
-</div>
 
 <%- include('../partials/footer') %>
