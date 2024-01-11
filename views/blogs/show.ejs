@@ -26,6 +26,11 @@
             </div>
         <% }); %>
     </div>
+    <% if (user) { %>
+        <div class="mt-4">
+            <a id="replyButton" class="btn btn-primary">Reply</a>
+        </div>
+    <% } %>
     
     <!-- Pagination -->
     <div class="pagination">
