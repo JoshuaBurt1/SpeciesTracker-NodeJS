@@ -89,19 +89,42 @@ router.get("/edit/:_id", IsLoggedIn, logMiddleware, async  (req, res, next) => {
 });
 
 // User login not required to view
+const pageSize = 5; // Number of replies per page
+
 router.get("/:id", logMiddleware, async (req, res) => {
     try {
-        let blogId = req.params.id; // Use req.params.id to get the blog ID
-        
-        const blog = await Blog.findOne({  _id: blogId
-        });
+        let blogId = req.params.id;
+
+        const blog = await Blog.findOne({ _id: blogId });
+
+        if (!blog) {
+            console.error("Blog not found");
+            return res.redirect("/error");
+        }
+
+        const numberOfReplies = blog.replies.length;
 
         console.log("Blog retrieved successfully:", blog);
+        console.log("Number of replies:", numberOfReplies);
+
+        // Pagination logic
+        const page = parseInt(req.query.page) || 1;
+        const skipSize = pageSize * (page - 1);
+        const endIndex = Math.min(skipSize + pageSize, numberOfReplies);
+
+        const paginatedReplies = blog.replies.slice(skipSize, endIndex);
+
+        const totalPages = Math.ceil(numberOfReplies / pageSize);
 
         res.render("blogs/show", {
             user: req.user,
             blog: blog,
-            title: blog.title
+            numberOfReplies: numberOfReplies,
+            title: blog.title,
+            req: req, // Pass the req object
+            paginatedReplies: paginatedReplies,
+            totalPages: totalPages,
+            currentPage: page,
         });
     } catch (err) {
         console.error(err);

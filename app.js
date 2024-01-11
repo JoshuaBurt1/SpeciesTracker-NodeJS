@@ -83,32 +83,31 @@ passport.use(
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-//4. ROUTER and API ('/', indexRouter)
+// 4. ROUTER and API ('/', indexRouter)
 var indexRouter = require('./routes/index');
 var blogsRouter = require('./routes/blogs');
-var plantsRouter = require("./routes/plants"); //required for add, edit, delete route changes
-var fungiRouter = require("./routes/fungi"); //required for add, edit, delete route changes
-var animalsRouter = require("./routes/animals"); //required for add, edit, delete route changes
-var protistsRouter = require("./routes/protists"); //required for add, edit, delete route 
+var plantsRouter = require("./routes/plants");
+var fungiRouter = require("./routes/fungi");
+var animalsRouter = require("./routes/animals");
+var protistsRouter = require("./routes/protists");
 
-app.use('/', indexRouter); //to view all data, (dataViewer.ejs) view
+app.use('/', indexRouter);
 app.use('/blogs', blogsRouter);
-app.use('/plants', plantsRouter); //required for add, edit, delete route changes
-app.use("/fungi", fungiRouter); //required for add, edit, delete route changes
-app.use('/animals', animalsRouter); //required for add, edit, delete route changes
-app.use("/protists", protistsRouter); //required for add, edit, delete route changes
+app.use('/plants', plantsRouter);
+app.use("/fungi", fungiRouter);
+app.use('/animals', animalsRouter);
+app.use("/protists", protistsRouter);
 
-//ROUTING ERRORS
+// ROUTING ERRORS
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
 });
+
 // error handler
 app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
-  // render the error page
   res.status(err.status || 500);
   res.render("error");
 });

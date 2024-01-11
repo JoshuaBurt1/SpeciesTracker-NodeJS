@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
       truncateElement.innerHTML = truncateWords(truncateElement.innerHTML, 10);
     });
   });
+
   document.addEventListener('DOMContentLoaded', function () {
     var replyButton = document.getElementById('replyButton');
     var replySection = document.getElementById('replySection');
@@ -80,4 +81,5 @@ document.addEventListener("DOMContentLoaded", function () {
         };
         xhr.send(JSON.stringify({ content: replyContent }));
     }
-});
+
+  });

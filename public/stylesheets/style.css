@@ -77,13 +77,25 @@
 }
 
 /* Content container*/
+/*Home*/
 #downloadCsvLink{
 width: 10%;
 }
 
+/*Forum*/
 #bold{ 
   font-weight: bold;
 }
+
+#blogPost{
+  border: 2px solid grey; /* Adjust the color as needed */
+}
+
+#replyCard  {
+  margin-left: 0.5%; /* Specify your left border style */
+  margin-right: 0.5%; /* Specify your right border style */
+}
+/*Indexes*/
 
 .container {
   position: relative;
