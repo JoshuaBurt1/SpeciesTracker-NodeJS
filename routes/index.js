@@ -92,12 +92,6 @@ router.get('/', logMiddleware, function(req, res, next) {
   res.render('index', { user: req.user, title: 'Species Tracker'});
 });
 
-//okay for single pages without routes themselves
-router.get("/forum", logMiddleware, (req, res, next) => {
-  res.render("forum", { title: "Forum", user: req.user  });
-});
-
-
 // Import Mongoose models
 const Animal = require("../models/animal");
 const Fungus = require("../models/fungus");

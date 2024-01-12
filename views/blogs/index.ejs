@@ -14,13 +14,13 @@
                     <th id="th_topic">Category</th>
                     <th id="th_title">Title</th>
                     <th id="th_content">Content</th>
-                    <th id="th_user">Posted By</th>
+                    <th id="th_user">Author</th>
                     <th id="th_action">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <% let sortedBlogs = blogs.sort((a, b) => a.topic.localeCompare(b.topic)); %>
-                <% let currentTopic = null; %>  
+                <% let currentTopic = null; %>
                 <% sortedBlogs.forEach(blog => { %>
                     <% if (blog.topic !== currentTopic) { %>
                         <!-- Display subheading when topic changes -->
@@ -29,7 +29,7 @@
                                 <button class="btn btn-secondary btn-sm topicButton" data-topic="<%= blog.topic %>">
                                     <%= blog.topic %>
                                 </button>
-                            </td>   
+                            </td>
                             <td colspan="1">
                                 <!-- Create Entry button for the current topic -->
                                 <a class="btn btn-primary btn-sm" href="/blogs/addPost?topic=<%= blog.topic %>">Create Entry</a>
@@ -38,12 +38,16 @@
                         <% currentTopic = blog.topic; %>
                     <% } %>
                     <tr class="originalPost" style="display: none;" data-topic="<%= blog.topic %>">
-                        <td></td>
+                        <td>
+                           <strong>Views:</strong> <%= blog.views %>; 
+                        <strong>Last Post:</strong> <span id="date"><%= getLastPostTime(blog) %></span>
+                        </td>   
                         <td>
                             <a href="/blogs/<%= blog.id %>"><%= blog.title %></a>
                         </td>
                         <td class="truncated"><%= blog.content %></td>
-                        <td><%= blog.user %></td>
+                        <td><%= blog.user %> @ <span id="date"><%= blog.createdAt %></span></td>
+        
                         <% if (user && (user._id.toString() === blog.user._id.toString() || user.admin === 1)) { %>
                             <td>
                                 <a class="btn btn-primary btn-sm" href="/blogs/editPost/<%= blog._id %>">Edit</a>

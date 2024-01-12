@@ -24,17 +24,13 @@ const configurations = {  <br>
 ~Your Dataset view (login) & All data view <br>
 ~API & csv download <br>
 ~User authentication & github auth: npm i passport express-session passport-local-mongoose passport-github2 <br>
-~Message board (Forum) with reply <br>
-~Admin privileges (Edit and delete any post) <br>
+~Message board with reply <br>
+~Admin privileges (add category, edit & delete any post) <br>
 
 # To be Added: <br>
 * Message board: 
-* Admin priv.: delete user; add category
+* Admin priv.: delete user & associate data
 * add a route for category -> blog -> replies 
-* last blog post & time displayed at category view @ Posted By 
-* last reply post & time displayed on blog view @ Posted By 
-* posted edited marker and time, if occurred
-* views, unique views
 * allow users to insert attachments/images into post
 <br>
 
@@ -51,6 +47,7 @@ const configurations = {  <br>
 
 * Overall Data: 
 * Ban user & delete associated info by user email function; AND/OR disassociate with more likely true data until "threshold %" reached
+* database (csv/json) backup comparisons to make sure values are not being manipulated
 <br>
 
 * Machine Learning:

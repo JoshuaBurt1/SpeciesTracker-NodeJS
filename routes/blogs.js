@@ -11,16 +11,28 @@ const logMiddleware = require("../logMiddleware");
 // Middleware for user authentication
 const IsLoggedIn = require("../extensions/authentication");
 
+//get the last reply's timestamp
+const getLastReplyTimestamp = (blog) => {
+    const numReplies = blog.replies.length;
+
+    if (numReplies > 0) {
+        return blog.replies[numReplies - 1].updatedAt;
+    } else {
+        return blog.createdAt;
+    }
+};
+// Your route handler
 router.get("/", logMiddleware, async (req, res, next) => {
     try {
         const blogs = await Blog.find({ users: req.session.userId });
-        const user = req.user || {}; // Ensure user is always an object
+        const user = req.user || {};
 
         res.render("blogs/index", {
             user: req.user,
-            admin: user.admin, // Set a default value if admin is not present
+            admin: user.admin,
             blogs: blogs,
-            title: "Message Board"
+            title: "Message Board",
+            getLastPostTime: getLastReplyTimestamp, // Pass the function to the view
         });
     } catch (err) {
         console.error(`ERROR: ${err}`);
@@ -125,11 +137,11 @@ router.get("/editPost/:_id", IsLoggedIn, logMiddleware, async  (req, res, next) 
 
 // User login not required to view
 const pageSize = 5; // Number of replies per page
-
 router.get("/:id", logMiddleware, async (req, res) => {
     try {
-        let blogId = req.params.id;
+        const blogId = req.params.id;
 
+        // Find the blog post by ID
         const blog = await Blog.findOne({ _id: blogId });
 
         if (!blog) {
@@ -137,10 +149,13 @@ router.get("/:id", logMiddleware, async (req, res) => {
             return res.redirect("/error");
         }
 
-        const numberOfReplies = blog.replies.length;
+        if (!blog.viewed) {
+            blog.views = (blog.views || 0) + 1;
+            blog.viewed = true;
+            await blog.save();
+          }
 
-        console.log("Blog retrieved successfully:", blog);
-        console.log("Number of replies:", numberOfReplies);
+        const numberOfReplies = blog.replies.length;
 
         // Pagination logic
         const page = parseInt(req.query.page) || 1;

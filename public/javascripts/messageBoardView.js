@@ -9,6 +9,33 @@ document.querySelectorAll('.topicButton').forEach(function (button) {
   });
 });
 
+//Date formatting
+document.addEventListener("DOMContentLoaded", function () {
+  var dateElements = document.querySelectorAll('#date');
+
+  dateElements.forEach(function (dateElement) {
+    var dateString = dateElement.innerHTML;
+    function formatDate(dateString) {
+      var date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return 'Invalid Date';
+      }
+      const options = {
+        month: '2-digit',
+        day: '2-digit',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        timeZoneName: 'short'
+      };
+
+      return date.toLocaleString('en-US', options);
+    }
+    dateElement.innerHTML = formatDate(dateString);
+  });
+});
+
 //Adds truncated content view at Category level
 document.addEventListener("DOMContentLoaded", function () {
   var truncatedElements = document.querySelectorAll('.truncated');

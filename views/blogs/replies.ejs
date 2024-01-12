@@ -4,35 +4,44 @@
 </header>
 <div class="page-container">
     <h5>Original Post:</h5>
-<div id="blogPost" class="card">
-    <div class="card-body">
-        <p class="card-text"><%- blog.content.replace(/\n/g, '<br>') %></p>
-        <p class="card-text">
-            <span id="bold">Posted by: </span> <%= blog.user %> @ <%= blog.createdAt %>
-        </p>
-    </div>
-</div>
-<br>
-<h5>Replies:</h5>
-<div id="replySection">
-    <% paginatedReplies.forEach(reply => { %>
-        <div class="card mt-3" id="replyCard">
-            <div class="card-body">
-                <!-- Display reply content and user details -->
-                <p class="card-text"><%- reply.content.replace(/\n/g, '<br>') %></p>
-                <p class="card-text">
-                    <span id="bold">Posted by: </span><%= reply.user%> @ <%= reply.createdAt %>
-                </p>
-    
-                <!-- Add a link/button to delete the reply -->
-                <% if (user && (user.admin === 1 || user._id.toString() === reply.user._id.toString())) { %>
-                    <a class="btn btn-primary btn-sm" href="/blogs/editReply/<%= blog._id %>/<%= reply._id %>">Edit</a>
-                    <a class="btn btn-danger btn-sm" href="/blogs/deleteReply/<%= blog._id %>/<%= reply._id %>">Delete Reply</a>
+    <div id="blogPost" class="card">
+        <div class="card-body">
+            <p class="card-text"><%- blog.content.replace(/\n/g, '<br>') %></p>
+            <p class="card-text">
+                <p><strong>Posted by:</strong> <%= blog.user %> @ <span id="date"><%= blog.createdAt %></span> </p>
+                <% if (blog.createdAt.toString() === blog.updatedAt.toString()) { %>
+                <% } else { %>
+                    <p><strong>Edited</strong> @ <span id="date"><%= blog.updatedAt %></span></p>
                 <% } %>
-            </div>
+                </p>
+            </p>
         </div>
-    <% }); %>
-</div>
+    </div>
+    <br>
+    <h5>Replies:</h5>
+    <div id="replySection">
+        <% paginatedReplies.forEach(reply => { %>
+            <div class="card mt-3" id="replyCard">
+                <div class="card-body">
+                    <!-- Display reply content and user details -->
+                    <p class="card-text"><%- reply.content.replace(/\n/g, '<br>') %></p>
+                    <p class="card-text">
+                        <p><strong>Posted by:</strong><%= reply.user%> @ <span id="date"><%= reply.createdAt %></span></p>
+                        <% if (reply.createdAt.toString() === reply.updatedAt.toString()) { %>
+                        <% } else { %>
+                            <p><strong>Edited</strong> @ <span id="date"><%= reply.updatedAt %></span></p>
+                        <% } %>
+                    </p>
+        
+                    <!-- Add a link/button to delete the reply -->
+                    <% if (user && (user.admin === 1 || user._id.toString() === reply.user._id.toString())) { %>
+                        <a class="btn btn-primary btn-sm" href="/blogs/editReply/<%= blog._id %>/<%= reply._id %>">Edit</a>
+                        <a class="btn btn-danger btn-sm" href="/blogs/deleteReply/<%= blog._id %>/<%= reply._id %>">Delete Reply</a>
+                    <% } %>
+                </div>
+            </div>
+        <% }); %>
+    </div>
 
     <% if (user) { %>
         <div class="mt-4">
