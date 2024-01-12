@@ -29,7 +29,7 @@ const configurations = {  <br>
 
 # To be Added: <br>
 * Message board: 
-* Admin login vs user login: admin can add and delete message board topics, delete user; change blog post category from webpage rather than modifying MongoDB (admin value is null on registration unless manually added to database)
+* Admin priv.: delete user; add category
 * add a route for category -> blog -> replies 
 * last blog post & time displayed at category view @ Posted By 
 * last reply post & time displayed on blog view @ Posted By 

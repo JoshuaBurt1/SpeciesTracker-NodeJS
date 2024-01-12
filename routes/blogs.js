@@ -28,7 +28,33 @@ router.get("/", logMiddleware, async (req, res, next) => {
     }
 });
 
-router.post('/add', IsLoggedIn, (req, res) => {
+//GET handler for /blogs/addPost (loads)
+router.get("/addCategory", IsLoggedIn, logMiddleware, (req, res, next) => {
+    res.render("blogs/addCategory", { 
+        user: req.user, 
+        title: "Add a new Category",
+    });
+});
+
+/*
+router.post('/addCategory', IsLoggedIn, (req, res) => {
+    console.log('Form Data:', req.body);
+
+    Blog.create({
+        topic: req.body.topic, // Use the topic from the form
+    })
+    .then((createdModel) => {
+        console.log("Model created successfully:", createdModel);
+        res.redirect("/blogs");
+    })
+    .catch((error) => {
+        console.error("An error occurred:", error);
+        // Handle the error appropriately, e.g., by redirecting back to the form with an error message
+        res.redirect("/blogs/addCategory");
+    });
+});*/
+
+router.post('/addPost', IsLoggedIn, (req, res) => {
     console.log('Form Data:', req.body);
 
     Blog.create({
@@ -44,24 +70,24 @@ router.post('/add', IsLoggedIn, (req, res) => {
     .catch((error) => {
         console.error("An error occurred:", error);
         // Handle the error appropriately, e.g., by redirecting back to the form with an error message
-        res.redirect("/blogs/add");
+        res.redirect("/blogs/addPost");
     });
 });
   
-//GET handler for /blogs/add (loads)
-router.get("/add", IsLoggedIn, logMiddleware, (req, res, next) => {
-    res.render("blogs/add", { 
+//GET handler for /blogs/addPost (loads)
+router.get("/addPost", IsLoggedIn, logMiddleware, (req, res, next) => {
+    res.render("blogs/addPost", { 
         user: req.user, 
         title: "Add a new Blog",
         topic: req.query.topic // Pass the topic from the query parameters
     });
 });
 
-router.get("/edit/:_id", IsLoggedIn, logMiddleware, async  (req, res, next) => {
+router.get("/editPost/:_id", IsLoggedIn, logMiddleware, async  (req, res, next) => {
     try {
       const blogObj = await Blog.findById(req.params._id).exec();
       console.log(blogObj);
-      res.render("blogs/edit", {
+      res.render("blogs/editPost", {
         user: req.user,
         title: "Edit a Blog Entry",
         blog: blogObj
@@ -73,7 +99,7 @@ router.get("/edit/:_id", IsLoggedIn, logMiddleware, async  (req, res, next) => {
     }
   });
 
-  router.post("/edit/:_id", IsLoggedIn, (req, res, next) => {
+  router.post("/editPost/:_id", IsLoggedIn, (req, res, next) => {
     // Continue with the update logic
     Blog.findOneAndUpdate(
         { _id: req.params._id },

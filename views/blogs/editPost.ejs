@@ -3,7 +3,7 @@
     <h1>Edit Blog Post</h1>
 </header>
 <div>
-    <form action="/blogs/edit/<%= blog._id %>" method="POST">
+    <form action="/blogs/editPost/<%= blog._id %>" method="POST">
         <label for="name" class="col-2">Name:</label>
         <input name="name" id="name" class="form-control" value="<%= blog.title %>" required/>
 
