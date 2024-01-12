@@ -6,9 +6,9 @@
     <h5>Original Post:</h5>
 <div id="blogPost" class="card">
     <div class="card-body">
-        <p class="card-text"><%= blog.content || "Your story is processing..." %></p>
+        <p class="card-text"><%- blog.content.replace(/\n/g, '<br>') %></p>
         <p class="card-text">
-            <span id="bold">Posted by: </span> <%= blog.user.username || "Unknown User" %> @ <%= blog.createdAt %>
+            <span id="bold">Posted by: </span> <%= blog.user %> @ <%= blog.createdAt %>
         </p>
     </div>
 </div>
@@ -18,10 +18,17 @@
     <% paginatedReplies.forEach(reply => { %>
         <div class="card mt-3" id="replyCard">
             <div class="card-body">
+                <!-- Display reply content and user details -->
                 <p class="card-text"><%- reply.content.replace(/\n/g, '<br>') %></p>
                 <p class="card-text">
-                    <span id="bold">Posted by: </span><%= reply.user ? reply.user._id : "Unknown User" %> @ <%= reply.createdAt %>
+                    <span id="bold">Posted by: </span><%= reply.user%> @ <%= reply.createdAt %>
                 </p>
+    
+                <!-- Add a link/button to delete the reply -->
+                <% if (user && (user.admin === 1 || user._id.toString() === reply.user._id.toString())) { %>
+                    <a class="btn btn-primary btn-sm" href="/blogs/editReply/<%= blog._id %>/<%= reply._id %>">Edit</a>
+                    <a class="btn btn-danger btn-sm" href="/blogs/deleteReply/<%= blog._id %>/<%= reply._id %>">Delete Reply</a>
+                <% } %>
             </div>
         </div>
     <% }); %>
@@ -29,7 +36,7 @@
 
     <% if (user) { %>
         <div class="mt-4">
-            <button  id="replyButton" class="offset-3 btn btn-primary">Reply</button>
+            <button id="replyButton" class="offset-3 btn btn-primary">Reply</button>
         </div>
     <% } %>
 

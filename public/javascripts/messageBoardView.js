@@ -1,3 +1,4 @@
+//Category level drop down view of posts
 document.querySelectorAll('.topicButton').forEach(function (button) {
   button.addEventListener('click', function () {
       var clickedTopic = this.getAttribute('data-topic');
@@ -8,11 +9,10 @@ document.querySelectorAll('.topicButton').forEach(function (button) {
   });
 });
 
+//Adds truncated content view at Category level
 document.addEventListener("DOMContentLoaded", function () {
-  // Get all elements with the class 'truncated'
   var truncatedElements = document.querySelectorAll('.truncated');
 
-  // Function to truncate text
   function truncateWords(text, limit) {
     const words = text.split(' ');
     if (words.length > limit) {
@@ -20,16 +20,31 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     return text;
   }
-
-  // Iterate through each 'truncated' element
   truncatedElements.forEach(function (truncateElement) {
-    // Apply the truncateWords function to the inner HTML of each element
     truncateElement.innerHTML = truncateWords(truncateElement.innerHTML, 10);
   });
 });
 
-//AJAX request
-//AJAX vs HTTP method --> On form submit: HTTP requires browser reload, AJAX does not
+//Adds new line on pressing "Enter" for original posts
+document.addEventListener('DOMContentLoaded', function () {
+  var contentTextarea = document.querySelector('#originalPost');
+  contentTextarea.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      var cursorPosition = contentTextarea.selectionStart;
+      var currentValue = contentTextarea.value;
+      var newValue =
+          currentValue.substring(0, cursorPosition) +
+          '\n' +
+          currentValue.substring(contentTextarea.selectionEnd);
+
+      contentTextarea.value = newValue;
+    }
+  });
+});
+
+//Adds new line on pressing "Enter" for replies
+//AJAX vs HTTP method --> On form submit: HTTP requires browser reload, AJAX does not (this is AJAX)
 document.addEventListener('DOMContentLoaded', function () {
   var replyButton = document.getElementById('replyButton');
   var replySection = document.getElementById('replySection');
@@ -68,23 +83,23 @@ document.addEventListener('DOMContentLoaded', function () {
       replySection.appendChild(submitButton);
       replySection.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
 
-      // Add event listener to the textarea for Enter key presses
-      replyInput.addEventListener('keydown', function (event) {
-          if (event.key === 'Enter' && !event.shiftKey) {
-              // Prevent the default behavior of the Enter key (submitting the form)
-              event.preventDefault();
+        // Add event listener to the textarea for Enter key presses
+        replyInput.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                // Prevent the default behavior of the Enter key (submitting the form)
+                event.preventDefault();
 
-              // Insert a newline character in the textarea
-              var cursorPosition = replyInput.selectionStart;
-              var currentValue = replyInput.value;
-              var newValue =
-                  currentValue.substring(0, cursorPosition) +
-                  '\n' +
-                  currentValue.substring(replyInput.selectionEnd);
+                // Insert a newline character in the textarea
+                var cursorPosition = replyInput.selectionStart;
+                var currentValue = replyInput.value;
+                var newValue =
+                    currentValue.substring(0, cursorPosition) +
+                    '\n' +
+                    currentValue.substring(replyInput.selectionEnd);
 
-              replyInput.value = newValue;
-          }
-      });
+                replyInput.value = newValue;
+            }
+        });
 
       // Add event listener to the submit button
       submitButton.addEventListener('click', function () {

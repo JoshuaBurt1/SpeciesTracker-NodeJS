@@ -31,7 +31,7 @@
     <script defer src="/javascripts/activeCarousel.js"></script>
     <script defer src="/javascripts/imageEnlarge.js"></script>
     <script defer src="/javascripts/csvDownload.js"></script>
-    <script defer src="/javascripts/forumView.js"></script>
+    <script defer src="/javascripts/messageBoardView.js"></script>
     
 
     <!--Maps - Image Location -->
@@ -104,24 +104,22 @@
               </ul>
             </li>
             <% } %>
-          <% if (user) { %>
-            <li class="nav-item"><a
-                class="nav-link"
-                href="#"
-              ><%= user._id %> (<%= user.username %>)</a></li>
-            <li class="nav-item"><a
-                class="nav-link"
-                href="/Logout"
-              >Logout</a></li>
+            <% if (user) { %>
+              <li class="nav-item">
+                  <a class="nav-link <%= user.admin === 1 ? 'admin-link' : '' %>" href="#">
+                      <%= user._id %> (<%= user.username %>)
+                  </a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="/Logout">Logout</a>
+              </li>
           <% } else { %>
-            <li class="nav-item"><a
-                class="nav-link"
-                href="/Register"
-              >Register</a></li>
-            <li class="nav-item"><a
-                class="nav-link"
-                href="/Login"
-              >Login</a></li>
+              <li class="nav-item">
+                  <a class="nav-link" href="/Register">Register</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="/Login">Login</a>
+              </li>
           <% } %>
         </ul>
       </div>

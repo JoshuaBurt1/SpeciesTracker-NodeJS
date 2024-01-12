@@ -11,12 +11,14 @@ const logMiddleware = require("../logMiddleware");
 // Middleware for user authentication
 const IsLoggedIn = require("../extensions/authentication");
 
-// User login not required to view
 router.get("/", logMiddleware, async (req, res, next) => {
     try {
         const blogs = await Blog.find({ users: req.session.userId });
+        const user = req.user || {}; // Ensure user is always an object
+
         res.render("blogs/index", {
             user: req.user,
+            admin: user.admin, // Set a default value if admin is not present
             blogs: blogs,
             title: "Message Board"
         });
@@ -122,7 +124,7 @@ router.get("/:id", logMiddleware, async (req, res) => {
 
         const totalPages = Math.ceil(numberOfReplies / pageSize);
 
-        res.render("blogs/show", {
+        res.render("blogs/replies", {
             user: req.user,
             blog: blog,
             numberOfReplies: numberOfReplies,
@@ -166,6 +168,7 @@ router.post("/:id", logMiddleware, async (req, res) => {
     }
 });
 
+//DELETE POST
 router.get("/delete/:id", IsLoggedIn, async (req, res) => {
     try {
         let blogId = req.params.id; // Use req.params.id to get the blog ID
@@ -181,5 +184,89 @@ router.get("/delete/:id", IsLoggedIn, async (req, res) => {
     }
 });
 
+// GET handler for editing a reply (loads)
+router.get("/editReply/:blogId/:replyId", IsLoggedIn, logMiddleware, async (req, res) => {
+    try {
+        const blogId = req.params.blogId;
+        const replyId = req.params.replyId;
+
+        const blog = await Blog.findById(blogId);
+
+        if (!blog) {
+            console.error("Blog not found");
+            return res.redirect("/error");
+        }
+
+        // Find the correct reply using the replyId
+        const reply = blog.replies.find(r => r._id.toString() === replyId);
+
+        if (!reply) {
+            console.error("Reply not found");
+            return res.redirect("/error");
+        }
+
+        res.render("blogs/editReply", {
+            user: req.user,
+            title: "Edit Reply",
+            blogId: blog._id,
+            reply: reply,
+            blog: blog, // Add this line to pass the 'blog' variable to the view
+        });
+    } catch (err) {
+        console.error(err);
+        res.redirect("/error");
+    }
+});
+
+// POST handler for updating a reply
+router.post("/editReply/:blogId/:replyId", IsLoggedIn, async (req, res) => {
+    try {
+        const blogId = req.params.blogId;
+        const replyId = req.params.replyId;
+
+        const updatedContent = req.body.content;
+
+        const blog = await Blog.findOneAndUpdate(
+            { _id: blogId, "replies._id": replyId },
+            { $set: { "replies.$.content": updatedContent } },
+            { new: true }
+        );
+
+        if (!blog) {
+            console.error("Blog not found");
+            return res.redirect("/error");
+        }
+
+        res.redirect(`/blogs/${blogId}`);
+    } catch (err) {
+        console.error(err);
+        res.redirect("/error");
+    }
+});
+
+// GET handler for deleting a reply
+router.get("/deleteReply/:blogId/:replyId", IsLoggedIn, async (req, res) => {
+    try {
+        const { blogId, replyId } = req.params;
+
+        // Find the blog by ID and update replies array by removing the specified reply
+        const updatedBlog = await Blog.findByIdAndUpdate(
+            blogId,
+            { $pull: { replies: { _id: replyId } } },
+            { new: true }
+        );
+
+        if (!updatedBlog) {
+            console.error("Blog not found");
+            return res.redirect("/error");
+        }
+
+        console.log("Reply deleted successfully");
+        res.redirect(`/blogs/${blogId}`);
+    } catch (err) {
+        console.error(err);
+        res.redirect("/error");
+    }
+});
 
 module.exports = router;

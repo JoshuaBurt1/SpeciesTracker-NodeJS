@@ -8,7 +8,7 @@
         <input name="name" id="name" class="form-control" value="<%= blog.title %>" required/>
 
         <label for="content" class="col-2">Content:</label>
-        <input name="content" id="content" class="form-control" value="<%= blog.content %>" required/>
+        <textarea name="content" id="originalPost" class="form-control" required><%= blog.content %></textarea>
 
       <button class="offset-3 btn btn-primary">Save</button>
     </form>

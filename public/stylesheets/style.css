@@ -76,6 +76,14 @@
   border-bottom-right-radius: 7px;
 }
 
+.admin-link {
+  color: red;
+}
+
+.admin-link:hover {
+  color: rgb(234, 11, 11);
+}
+
 /* Content container*/
 /*Home*/
 #downloadCsvLink{
@@ -105,7 +113,7 @@ width: 10%;
 
 #blogPost{
   border: 2px solid grey; /* Adjust the color as needed */
-}
+} 
 
 #replyCard  {
   margin-left: 0.5%; /* Specify your left border style */
@@ -117,6 +125,13 @@ width: 10%;
   height: 20vh; /* Set the desired height */
   margin-top: 1%;
   margin-left: 0.5%;
+}
+
+#originalPost {
+  height: 20vh; /* Set the desired height */
+}
+#replyEdit {
+  height: 20vh; /* Set the desired height */
 }
 /*Indexes*/
 

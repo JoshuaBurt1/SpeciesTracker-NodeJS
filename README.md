@@ -25,15 +25,17 @@ const configurations = {  <br>
 ~API & csv download <br>
 ~User authentication & github auth: npm i passport express-session passport-local-mongoose passport-github2 <br>
 ~Message board (Forum) with reply <br>
+~Admin privileges (Edit and delete any post) <br>
 
 # To be Added: <br>
 * Message board: 
-* Admin login vs user login: admin can add and delete message board topics, delete any message/user; change blog post category from webpage rather than modifying MongoDB (admin value is null on registration unless manually added to database)
+* Admin login vs user login: admin can add and delete message board topics, delete user; change blog post category from webpage rather than modifying MongoDB (admin value is null on registration unless manually added to database)
 * add a route for category -> blog -> replies 
 * last blog post & time displayed at category view @ Posted By 
 * last reply post & time displayed on blog view @ Posted By 
+* posted edited marker and time, if occurred
 * views, unique views
-* allow users to edit rep lies; allow users to insert attachments/images into post
+* allow users to insert attachments/images into post
 <br>
 
 * APIs:
