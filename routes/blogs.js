@@ -36,12 +36,13 @@ router.get("/addCategory", IsLoggedIn, logMiddleware, (req, res, next) => {
     });
 });
 
-/*
 router.post('/addCategory', IsLoggedIn, (req, res) => {
     console.log('Form Data:', req.body);
 
     Blog.create({
         topic: req.body.topic, // Use the topic from the form
+        title: req.body.title,
+        user: req.user._id,
     })
     .then((createdModel) => {
         console.log("Model created successfully:", createdModel);
@@ -52,7 +53,7 @@ router.post('/addCategory', IsLoggedIn, (req, res) => {
         // Handle the error appropriately, e.g., by redirecting back to the form with an error message
         res.redirect("/blogs/addCategory");
     });
-});*/
+});
 
 router.post('/addPost', IsLoggedIn, (req, res) => {
     console.log('Form Data:', req.body);
