@@ -3,40 +3,56 @@
 <div class="mb-3">
     <p class="lead">Discussion and archive of species related content</p>
 </div>  
-    <a class="btn btn-primary" href="/blogs/add" id="buttonPad">Create Entry</a>
-    <div class="page-container"> <!-- Line Changed -->
-        <div class="table-container"> <!-- Line Changed -->
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Content</th>
-                        <th>Posted By</th>
-                        <% if (user) { %>
-                            <th>Actions</th>
+<div class="page-container">
+    <div class="table-container">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th id="th_topic">Category</th>
+                    <th id="th_title">Title</th>
+                    <th id="th_content">Content</th>
+                    <th id="th_user">Posted By</th>
+                    <th id="th_action">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% let sortedBlogs = blogs.sort((a, b) => a.topic.localeCompare(b.topic)); %>
+                <% let currentTopic = null; %>  
+                <% sortedBlogs.forEach(blog => { %>
+                    <% if (blog.topic !== currentTopic) { %>
+                        <!-- Display subheading when topic changes -->
+                        <tr class="table-secondary">
+                            <td colspan="4">
+                                <button class="btn btn-secondary btn-sm topicButton" data-topic="<%= blog.topic %>">
+                                    <%= blog.topic %>
+                                </button>
+                            </td>   
+                            <td colspan="1">
+                                <!-- Create Entry button for the current topic -->
+                                <a class="btn btn-primary btn-sm" href="/blogs/add?topic=<%= blog.topic %>">Create Entry</a>
+                            </td>
+                        </tr>
+                        <% currentTopic = blog.topic; %>
+                    <% } %>
+                    <tr class="originalPost" style="display: none;" data-topic="<%= blog.topic %>">
+                        <td></td>
+                        <td>
+                            <a href="/blogs/<%= blog.id %>"><%= blog.title %></a>
+                        </td>
+                        <td class="truncated"><%= blog.content %></td>
+                        <td><%= blog.user %></td>
+                        <% if (user && user._id.toString() === blog.user._id.toString()) { %>
+                            <td>
+                                <a class="btn btn-primary" href="/blogs/edit/<%= blog._id %>">Edit</a>
+                                <a class="btn btn-danger" href="/blogs/delete/<%= blog._id %>" onclick="return confirmDeletion()">Delete</a>
+                            </td>
+                        <% } else { %>
+                            <td></td> <!-- Empty cell if the user is not the owner -->
                         <% } %>
                     </tr>
-                </thead>
-                <tbody>
-                    <% blogs.forEach(blog => { %>
-                        <tr>
-                            <td>
-                                <a href="/blogs/<%= blog.id %>"><%= blog.title %></a>
-                            </td>
-                            <td class="truncated"><%= blog.content %></td>
-                            <td><%= blog.user %></td>
-                            <% if (user && user._id.toString() === blog.user._id.toString()) { %>
-                                <td>
-                                    <a class="btn btn-primary" href="/blogs/edit/<%= blog._id %>">Edit</a>
-                                    <a class="btn btn-danger" href="/blogs/delete/<%= blog._id %>" onclick="return confirmDeletion()">Delete</a>
-                                </td>
-                            <% } else { %>
-                                <td></td> <!-- Empty cell if user is not the owner -->
-                            <% } %>
-                        </tr>
-                    <% }); %>
-                </tbody>
-            </table>
+                <% }); %>
+            </tbody>
+        </table>
     </div>
 </div>
 

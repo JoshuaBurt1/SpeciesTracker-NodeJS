@@ -1,3 +1,13 @@
+document.querySelectorAll('.topicButton').forEach(function (button) {
+  button.addEventListener('click', function () {
+      var clickedTopic = this.getAttribute('data-topic');
+      var originalPostRows = document.querySelectorAll('.originalPost[data-topic="' + clickedTopic + '"]');
+      originalPostRows.forEach(function (post) {
+          post.style.display = (post.style.display === 'none' || post.style.display === '') ? 'table-row' : 'none';
+      });
+  });
+});
+
 document.addEventListener("DOMContentLoaded", function () {
   // Get all elements with the class 'truncated'
   var truncatedElements = document.querySelectorAll('.truncated');

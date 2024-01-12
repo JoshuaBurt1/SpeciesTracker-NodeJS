@@ -82,7 +82,23 @@
 width: 10%;
 }
 
-/*Forum*/
+/*Message Board*/
+#th_content{
+  width: 20vw;
+}
+#th_topic{
+  width: 10vw;
+}
+#th_title{
+  width: 15vw;
+}
+#th_user{
+  width: 12vw;
+}
+#th_action{
+  width: 10vw;
+}
+
 #bold{ 
   font-weight: bold;
 }

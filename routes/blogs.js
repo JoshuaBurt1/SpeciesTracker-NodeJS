@@ -28,26 +28,31 @@ router.get("/", logMiddleware, async (req, res, next) => {
 
 router.post('/add', IsLoggedIn, (req, res) => {
     console.log('Form Data:', req.body);
-  
+
     Blog.create({
-      title: req.body.title,
-      content: req.body.content,
-      user: req.user._id,
+        topic: req.body.topic, // Use the topic from the form
+        title: req.body.title,
+        content: req.body.content,
+        user: req.user._id,
     })
     .then((createdModel) => {
-      console.log("Model created successfully:", createdModel);
-      res.redirect("/blogs");
+        console.log("Model created successfully:", createdModel);
+        res.redirect("/blogs");
     })
     .catch((error) => {
-      console.error("An error occurred:", error);
+        console.error("An error occurred:", error);
+        // Handle the error appropriately, e.g., by redirecting back to the form with an error message
+        res.redirect("/blogs/add");
     });
-  });
+});
   
 //GET handler for /blogs/add (loads)
 router.get("/add", IsLoggedIn, logMiddleware, (req, res, next) => {
     res.render("blogs/add", { 
         user: req.user, 
-        title: "Add a new Blog" });
+        title: "Add a new Blog",
+        topic: req.query.topic // Pass the topic from the query parameters
+    });
 });
 
 router.get("/edit/:_id", IsLoggedIn, logMiddleware, async  (req, res, next) => {
@@ -71,6 +76,7 @@ router.get("/edit/:_id", IsLoggedIn, logMiddleware, async  (req, res, next) => {
     Blog.findOneAndUpdate(
         { _id: req.params._id },
         {
+            topic: req.body.topic,
             title: req.body.name,
             content: req.body.content,
             status: req.body.updateDate,
