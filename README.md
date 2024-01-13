@@ -4,6 +4,8 @@ https://speciestracker3.azurewebsites.net/
 
 # To Start: <br>
 * Download zip, open in code editor
+* Download node.js, create a MongoDB account and cluster
+* Download dependencies in terminal: npm i connect cookie-parser csv-writer debug ejs express express-session fs http-errors leaflet mongodb mongoose morgan multer nodemon passport passport-github2 passport-local-mongoose url
 * Add config folder -> globals.js file
 const configurations = {  <br>
   db: "your_mongodb_link",  <br>
@@ -29,8 +31,10 @@ const configurations = {  <br>
 
 # To be Added: <br>
 * Message board: 
-* Admin priv.: delete user & associate data
+* Admin priv.: delete user & associated data
 * add a route for category -> blog -> replies 
+* sort post - most recent reply appears at top under topic
+* Archive - for essential information (admin can move by edit topic (add category/topic-done))
 * allow users to insert attachments/images into post
 <br>
 
@@ -51,7 +55,8 @@ const configurations = {  <br>
 <br>
 
 * Machine Learning:
-* Machine learning species identifier (within add.ejs view) 
+* Machine learning species identifier (within add.ejs view)
+- Choices: A. Use an API (https://my.plantnet.org/) B. Use a dataset (Kaggle etc.) + pre-trained model C. Make your own dataset/ train your model
 * Identification (on image upload) - should be able to autofill species name; feedback if wrong kingdom/no upload
 * identification info: added via chatgpt --> orderby button: Taxonomy, Conservation Status, Invasiveness, Industrial Usage, Nutrition, Toxicity (Developer does not hardcode, chatgpt adds info to mongoDB)
 * after info added, searchBar can search by taxonomy, etc.
