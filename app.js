@@ -104,51 +104,39 @@ app.use("/fungi", fungiRouter);
 app.use('/animals', animalsRouter);
 app.use("/protists", protistsRouter);
 
-//IDENTIFY
-
+//IDENTIFY PLANT (PlantNet)
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
-
 // Configure express-fileupload to use a temporary directory
 app.use(fileUpload({ useTempFiles: true, tempFileDir: os.tmpdir() }));
 app.post('/identify', async (req, res) => {
   const project = 'all?include-related-images=false&no-reject=false&lang=en&type=kt';
   const apiKey = config.plantNetAPI;
   const apiUrl = `https://my-api.plantnet.org/v2/identify/${project}&api-key=${apiKey}`;
-
   const formData = new FormData();
-
   // Use req.files.image to access the uploaded file  
   const file = req.files.image;
-
   console.log(apiUrl);
   console.log('file', file);
-
   // Make sure file is not empty
   if (!file) {
       return res.status(400).json({ message: 'No file uploaded.' });
   }
-
   console.log('file.tempFilePath', file.tempFilePath);
-
   const fileStream = fs.createReadStream(file.tempFilePath);
-
   console.log('fileStream', fileStream);
-
   formData.append('images', fileStream, { filename: file.name });
-
   try {
       const response = await axios.post(apiUrl, formData, {
           headers: {
               ...formData.getHeaders(),
           },
       });
-
       // Extract information about the first match
       const firstMatch = response.data.results && response.data.results[0];
-      
+    
       // Send back detailed information to the client
       res.status(response.status).json({
           status: response.status,

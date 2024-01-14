@@ -154,24 +154,14 @@ router.post("/edit/:_id", IsLoggedIn, upload.single('image'), (req, res, next) =
 router.get("/delete/:_id", IsLoggedIn, async (req, res, next) => {
   try {
     let fungusId = req.params._id;
-
+    
     // Find the fungus to be deleted
     const fungusToDelete = await Fungus.findById(fungusId).exec();
 
     // Delete the image file associated with the fungus
     if (fungusToDelete && fungusToDelete.image) {
       const imagePath = path.join(__dirname, '..', 'public/images/fungi_images', fungusToDelete.image);
-
-      try {
-        // Check if the file exists before attempting to delete
-        await fsPromises.access(imagePath);
-
-        // If the file exists, delete it
-        await fsPromises.unlink(imagePath);
-      } catch (err) {
-        // Handle the error (file not found, permission issues, etc.)
-        console.error(`Error deleting image file: ${err.message}`);
-      }
+      fs.unlinkSync(imagePath); // Delete the file
     }
 
     // Delete the fungus from the database
