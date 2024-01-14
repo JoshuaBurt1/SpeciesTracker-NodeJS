@@ -45,6 +45,10 @@ document.addEventListener('DOMContentLoaded', function () {
           const coordinates = `${roundedLatitude}, ${roundedLongitude}`;
           coordinatesInput.value = coordinates;
           console.log('Coordinates:', coordinates);
+
+          // Log the image path
+        const imagePath = file.name; // Assuming the file name contains the path information
+        console.log('Image Path:', imagePath);
         }
       });
     };

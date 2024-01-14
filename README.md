@@ -5,9 +5,11 @@ https://speciestracker3.azurewebsites.net/
 # To Start: <br>
 * Download zip, open in code editor
 * Download node.js, create a MongoDB account and cluster
-* Download dependencies in terminal: npm i connect cookie-parser csv-writer debug ejs express express-session fs http-errors leaflet mongodb mongoose morgan multer nodemon passport passport-github2 passport-local-mongoose url
+* In terminal: npm init -y
+* Download dependencies: npm i connect cookie-parser csv-writer debug ejs express express-session fs http-errors leaflet mongodb mongoose morgan multer nodemon passport passport-github2 passport-local-mongoose url axios form-data cors express-fileupload os
 * Add config folder -> globals.js file
 const configurations = {  <br>
+  plantNetAPI: "your_plantNet_API_key", <br>
   db: "your_mongodb_link",  <br>
   github: { <br>
     clientId: "your_id", <br>
@@ -23,8 +25,8 @@ const configurations = {  <br>
 ~Image upload: npm i multer <br>
 ~Date, time, gps autofill: npm/exif-js <br>
 ~Coordinates to map & map to coordinates: npm i leaflet <br>
-~Your Dataset view (login) & All data view <br>
-~API & csv download <br>
+~Plant identification (plantNet API)
+~this website database API & csv download <br>
 ~User authentication & github auth: npm i passport express-session passport-local-mongoose passport-github2 <br>
 ~Message board with reply <br>
 ~Admin privileges (add category, edit & delete any post) <br>
@@ -34,8 +36,9 @@ const configurations = {  <br>
 * Admin priv.: delete user & associated data
 * add a route for category -> blog -> replies 
 * sort post - most recent reply appears at top under topic
-* Archive - for essential information (admin can move by edit topic (add category/topic-done))
+* Archive - for essential information (admin can move by editing post topic value)
 * allow users to insert attachments/images into post
+* ability to reply to replies
 <br>
 
 * APIs:
@@ -56,7 +59,7 @@ const configurations = {  <br>
 
 * Machine Learning:
 * Machine learning species identifier (within add.ejs view)
-- Choices: A. Use an API (https://my.plantnet.org/) B. Use a dataset (Kaggle etc.) + pre-trained model C. Make your own dataset/ train your model
+- Choices: A. Use an API B. Use a dataset (Kaggle etc.) + pre-trained model C. Make your own dataset/ train your model
 * Identification (on image upload) - should be able to autofill species name; feedback if wrong kingdom/no upload
 * identification info: added via chatgpt --> orderby button: Taxonomy, Conservation Status, Invasiveness, Industrial Usage, Nutrition, Toxicity (Developer does not hardcode, chatgpt adds info to mongoDB)
 * after info added, searchBar can search by taxonomy, etc.

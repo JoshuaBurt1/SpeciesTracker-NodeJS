@@ -1,19 +1,18 @@
 <%- include('../partials/header') %>
 <h1><%= title %></h1>
 
-
 <!-- available to req.body object -->
 <form method="POST" enctype="multipart/form-data">
   <!-- Input names have to match the name of the fields in the mongo schema object -->
-  <!-- Mapping is not automatic, but it's best practices -->
+  <fieldset class="form-group">
+    <label for="image" class="col-2">Image:</label>
+    <input type="file" name="image" id="image" class="form-control" accept=".jpg, .jpeg, .png" required onchange="identifyPlant()">
+  </fieldset>
   <fieldset class="form-group">
     <label for="name" class="col-2">Name:</label>
     <input name="name" id="name" class="form-control" required/>
   </fieldset>
-  <fieldset class="form-group">
-    <label for="image" class="col-2">Image:</label>
-    <input type="file" name="image" id="image" class="form-control" accept=".jpg, .jpeg, .png" required>
-  </fieldset>
+  <div id="scientificName"></div>
   <fieldset class="form-group">
     <label for="updateDate" class="col-2">Date Identified:</label>
     <input
@@ -24,7 +23,6 @@
       placeholder="YYYY:MM:DD HH:mm:ss"
     />
   </fieldset>
-  <!-- -->
   <fieldset class="form-group">
     <label for="location" class="col-2">Location:</label>
     <input name="location" id="location" class="form-control" placeholder="Latitude, Longitude (e.g., 45.0000, -45.0000)" required/>
@@ -37,5 +35,48 @@
   <!-- Button needs to be inside <form> element to trigger POST -->
   <button class="offset-3 btn btn-primary">Save</button>
 </form>
+
+<script defer>
+  async function identifyPlant() {
+      const image = document.getElementById('image');
+      const images = image.files;
+      const formData = new FormData();
+    formData.append('image', images[0]);
+      try {
+          const apiUrl = 'http://localhost:3000/identify'; // Your server URL
+          const response = await fetch(apiUrl, {
+              method: 'POST',
+              body: formData
+          });
+
+          // Check if the response has an error status
+          if (!response.ok) {
+              console.error('Error response status:', response.status);
+              console.log('Error response text:', await response.text());
+              return;
+          }
+
+          const data = await response.json();
+          console.log('status', response.status); // should be: 200
+          console.log('data', data);
+          var plant = document.getElementById('scientificName');
+          plant.innerHTML = data.bestMatch;
+
+          var commonName = document.getElementById('name');
+
+        if (data.firstMatch && data.firstMatch.species && data.firstMatch.species.commonNames && data.firstMatch.species.commonNames.length > 0) {
+            commonName.innerHTML = `${data.firstMatch.species.commonNames[0]}`;
+
+            // Set the value of the 'name' input to the common name
+            commonName.value = data.firstMatch.species.commonNames[0];
+        } else {
+            commonName.innerHTML = 'No species information available.';
+            commonName.value = ''; // Clear the input value if no common name is available
+        }
+      } catch (error) {
+          console.error('error', error);
+      }
+  }
+</script>
 
 <%- include('../partials/footer') %>

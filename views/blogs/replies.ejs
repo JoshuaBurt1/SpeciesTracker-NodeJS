@@ -36,7 +36,9 @@
                     <!-- Add a link/button to delete the reply -->
                     <% if (user && (user.admin === 1 || user._id.toString() === reply.user._id.toString())) { %>
                         <a class="btn btn-primary btn-sm" href="/blogs/editReply/<%= blog._id %>/<%= reply._id %>">Edit</a>
-                        <a class="btn btn-danger btn-sm" href="/blogs/deleteReply/<%= blog._id %>/<%= reply._id %>">Delete Reply</a>
+                        <% if (user && user.admin === 1) { %>
+                            <a class="btn btn-danger btn-sm" href="/blogs/deleteReply/<%= blog._id %>/<%= reply._id %>" onclick="return confirmDeletion()">Delete</a>
+                        <% } %>
                     <% } %>
                 </div>
             </div>

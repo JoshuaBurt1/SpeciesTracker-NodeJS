@@ -10,25 +10,21 @@ const IsLoggedIn = require("../extensions/authentication");
 //Mongoose models
 const Plant = require("../models/plant"); // Import mongoose model to be used
 
-//FILE STORAGE
+//FILE STORAGE (multer)
 // Update the storage configuration
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const userId = req.user._id; // Assuming user object is available after authentication
     const userImagesPath = `public/images/plantae_images`;
-
-    // Ensure the user's folder exists, create if not
     fs.mkdirSync(path.join(__dirname, '..', userImagesPath), { recursive: true });
-
-    // Set the destination path
     cb(null, userImagesPath);
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
   },
 });
-// Use the updated storage configuration
 const upload = multer({ storage: storage });
+
 // Use the middleware to check if the user is logged in
 router.use(IsLoggedIn);
 

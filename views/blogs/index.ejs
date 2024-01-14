@@ -51,7 +51,9 @@
                         <% if (user && (user._id.toString() === blog.user._id.toString() || user.admin === 1)) { %>
                             <td>
                                 <a class="btn btn-primary btn-sm" href="/blogs/editPost/<%= blog._id %>">Edit</a>
-                                <a class="btn btn-danger btn-sm" href="/blogs/delete/<%= blog._id %>" onclick="return confirmDeletion()">Delete</a>
+                                <% if (user && user.admin === 1) { %>
+                                    <a class="btn btn-danger btn-sm" href="/blogs/delete/<%= blog._id %>" onclick="return confirmDeletion()">Delete</a>
+                                <% } %>
                             </td>
                         <% } else { %>
                             <td></td> <!-- Empty cell if the user is not the owner -->

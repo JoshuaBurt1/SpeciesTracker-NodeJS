@@ -2,9 +2,15 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
+const axios = require('axios');
+const FormData = require('form-data');
+const cors = require('cors');
+const fs = require('fs');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var app = express();
+const os = require('os'); 
+const fileUpload = require('express-fileupload');
 
 // view engine setup - Serve static files from the 'public' directory
 app.use(express.static('public'));
@@ -98,10 +104,61 @@ app.use("/fungi", fungiRouter);
 app.use('/animals', animalsRouter);
 app.use("/protists", protistsRouter);
 
-// ROUTING ERRORS
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404));
+//IDENTIFY
+
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(__dirname));
+
+// Configure express-fileupload to use a temporary directory
+app.use(fileUpload({ useTempFiles: true, tempFileDir: os.tmpdir() }));
+app.post('/identify', async (req, res) => {
+  const project = 'all?include-related-images=false&no-reject=false&lang=en&type=kt';
+  const apiKey = config.plantNetAPI;
+  const apiUrl = `https://my-api.plantnet.org/v2/identify/${project}&api-key=${apiKey}`;
+
+  const formData = new FormData();
+
+  // Use req.files.image to access the uploaded file  
+  const file = req.files.image;
+
+  console.log(apiUrl);
+  console.log('file', file);
+
+  // Make sure file is not empty
+  if (!file) {
+      return res.status(400).json({ message: 'No file uploaded.' });
+  }
+
+  console.log('file.tempFilePath', file.tempFilePath);
+
+  const fileStream = fs.createReadStream(file.tempFilePath);
+
+  console.log('fileStream', fileStream);
+
+  formData.append('images', fileStream, { filename: file.name });
+
+  try {
+      const response = await axios.post(apiUrl, formData, {
+          headers: {
+              ...formData.getHeaders(),
+          },
+      });
+
+      // Extract information about the first match
+      const firstMatch = response.data.results && response.data.results[0];
+      
+      // Send back detailed information to the client
+      res.status(response.status).json({
+          status: response.status,
+          bestMatch: response.data.bestMatch,
+          firstMatch: firstMatch,
+      });
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(error.response?.status || 500).json({ message: error.message });
+  }
 });
 
 // error handler
