@@ -2,7 +2,6 @@
 const express = require("express");
 const multer = require('multer');
 const fs = require('fs');
-const fsPromises = require('fs').promises; // Add this line to require fs and promisify its methods
 const path = require('path');
 const router = express.Router();
 var logMiddleware = require('../logMiddleware'); //route logging middleware
@@ -115,6 +114,7 @@ router.get("/edit/:_id", IsLoggedIn, logMiddleware, async  (req, res, next) => {
   try {
     const plantObj = await Plant.findById(req.params._id).exec();
     console.log(plantObj);
+    console.log(plantObj.name);
     res.render("plants/edit", {
       user: req.user,
       title: "Edit a Plant Entry",
@@ -128,34 +128,38 @@ router.get("/edit/:_id", IsLoggedIn, logMiddleware, async  (req, res, next) => {
 });
 
 // POST /plants/editID
-router.post("/edit/:_id", IsLoggedIn, upload.single('image'), (req, res, next) => {
-  // Check if a file was uploaded
-  if (req.file) {
-    // Use req.file.path to get the path of the uploaded image
-    var imagePath = req.file.path;
-    imagePath = path.basename(imagePath);
-    console.log(imagePath); // Print the path of the uploaded image to the console)
-  } else {
-    // No file was uploaded, use the existing image path
-    var imagePath = req.body.image;
-  }
-  // Continue with the update logic
-  Plant.findOneAndUpdate(
-    { _id: req.params._id },
-    {
-      name: req.body.name,
-      updateDate: req.body.updateDate,
-      location: req.body.location,
-      image: imagePath,
-      user: req.user._id, // Use req.user._id to get the currently logged-in user's ID
+router.post("/edit/:_id", IsLoggedIn, upload.single('image'), async (req, res, next) => {
+  try {
+    const uniqueImageName = createUniqueImageName(req.body.name, req.file.originalname);
+    
+    // Move the uploaded image to the new destination path
+    const newDestinationPath = path.join(__dirname, '..', userImagesPath, uniqueImageName);
+    await fs.promises.rename(req.file.path, newDestinationPath);
+
+    // Continue with the update logic
+    const updatedPlant = await Plant.findOneAndUpdate(
+      { _id: req.params._id },
+      {
+        name: req.body.name,
+        updateDate: req.body.updateDate,
+        location: req.body.location,
+        image: uniqueImageName,
+        user: req.user._id,
+      },
+      { new: true } // to return the updated document
+    );
+
+    if (!updatedPlant) {
+      console.log("Plant not found");
+      return res.redirect("/error");
     }
-  )
-  .then((updatedPlant) => {
+
+    console.log("Model updated successfully:", updatedPlant);
     res.redirect("/plants");
-  })
-  .catch((err) => {
+  } catch (error) {
+    console.error("An error occurred:", error);
     res.redirect("/error");
-  });
+  }
 });
 
 //TODO D > Delete a plant

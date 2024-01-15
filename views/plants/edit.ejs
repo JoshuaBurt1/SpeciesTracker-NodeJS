@@ -14,7 +14,7 @@
       <fieldset class="form-group">
         <label for="image" class="col-2">Image:</label>
         <input type="file" name="image" id="image" class="form-control" accept=".jpg, .jpeg, .png" >
-        <small class="form-text text-muted">Previous Image Path: <%= plant.image %></small>
+        <small class="form-text text-muted" id="originalFileName">Previous Image Path: <%= plant.image %></small>
       </fieldset>
       <fieldset class="form-group">
         <label for="updateDate" class="col-2">Date Identified:</label>
@@ -34,4 +34,48 @@
     </form>
   </div>
 </div>
+
+<script defer>
+  const nameInput = document.getElementById('name');
+  const imageInput = document.getElementById('image');
+
+  // Function to send data to the server
+  const sendDataToServer = async (data) => {
+  try {
+    const formData = new FormData();
+
+    // Append each key-value pair to the FormData object
+    Object.entries(data).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+
+    const response = await fetch('/edit/:_id', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Server error');
+    }
+
+    const result = await response.json();
+    console.log('Server response:', result);
+  } catch (error) {
+    console.error('Error sending data to the server:', error);
+  }
+};
+
+  // Event listener for name input
+  nameInput.addEventListener('input', () => {
+    const nameValue = nameInput.value;
+    sendDataToServer({ name: nameValue });
+  });
+
+  // Event listener for image input (assuming you want to handle file input changes)
+  imageInput.addEventListener('change', () => {
+    const imageFile = imageInput.files[0];
+    sendDataToServer({ image: imageFile });
+  });
+</script>
+
 <%- include('../partials/footer') %>

@@ -7,7 +7,7 @@ https://speciestracker3.azurewebsites.net/
 * Download node.js, create a MongoDB account and cluster
 * In terminal: npm init -y
 * Download dependencies: npm i connect cookie-parser csv-writer debug ejs express express-session fs http-errors leaflet mongodb mongoose morgan multer nodemon passport passport-github2 passport-local-mongoose url axios form-data cors express-fileupload os
-* Add config folder -> globals.js file
+* Add folder & file config/globals.js <br>
 const configurations = {  <br>
   plantNetAPI: "your_plantNet_API_key", <br>
   db: "your_mongodb_link",  <br>
@@ -17,6 +17,7 @@ const configurations = {  <br>
     callbackUrl: "callback_url", <br>
   }, <br>
 }; <br>
+module.exports = configurations;<br>
 * In terminal: nodemon
 
 # Capabilities <br>
@@ -25,7 +26,7 @@ const configurations = {  <br>
 ~Image upload: npm i multer <br>
 ~Date, time, gps autofill: npm/exif-js <br>
 ~Coordinates to map & map to coordinates: npm i leaflet <br>
-~Plant identification (plantNet API)
+~Plant identification (plantNet API) <br>
 ~this website database API & csv download <br>
 ~User authentication & github auth: npm i passport express-session passport-local-mongoose passport-github2 <br>
 ~Message board with reply <br>

@@ -72,19 +72,33 @@ router.get('/', IsLoggedIn, logMiddleware, async (req, res, next) => {
   }
 });
 
+//ADD name field = name_timestamp.jpg
+const userImagesPath = 'public/images/fungi_images';
+// Ensure the directory exists
+fs.mkdirSync(path.join(__dirname, '..', userImagesPath), { recursive: true });
+const createUniqueImageName = (name, originalName) => {
+  // Replace spaces with underscores in the name
+  const formattedName = name.replace(/\s+/g, '_');
+  const extension = path.extname(originalName);
+  const timestamp = new Date().getTime();
+  const uniqueName = `${formattedName}_${timestamp}${extension}`;
+  return uniqueName;
+};
+
 //ADD view POST
-router.post("/add", IsLoggedIn, upload.single('image'), (req, res, next) => {
+router.post("/add", IsLoggedIn, upload.single('image'), async (req, res, next) => {
   // Use req.file.path to get the path of the uploaded image
-  var imagePath = req.file.path;
-  imagePath = path.basename(imagePath);
-  console.log(imagePath); // Print the path of the uploaded image to the console)
+  const uniqueImageName = createUniqueImageName(req.body.name, req.file.originalname);
+    // Move the uploaded image to the new destination path
+    const newDestinationPath = path.join(__dirname, '..', userImagesPath, uniqueImageName);
+    await fs.promises.rename(req.file.path, newDestinationPath);
 
   // Create a new Fungus with the uploaded image path
   Fungus.create({
     name: req.body.name,
     updateDate: req.body.updateDate,
     location: req.body.location,
-    image: imagePath, // Save the path to the uploaded image
+    image: uniqueImageName, // Save the path to the uploaded image
     user: req.user._id, // Use req.user._id to get the currently logged-in user's ID
   })
   .then((createdModel) => {
