@@ -22,6 +22,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Log the server running message
+const port = 3001;
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
+
 //2. DATABASE MongoDB CONNECTIONS
 //Add connection string from Config file
 const config = require("./config/globals");
