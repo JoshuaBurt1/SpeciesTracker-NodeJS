@@ -6,6 +6,7 @@ const animalsSchemaObj = {
   // add each element and its properties
   kingdom: { type: String, required: true, default: "animalia" },
   name: { type: String, required: true },
+  binomialNomenclature: { type: String, required: false },
   updateDate: { type: String, required: true },
   location: { type: String, required: true },
   image: { type: String, required: true },

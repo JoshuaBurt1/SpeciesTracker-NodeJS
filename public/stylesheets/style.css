@@ -171,9 +171,60 @@ body {
 label {
   display: inline-block;
   max-width: 100%;
-  margin-top: 1em;
+  margin-top: 0.5em;
   margin-bottom: 0.2em;
   font-weight: 700;
+  white-space: nowrap; /* Prevent wrapping onto new line */
+
+}
+
+#dataVisual {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start; /* Align items to the top */
+}
+
+#nameRow {
+  display: flex;
+  justify-content: space-between; /* Create space between the fieldsets */
+  margin-bottom: 1%;
+}
+
+#nameRow fieldset {
+  margin: 0;
+  flex-grow: 1; /* Make both fieldsets take up equal space */
+}
+
+#nameRow fieldset:first-child {
+  margin-right: 2%; 
+}
+
+#name{
+  margin-right:2%;
+}
+#binomialNomenclature{
+  margin-right:2%;
+}
+
+#imageAndName {
+  width: 100%; /* Set the desired width */
+  margin-right: 2%;
+}
+
+#imageVisual {
+  height: 100%; /* Set to 90% height */
+  display: flex;
+  justify-content: flex-end; /* Align content to the left */
+  align-items: flex-start; /* Align content to the top */
+  flex-grow: 1; /* Fill remaining space */
+}
+
+#preview {
+  object-fit: contain; /* Maintain aspect ratio without overflowing */
+}
+
+#loginPassword {
+  margin-bottom: 1%; /* Add some spacing between fieldsets */
 }
 
 #help{

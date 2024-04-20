@@ -42,7 +42,7 @@
       <tbody>
         <% dataset.forEach(function(item) { %>
           <tr>
-            <td class="col-2"><%= item.name %></td>
+            <td class="col-2"><%= item.name %><br><i><%= item.binomialNomenclature %></i></td>
             <td>
               <ul id="cellList">
                 <% if (item.updateDates && item.updateDates.length > 0) { %>

@@ -4,15 +4,28 @@
 <!-- available to req.body object -->
 <form method="POST" enctype="multipart/form-data">
   <!-- Input names have to match the name of the fields in the mongo schema object -->
-  <fieldset class="form-group">
-    <label for="image" class="col-2">Image:</label>
-    <input type="file" name="image" id="image" class="form-control" accept=".jpg, .jpeg, .png" required onchange="identifyPlant()">
-  </fieldset>
-  <fieldset class="form-group">
-    <label for="name" class="col-2">Name:</label>
-    <input name="name" id="name" class="form-control" required/>
-  </fieldset>
-  <div id="scientificName"></div>
+  <div id="dataVisual">
+    <div id="imageAndName">
+        <fieldset class="form-group">
+            <label for="image" class="col-2">Image:</label>
+            <input type="file" name="image" id="image" class="form-control" accept=".jpg, .jpeg, .png" required onchange="identifyPlant()">
+        </fieldset>
+        <div id="nameRow">
+        <fieldset class="form-group">
+            <label for="name" class="col-2">Name:</label>
+            <input name="name" id="name" class="form-control" required/>
+        </fieldset>
+        <fieldset class="form-group">
+            <label for="binomialNomenclature" class="col-2">Scientific Name:</label>
+            <input name="binomialNomenclature" id="binomialNomenclature" class="form-control"/>
+        </fieldset>
+      </div>
+        <div id="top3"></div> <!-- list top 3 names, scientific name and percentages -->
+    </div>
+    <div id="imageVisual">
+        <img src="/site_images/noimage.png" alt="No image" id="preview">
+    </div>
+  </div>
   <fieldset class="form-group">
     <label for="updateDate" class="col-2">Date Identified:</label>
     <input
@@ -35,47 +48,50 @@
   <!-- Button needs to be inside <form> element to trigger POST -->
   <button class="offset-3 btn btn-primary">Save</button>
 </form>
-
 <script defer>
   async function identifyPlant() {
-      const image = document.getElementById('image');
-      const images = image.files;
-      const formData = new FormData();
+    //changes preview image
+    const images = image.files;
+    const formData = new FormData();
     formData.append('image', images[0]);
-      try {
-          const apiUrl = 'http://localhost:3000/identify'; // Your server URL
-          const response = await fetch(apiUrl, {
-              method: 'POST',
-              body: formData
-          });
+    
+    try {
+      const apiUrl = 'http://localhost:3000/identify'; // Your server URL
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        body: formData
+      });
 
-          // Check if the response has an error status
-          if (!response.ok) {
-              console.error('Error response status:', response.status);
-              console.log('Error response text:', await response.text());
-              return;
-          }
-
-          const data = await response.json();
-          console.log('status', response.status); // should be: 200
-          console.log('data', data);
-          var plant = document.getElementById('scientificName');
-          plant.innerHTML = data.bestMatch;
-
-          var commonName = document.getElementById('name');
-
-        if (data.firstMatch && data.firstMatch.species && data.firstMatch.species.commonNames && data.firstMatch.species.commonNames.length > 0) {
-            commonName.innerHTML = `${data.firstMatch.species.commonNames[0]}`;
-
-            // Set the value of the 'name' input to the common name
-            commonName.value = data.firstMatch.species.commonNames[0];
-        } else {
-            commonName.innerHTML = 'No species information available.';
-            commonName.value = ''; // Clear the input value if no common name is available
-        }
-      } catch (error) {
-          console.error('error', error);
+      if (!response.ok) {
+        console.error('Error response status:', response.status);
+        console.log('Error response text:', await response.text());
+        return;
       }
+
+      const data = await response.json();
+      console.log('status', response.status);
+      console.log('data', data);
+      
+      // Display top 3 matches
+      const top3Div = document.getElementById('top3');
+      top3Div.innerHTML = ''; // Clear previous content
+
+      data.top3Matches.forEach((match, index) => {
+      const matchDiv = document.createElement('div');
+      matchDiv.innerHTML = `<strong>${index + 1}. Name:</strong> ${match.name}; 
+                        <strong>Scientific Name:</strong> ${match.scientificName}; 
+                        <strong>Percentage:</strong> ${match.score}<br>`;
+      top3Div.appendChild(matchDiv);  
+    });
+
+      // Set values for initial fields
+      var plant = document.getElementById('binomialNomenclature');
+      plant.value = data.top3Matches[0].scientificName;
+      var commonName = document.getElementById('name');
+      commonName.value = data.top3Matches[0].name;
+    } catch (error) {
+      console.error('error', error);
+    }
   }
 </script>
 

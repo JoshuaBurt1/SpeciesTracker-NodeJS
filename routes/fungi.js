@@ -96,6 +96,7 @@ router.post("/add", IsLoggedIn, upload.single('image'), async (req, res, next) =
   // Create a new Fungus with the uploaded image path
   Fungus.create({
     name: req.body.name,
+    binomialNomenclature: req.body.binomialNomenclature,
     updateDate: req.body.updateDate,
     location: req.body.location,
     image: uniqueImageName, // Save the path to the uploaded image
@@ -149,6 +150,7 @@ router.post("/edit/:_id", IsLoggedIn, upload.single('image'), (req, res, next) =
     { _id: req.params._id },
     {
       name: req.body.name,
+      binomialNomenclature: req.body.binomialNomenclature,
       updateDate: req.body.updateDate,
       location: req.body.location,
       image: imagePath,

@@ -124,34 +124,32 @@ app.post('/identify', async (req, res) => {
   const formData = new FormData();
   // Use req.files.image to access the uploaded file  
   const file = req.files.image;
-  console.log(apiUrl);
-  console.log('file', file);
   // Make sure file is not empty
   if (!file) {
-      return res.status(400).json({ message: 'No file uploaded.' });
+    return res.status(400).json({ message: 'No file uploaded.' });
   }
-  console.log('file.tempFilePath', file.tempFilePath);
   const fileStream = fs.createReadStream(file.tempFilePath);
-  console.log('fileStream', fileStream);
   formData.append('images', fileStream, { filename: file.name });
   try {
-      const response = await axios.post(apiUrl, formData, {
-          headers: {
-              ...formData.getHeaders(),
-          },
-      });
-      // Extract information about the first match
-      const firstMatch = response.data.results && response.data.results[0];
-    
-      // Send back detailed information to the client
-      res.status(response.status).json({
-          status: response.status,
-          bestMatch: response.data.bestMatch,
-          firstMatch: firstMatch,
-      });
+    const response = await axios.post(apiUrl, formData, {
+      headers: {
+        ...formData.getHeaders(),
+      },
+    });
+    // Extract information about the top 3 matches
+    const top3Matches = response.data.results.slice(0, 3);
+    // Send back detailed information to the client
+    res.status(response.status).json({
+      status: response.status,
+      top3Matches: top3Matches.map(match => ({
+        name: match.species.commonNames[0],
+        scientificName: match.species.scientificName,
+        score: match.score
+      }))
+    });
   } catch (error) {
-      console.error('Error:', error);
-      res.status(error.response?.status || 500).json({ message: error.message });
+    console.error('Error:', error);
+    res.status(error.response?.status || 500).json({ message: error.message });
   }
 });
 

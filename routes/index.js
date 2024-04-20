@@ -120,6 +120,7 @@ router.get("/dataViewer", logMiddleware, async (req, res, next) => {
       } else {
         acc.push({
           name: item.name,
+          binomialNomenclature: item.binomialNomenclature,
           kingdom: item.kingdom,
           locations: [item.location],
           updateDates: [item.updateDate],

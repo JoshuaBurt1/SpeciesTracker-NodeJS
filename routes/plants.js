@@ -91,6 +91,7 @@ router.post("/add", IsLoggedIn, upload.single('image'), async (req, res, next) =
     // Create a new plant entry for the updated image
     const createdModel = await Plant.create({
       name: req.body.name,
+      binomialNomenclature: req.body.binomialNomenclature,
       updateDate: req.body.updateDate,
       location: req.body.location,
       image: uniqueImageName,
@@ -141,6 +142,7 @@ router.post("/edit/:_id", IsLoggedIn, upload.single('image'), async (req, res, n
       { _id: req.params._id },
       {
         name: req.body.name,
+        binomialNomenclature: req.body.binomialNomenclature,
         updateDate: req.body.updateDate,
         location: req.body.location,
         image: uniqueImageName,
