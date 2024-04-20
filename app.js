@@ -123,11 +123,12 @@ app.post('/identify', async (req, res) => {
   const apiUrl = `https://my-api.plantnet.org/v2/identify/${project}&api-key=${apiKey}`;
   const formData = new FormData();
   // Use req.files.image to access the uploaded file  
-  const file = req.files.image;
-  // Make sure file is not empty
-  if (!file) {
+  // Check if req.files.image exists and is not null
+  if (!req.files || !req.files.image) {
     return res.status(400).json({ message: 'No file uploaded.' });
   }
+  // Access the uploaded file  
+  const file = req.files.image;
   const fileStream = fs.createReadStream(file.tempFilePath);
   formData.append('images', fileStream, { filename: file.name });
   try {
