@@ -138,11 +138,11 @@ app.post('/identify', async (req, res) => {
       },
     });
     // Extract information about the top 3 matches
-    const top3Matches = response.data.results.slice(0, 3);
+    const top4Matches = response.data.results.slice(0, 4);
     // Send back detailed information to the client
     res.status(response.status).json({
       status: response.status,
-      top3Matches: top3Matches.map(match => ({
+      top4Matches: top4Matches.map(match => ({
         name: match.species.commonNames[0],
         scientificName: match.species.scientificName,
         score: match.score

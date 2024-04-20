@@ -5,19 +5,27 @@
     <form method="POST" enctype="multipart/form-data">
       <!-- Input names have to match the name of the fields in the mongo schema object -->
       <!-- Mapping is not automatic, but it's best practices -->
-      <fieldset class="form-group">
-        <label for="image" class="col-2">Image:</label>
-        <input type="file" name="image" id="image" class="form-control" accept=".jpg, .jpeg, .png" required/>
-      </fieldset>
-      <div id="names">
-      <fieldset class="form-group">
-        <label for="name" class="col-2">Common Name:</label>
-        <input name="name" id="name" class="form-control" required/>
-      </fieldset>
-      <fieldset class="form-group">
-        <label for="binomialNomenclature" class="col-2">Scientific Name:</label>
-        <input name="binomialNomenclature" id="binomialNomenclature" class="form-control"/>
-      </fieldset>
+      <div id="dataVisual">
+        <div id="imageAndName">
+            <fieldset class="form-group">
+                <label for="image" class="col-2">Image:</label>
+                <input type="file" name="image" id="image" class="form-control" accept=".jpg, .jpeg, .png">
+            </fieldset>
+            <div id="nameRow">
+            <fieldset class="form-group">
+                <label for="name" class="col-2">Name:</label>
+                <input name="name" id="name" class="form-control" required/>
+            </fieldset>
+            <fieldset class="form-group">
+                <label for="binomialNomenclature" class="col-2">Scientific Name:</label>
+                <input name="binomialNomenclature" id="binomialNomenclature" class="form-control"/>
+            </fieldset>
+          </div>
+            <div id="top4"></div> <!-- list top 3 names, scientific name and percentages -->
+        </div>
+        <div id="imageVisual">
+            <img src="/site_images/noimage.png" alt="No image" id="preview">
+        </div>
       </div>
       <fieldset class="form-group">
         <label for="updateDate" class="col-2">Date Identified:</label>
