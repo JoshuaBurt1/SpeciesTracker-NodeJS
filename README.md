@@ -27,7 +27,7 @@ module.exports = configurations;<br>
 ~Date, time, gps autofill: npm/exif-js <br>
 ~Coordinates to map & map to coordinates: npm i leaflet <br>
 ~Plant identification (plantNet API) <br>
-~this website database API & csv download <br>
+~Website database API, csv download, total image download <br>
 ~User authentication & github auth: npm i passport express-session passport-local-mongoose passport-github2 <br>
 ~Message board with reply <br>
 ~Admin privileges (add category, edit & delete any post) <br>
