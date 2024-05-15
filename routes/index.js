@@ -1,4 +1,6 @@
 var express = require('express');
+const fs = require('fs'); //for image download
+const archiver = require('archiver'); //for image download
 const path = require('path');
 var router = express.Router();
 var User = require("../models/user");
@@ -7,7 +9,7 @@ const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 var logMiddleware = require('../logMiddleware'); //route logging middleware
 
 // Constants
-const MODEL_NAMES = ['Animal', 'Fungus', 'Plant', 'Protist'];
+const MODEL_NAMES = ['Animal', 'Fungus', 'Plant', 'Bacterium'];
 const pageSize = 4;
 
 // Helper function to fetch data from a specific model
@@ -96,7 +98,7 @@ router.get('/', logMiddleware, function(req, res, next) {
 const Animal = require("../models/animal");
 const Fungus = require("../models/fungus");
 const Plant = require("../models/plant");
-const Protist = require("../models/protist");
+const Bacterium = require("../models/bacterium");
 
 router.get("/dataViewer", logMiddleware, async (req, res, next) => {
   try {
@@ -189,16 +191,16 @@ router.get("/api", async (req, res) => {
     };
 
     // Fetch data from each model without pagination
-    const [animalData, fungusData, plantData, protistData] = await Promise.all([
+    const [animalData, fungusData, plantData, bacteriumData] = await Promise.all([
       fetchData(Animal),
       fetchData(Fungus),
       fetchData(Plant),
-      fetchData(Protist),
-      // Add queries for other models (Plant, Protist) if needed
+      fetchData(Bacterium),
+      // Add queries for other models (Plant, Bacterium) if needed
     ]);
 
     // Combine data from different models into a single array
-    const combinedData = [...animalData, ...fungusData, ...plantData, ...protistData];
+    const combinedData = [...animalData, ...fungusData, ...plantData, ...bacteriumData];
 
     // Group entries by name and collect locations, update dates into arrays
     const groupedData = combinedData.reduce((acc, item) => {
@@ -272,10 +274,8 @@ router.get("/api/download-csv", async (req, res) => {
             // Exclude creating images array and pushing item.image
           });
         }
-  
         return acc;
       }, []);
-  
       // Sort each named entry by updateDate keeping association to location
       groupedData.forEach((group) => {
         const zippedData = group.updateDates.map((updateDate, index) => ({
@@ -288,10 +288,8 @@ router.get("/api/download-csv", async (req, res) => {
         group.updateDates = zippedData.map((item) => item.updateDate);
         // Exclude creating and mapping the images array
       });
-  
-
-// Create a CSV writer
-const csvWriter = createCsvWriter({
+  // Create a CSV writer
+  const csvWriter = createCsvWriter({
   path: path.join(__dirname, "speciesData.csv"), // Use an absolute path
   header: [
     { id: "name", title: "Name" },
@@ -300,22 +298,121 @@ const csvWriter = createCsvWriter({
     { id: "updateDates", title: "Update Dates" },
     // Exclude "images" from the CSV output
   ],
+  });
+    // Write the groupedData to the CSV file
+    await csvWriter.writeRecords(groupedData);
+    // Send the CSV file as a response
+    res.attachment("speciesData.csv");
+    res.sendFile(path.join(__dirname, "speciesData.csv")); // Use an absolute path
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
-// Write the groupedData to the CSV file
-await csvWriter.writeRecords(groupedData);
+/* //single folder download (animals)
+router.get('/download-images', (req, res) => {
+    const directoryPath = path.join(__dirname, '../public/images/animalia_images');
+    // Create a new zip archive
+    const archive = archiver('zip', {
+        zlib: { level: 9 } // Sets the compression level
+    });
+    // Set the response headers for streaming
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', 'attachment; filename="speciesImages.zip"');
+    res.setHeader('Transfer-Encoding', 'chunked'); // Enable chunked transfer encoding
+    // Pipe the archive to the response object
+    archive.pipe(res);
+    // Add files to the archive
+    fs.readdir(directoryPath, (err, files) => {
+        if (err) {
+            console.error('Error reading directory:', err);
+            return res.status(500).send('Error reading directory');
+        }
+        // Check if there are any files in the directory
+        if (files.length === 0) {
+            console.error('No files found in directory:', directoryPath);
+            return res.status(404).send('No images found');
+        }
+        files.forEach(file => {
+            const filePath = path.join(directoryPath, file);
+            archive.file(filePath, { name: file });
+        });
+        // Finalize the archive
+        archive.finalize();
+    });
+    // Handle archive errors
+    archive.on('error', err => {
+        console.error('Error creating archive:', err);
+        res.status(500).send('Error creating archive');
+    });
+});
+*/
 
-// Send the CSV file as a response
-res.attachment("speciesData.csv");
-res.sendFile(path.join(__dirname, "speciesData.csv")); // Use an absolute path
-} catch (err) {
-console.log(err);
-res.status(500).json({ error: "Internal Server Error" });
+router.get('/download-images', (req, res) => {
+  const directoryPath = path.join(__dirname, '../public/images');
+  // Create a new zip archive
+  const archive = archiver('zip', {
+      zlib: { level: 9 } // Sets the compression level
+  });
+  // Pipe the archive to the response object
+  archive.pipe(res);
+  // Function to recursively add files from all directories
+  function addFilesToArchive(dir) {
+      const files = fs.readdirSync(dir);
+      files.forEach(file => {
+          const filePath = path.join(dir, file);
+          if (fs.statSync(filePath).isDirectory()) {
+              addFilesToArchive(filePath);
+          } else {
+              archive.file(filePath, { name: path.relative(directoryPath, filePath) });
+          }
+      });
+  }
+  // Add files from all directories
+  addFilesToArchive(directoryPath);
+  // Finalize the archive
+  archive.finalize();
+  // Handle archive errors
+  archive.on('error', err => {
+      console.error('Error creating archive:', err);
+      res.status(500).send('Error creating archive');
+  });
+  // Set the response headers
+  res.attachment('images.zip');
+});
+
+//Calculates image data size from server and returns to client side
+router.get('/images-info', (req, res) => {
+  const imagesDirectory = path.join(__dirname, '../public/images');
+  // Function to recursively calculate directory size
+  function getDirectorySize(directory) {
+    console.log('Calculating size for directory:', directory);
+    let totalSize = 0;
+    const files = fs.readdirSync(directory);
+    //console.log('Files in directory:', files);
+    files.forEach(file => {
+        const filePath = path.join(directory, file);
+        const stats = fs.statSync(filePath);
+        if (stats.isDirectory()) {
+            //console.log('Entering subdirectory:', filePath);
+            totalSize += getDirectorySize(filePath);
+        } else {
+            //console.log('File:', filePath, 'Size:', stats.size);
+            totalSize += stats.size;
+        }
+    });
+    //console.log('Total size for directory:', directory, 'is', totalSize);
+    return totalSize;
 }
+  // Calculate the size of the images directory
+  const directorySize = getDirectorySize(imagesDirectory);
+  // Convert bytes to kilobytes for easier readability
+  const sizeGB = Math.round(directorySize);
+  // Send the response with the directory size in KB
+  res.json({ size: sizeGB });
 });
 
-router.get("/error", logMiddleware,  (req, res, next) => {
-  res.render("error", { title: "Error" });
-});
+
 
 module.exports = router;

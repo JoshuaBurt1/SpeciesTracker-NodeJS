@@ -101,14 +101,14 @@ var blogsRouter = require('./routes/blogs');
 var plantsRouter = require("./routes/plants");
 var fungiRouter = require("./routes/fungi");
 var animalsRouter = require("./routes/animals");
-var protistsRouter = require("./routes/protists");
+var bacteriaRouter = require("./routes/bacteria");
 
 app.use('/', indexRouter);
 app.use('/blogs', blogsRouter);
 app.use('/plants', plantsRouter);
 app.use("/fungi", fungiRouter);
 app.use('/animals', animalsRouter);
-app.use("/protists", protistsRouter);
+app.use("/bacteria", bacteriaRouter);
 
 //IDENTIFY PLANT (PlantNet)
 app.use(cors());

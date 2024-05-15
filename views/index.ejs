@@ -9,12 +9,19 @@
 <div class="row">
   <div class="col-lg-12">
     <div class="list-group">
-      <ul>
+      <ul> 
         <li>API path (testing): http://localhost:3000/api</li>
         <li>API path: https://speciestracker3.azurewebsites.net/api</li>
       </ul> <br>
       <!-- Add the download link for the CSV file -->
-      <a href="#" id="downloadCsvLink" class="btn btn-primary btn-sm">Download CSV</a>
+      <div id="inlineGroup">
+        <a id="downloadCsvLink" class="btn btn-primary btn-sm">Download CSV</a>
+        <p id="csvInfo">Loading...</p>
+      </div> <br>
+      <div id="inlineGroup">
+        <a href="/download-images" id="downloadImageLink" class="btn btn-primary btn-sm" download>Download Images</a> 
+        <p id="imageInfo">Loading...</p>
+      </div>
     </div>
   </div>
 </div>

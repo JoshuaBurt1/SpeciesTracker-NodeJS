@@ -87,7 +87,23 @@
 /* Content container*/
 /*Home*/
 #downloadCsvLink{
-width: 10%;
+width: 12%;
+}
+
+#downloadImageLink{
+  width: 12%;
+}
+#inlineGroup {
+  white-space: nowrap; /* Prevent line breaks */
+}
+
+#inlineGroup > * {
+  display: inline-block; /* Display child elements inline */
+  margin-right: 5px; /* Add minimal margin between elements */
+}
+
+#inlineGroup > *:last-child {
+  margin-right: 0; /* Remove margin for the last child element */
 }
 
 /*Message Board*/
