@@ -387,7 +387,7 @@ router.get('/images-info', (req, res) => {
   const imagesDirectory = path.join(__dirname, '../public/images');
   // Function to recursively calculate directory size
   function getDirectorySize(directory) {
-    console.log('Calculating size for directory:', directory);
+    //console.log('Calculating size for directory:', directory);
     let totalSize = 0;
     const files = fs.readdirSync(directory);
     //console.log('Files in directory:', files);

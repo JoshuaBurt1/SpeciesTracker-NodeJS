@@ -47,7 +47,7 @@ router.get('/', IsLoggedIn, logMiddleware, async (req, res, next) => {
     let skipSize = pageSize * (page - 1);
     
     const plants = await Plant.find(query)
-      .sort({ name: 1 })
+      .sort({ name: 1, updateDate: 1 })
       .limit(pageSize)
       .skip(skipSize);
 

@@ -51,8 +51,8 @@ router.get('/', IsLoggedIn, logMiddleware, async (req, res, next) => {
     let skipSize = pageSize * (page - 1);
     
     const animals = await Animal.find(query)
-      .sort({ name: 1 })
-      .limit(pageSize)
+      .sort({ name: 1, updateDate: 1 })
+        .limit(pageSize)
       .skip(skipSize);
 
     const totalRecords = await Animal.countDocuments(query);
