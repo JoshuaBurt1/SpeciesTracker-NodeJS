@@ -28,7 +28,6 @@ const upload = multer({ storage: storage });
 // Use the middleware to check if the user is logged in
 router.use(IsLoggedIn);
 
-// Configure GET/POST handlers
 // GET handler for index /plants/ <<landing/root page of my sections
 const pageSize = 4;
 router.get('/', IsLoggedIn, logMiddleware, async (req, res, next) => {
@@ -36,24 +35,19 @@ router.get('/', IsLoggedIn, logMiddleware, async (req, res, next) => {
     // SearchBar query parameter
     let searchQuery = req.query.searchBar || '';
     const userId = req.user._id;
-
     // Use a case-insensitive regular expression to match part of the name
     let query = {
       name: { $regex: new RegExp(searchQuery, 'i') },
       user: userId, // Include user ID in the search criteria
     };
-
     let page = parseInt(req.query.page) || 1;
     let skipSize = pageSize * (page - 1);
-    
     const plants = await Plant.find(query)
       .sort({ name: 1, updateDate: 1 })
       .limit(pageSize)
       .skip(skipSize);
-
     const totalRecords = await Plant.countDocuments(query);
     const totalPages = Math.ceil(totalRecords / pageSize);
-
     res.render("plants", {
       title: "Plant Dataset",
       user: req.user,
@@ -67,7 +61,6 @@ router.get('/', IsLoggedIn, logMiddleware, async (req, res, next) => {
     res.status(500).send("Internal Server Error");
   }
 });
-
 //ADD name field = name_timestamp.jpg
 const userImagesPath = 'public/images/plantae_images';
 // Ensure the directory exists
@@ -82,12 +75,50 @@ const createUniqueImageName = (name, originalName) => {
 };
 
 // ADD view POST
+const Exifr = require('exifr'); //FOR DATA INTEGRITY VARIABLES
+function convertToDecimal(latitude, longitude, latRef, lonRef) { // Function to convert GPS coordinates to decimal form
+  const lat = convertCoordinate(latitude);
+  const lon = convertCoordinate(longitude);
+  const latWithSign = latRef === 'S' ? -lat : lat;
+  const lonWithSign = lonRef === 'W' ? -lon : lon;
+  return latWithSign.toFixed(6).toString() + ', ' + lonWithSign.toFixed(6).toString();
+}
+function convertCoordinate(coordinate) { // Function to convert coordinate to decimal form
+  const [degrees, minutes, seconds] = coordinate;
+  const decimal = degrees + minutes / 60 + seconds / 3600;
+  return decimal;
+}
+function convertToDate(dateTimeOriginal) { // Function to convert date to the specified format
+  const date = new Date(dateTimeOriginal);
+  date.setMinutes(date.getMinutes() - date.getTimezoneOffset()); // Correct for local time zone offset (**this may need to be changed)
+  return `${date.getUTCFullYear()}:${String(date.getUTCMonth() + 1).padStart(2, '0')}:${String(date.getUTCDate()).padStart(2, '0')} ${String(date.getUTCHours()).padStart(2, '0')}:${String(date.getUTCMinutes()).padStart(2, '0')}:${String(date.getUTCSeconds()).padStart(2, '0')}`;
+}
 router.post("/add", IsLoggedIn, upload.single('image'), async (req, res, next) => {
   try {
     const uniqueImageName = createUniqueImageName(req.body.name, req.file.originalname);
     // Move the uploaded image to the new destination path
     const newDestinationPath = path.join(__dirname, '..', userImagesPath, uniqueImageName);
     await fs.promises.rename(req.file.path, newDestinationPath);
+    // Extract metadata from the image
+    const metadata = await Exifr.parse(newDestinationPath);
+    // Convert GPS coordinates to decimal form
+    const imageGPS = metadata?.GPSLatitude && metadata?.GPSLongitude ? convertToDecimal(metadata.GPSLatitude, metadata.GPSLongitude, metadata.GPSLatitudeRef, metadata.GPSLongitudeRef) : null;
+    // Convert date to the specified format
+    const imageDate = metadata?.DateTimeOriginal ? convertToDate(metadata.DateTimeOriginal) : null;
+    console.log(req.body.location);
+    console.log(req.body.updateDate);
+    var locationDataIntegrityValue;
+    var dateDataIntegrityValue;
+    if(imageDate === req.body.updateDate){
+      dateDataIntegrityValue = 0;
+    }else{
+      dateDataIntegrityValue = 1;
+    }
+    if (imageGPS === req.body.location) {
+      locationDataIntegrityValue = 0;
+    }else{
+      locationDataIntegrityValue = 1;
+    }
     // Create a new plant entry for the updated image
     const createdModel = await Plant.create({
       name: req.body.name,
@@ -96,8 +127,12 @@ router.post("/add", IsLoggedIn, upload.single('image'), async (req, res, next) =
       location: req.body.location,
       image: uniqueImageName,
       user: req.user._id,
+      dateChanged: dateDataIntegrityValue,
+      locationChanged: locationDataIntegrityValue,
     });
     console.log("Model created successfully:", createdModel);
+    console.log(imageGPS);
+    console.log(imageDate);
     res.redirect("/plants");
   } catch (error) {
     console.error("An error occurred:", error);

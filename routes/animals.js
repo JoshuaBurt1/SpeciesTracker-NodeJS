@@ -86,29 +86,69 @@ const createUniqueImageName = (name, originalName) => {
 };
 
 //ADD view POST
+const Exifr = require('exifr'); //FOR DATA INTEGRITY VARIABLES
+function convertToDecimal(latitude, longitude, latRef, lonRef) { // Function to convert GPS coordinates to decimal form
+  const lat = convertCoordinate(latitude);
+  const lon = convertCoordinate(longitude);
+  const latWithSign = latRef === 'S' ? -lat : lat;
+  const lonWithSign = lonRef === 'W' ? -lon : lon;
+  return latWithSign.toFixed(6).toString() + ', ' + lonWithSign.toFixed(6).toString();
+}
+function convertCoordinate(coordinate) { // Function to convert coordinate to decimal form
+  const [degrees, minutes, seconds] = coordinate;
+  const decimal = degrees + minutes / 60 + seconds / 3600;
+  return decimal;
+}
+function convertToDate(dateTimeOriginal) { // Function to convert date to the specified format
+  const date = new Date(dateTimeOriginal);
+  date.setMinutes(date.getMinutes() - date.getTimezoneOffset()); // Correct for local time zone offset (**this may need to be changed)
+  return `${date.getUTCFullYear()}:${String(date.getUTCMonth() + 1).padStart(2, '0')}:${String(date.getUTCDate()).padStart(2, '0')} ${String(date.getUTCHours()).padStart(2, '0')}:${String(date.getUTCMinutes()).padStart(2, '0')}:${String(date.getUTCSeconds()).padStart(2, '0')}`;
+}
 router.post("/add", IsLoggedIn, upload.single('image'), async (req, res, next) => {
-    // Use req.file.path to get the path of the uploaded image
+  try {
     const uniqueImageName = createUniqueImageName(req.body.name, req.file.originalname);
     // Move the uploaded image to the new destination path
     const newDestinationPath = path.join(__dirname, '..', userImagesPath, uniqueImageName);
     await fs.promises.rename(req.file.path, newDestinationPath);
-
-  // Create a new Animal with the uploaded image path
-  Animal.create({
-    name: req.body.name,
-    binomialNomenclature: req.body.binomialNomenclature,
-    updateDate: req.body.updateDate,
-    location: req.body.location,
-    image: uniqueImageName, // Save the path to the uploaded image
-    user: req.user._id, // Use req.user._id to get the currently logged-in user's ID
-  })
-  .then((createdModel) => {
+    // Extract metadata from the image
+    const metadata = await Exifr.parse(newDestinationPath);
+    // Convert GPS coordinates to decimal form
+    const imageGPS = metadata?.GPSLatitude && metadata?.GPSLongitude ? convertToDecimal(metadata.GPSLatitude, metadata.GPSLongitude, metadata.GPSLatitudeRef, metadata.GPSLongitudeRef) : null;
+    // Convert date to the specified format
+    const imageDate = metadata?.DateTimeOriginal ? convertToDate(metadata.DateTimeOriginal) : null;
+    console.log(req.body.location);
+    console.log(req.body.updateDate);
+    var locationDataIntegrityValue;
+    var dateDataIntegrityValue;
+    if(imageDate === req.body.updateDate){
+      dateDataIntegrityValue = 0;
+    }else{
+      dateDataIntegrityValue = 1;
+    }
+    if (imageGPS === req.body.location) {
+      locationDataIntegrityValue = 0;
+    }else{
+      locationDataIntegrityValue = 1;
+    }
+    // Create a new plant entry for the updated image
+    const createdModel = await Animal.create({
+      name: req.body.name,
+      binomialNomenclature: req.body.binomialNomenclature,
+      updateDate: req.body.updateDate,
+      location: req.body.location,
+      image: uniqueImageName,
+      user: req.user._id,
+      dateChanged: dateDataIntegrityValue,
+      locationChanged: locationDataIntegrityValue,
+    });
     console.log("Model created successfully:", createdModel);
+    console.log(imageGPS);
+    console.log(imageDate);
     res.redirect("/animals");
-  })
-  .catch((error) => {
+  } catch (error) {
     console.error("An error occurred:", error);
-  });
+    res.redirect("/error");
+  }
 });
 
 //TODO C > Create new animal
