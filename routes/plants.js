@@ -99,14 +99,15 @@ router.post("/add", IsLoggedIn, upload.single('image'), async (req, res, next) =
     // Move the uploaded image to the new destination path
     const newDestinationPath = path.join(__dirname, '..', userImagesPath, uniqueImageName);
     await fs.promises.rename(req.file.path, newDestinationPath);
+    //image data integrity code
     // Extract metadata from the image
     const metadata = await Exifr.parse(newDestinationPath);
     // Convert GPS coordinates to decimal form
     const imageGPS = metadata?.GPSLatitude && metadata?.GPSLongitude ? convertToDecimal(metadata.GPSLatitude, metadata.GPSLongitude, metadata.GPSLatitudeRef, metadata.GPSLongitudeRef) : null;
     // Convert date to the specified format
     const imageDate = metadata?.DateTimeOriginal ? convertToDate(metadata.DateTimeOriginal) : null;
-    console.log(req.body.location);
-    console.log(req.body.updateDate);
+    //console.log(req.body.location);
+    //console.log(req.body.updateDate);
     var locationDataIntegrityValue;
     var dateDataIntegrityValue;
     if(imageDate === req.body.updateDate){
@@ -130,9 +131,9 @@ router.post("/add", IsLoggedIn, upload.single('image'), async (req, res, next) =
       dateChanged: dateDataIntegrityValue,
       locationChanged: locationDataIntegrityValue,
     });
-    console.log("Model created successfully:", createdModel);
-    console.log(imageGPS);
-    console.log(imageDate);
+    //console.log("Model created successfully:", createdModel);
+    //console.log(imageGPS);
+    //console.log(imageDate);
     res.redirect("/plants");
   } catch (error) {
     console.error("An error occurred:", error);
@@ -167,10 +168,30 @@ router.get("/edit/:_id", IsLoggedIn, logMiddleware, async  (req, res, next) => {
 router.post("/edit/:_id", IsLoggedIn, upload.single('image'), async (req, res, next) => {
   try {
     const uniqueImageName = createUniqueImageName(req.body.name, req.file.originalname);
-    
     // Move the uploaded image to the new destination path
     const newDestinationPath = path.join(__dirname, '..', userImagesPath, uniqueImageName);
     await fs.promises.rename(req.file.path, newDestinationPath);
+    //image data integrity code
+    // Extract metadata from the image
+    const metadata = await Exifr.parse(newDestinationPath);
+    // Convert GPS coordinates to decimal form
+    const imageGPS = metadata?.GPSLatitude && metadata?.GPSLongitude ? convertToDecimal(metadata.GPSLatitude, metadata.GPSLongitude, metadata.GPSLatitudeRef, metadata.GPSLongitudeRef) : null;
+    // Convert date to the specified format
+    const imageDate = metadata?.DateTimeOriginal ? convertToDate(metadata.DateTimeOriginal) : null;
+    //console.log(req.body.location);
+    //console.log(req.body.updateDate);
+    var locationDataIntegrityValue;
+    var dateDataIntegrityValue;
+    if(imageDate === req.body.updateDate){
+      dateDataIntegrityValue = 0;
+    }else{
+      dateDataIntegrityValue = 1;
+    }
+    if (imageGPS === req.body.location) {
+      locationDataIntegrityValue = 0;
+    }else{
+      locationDataIntegrityValue = 1;
+    }
 
     // Continue with the update logic
     const updatedPlant = await Plant.findOneAndUpdate(
@@ -182,6 +203,8 @@ router.post("/edit/:_id", IsLoggedIn, upload.single('image'), async (req, res, n
         location: req.body.location,
         image: uniqueImageName,
         user: req.user._id,
+        dateChanged: dateDataIntegrityValue,
+        locationChanged: locationDataIntegrityValue,
       },
       { new: true } // to return the updated document
     );

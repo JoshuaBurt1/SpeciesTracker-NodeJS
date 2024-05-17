@@ -130,7 +130,7 @@ router.post("/add", IsLoggedIn, upload.single('image'), async (req, res, next) =
     }else{
       locationDataIntegrityValue = 1;
     }
-    // Create a new plant entry for the updated image
+    // Create a new bacterium entry for the updated image
     const createdModel = await Bacterium.create({
       name: req.body.name,
       binomialNomenclature: req.body.binomialNomenclature,
@@ -175,6 +175,64 @@ router.get("/edit/:_id", IsLoggedIn, logMiddleware, async  (req, res, next) => {
 });
 
 // POST /bacteria/editID
+router.post("/edit/:_id", IsLoggedIn, upload.single('image'), async (req, res, next) => {
+  try {
+    const uniqueImageName = createUniqueImageName(req.body.name, req.file.originalname);
+    // Move the uploaded image to the new destination path
+    const newDestinationPath = path.join(__dirname, '..', userImagesPath, uniqueImageName);
+    await fs.promises.rename(req.file.path, newDestinationPath);
+    //image data integrity code
+    // Extract metadata from the image
+    const metadata = await Exifr.parse(newDestinationPath);
+    // Convert GPS coordinates to decimal form
+    const imageGPS = metadata?.GPSLatitude && metadata?.GPSLongitude ? convertToDecimal(metadata.GPSLatitude, metadata.GPSLongitude, metadata.GPSLatitudeRef, metadata.GPSLongitudeRef) : null;
+    // Convert date to the specified format
+    const imageDate = metadata?.DateTimeOriginal ? convertToDate(metadata.DateTimeOriginal) : null;
+    //console.log(req.body.location);
+    //console.log(req.body.updateDate);
+    var locationDataIntegrityValue;
+    var dateDataIntegrityValue;
+    if(imageDate === req.body.updateDate){
+      dateDataIntegrityValue = 0;
+    }else{
+      dateDataIntegrityValue = 1;
+    }
+    if (imageGPS === req.body.location) {
+      locationDataIntegrityValue = 0;
+    }else{
+      locationDataIntegrityValue = 1;
+    }
+
+    // Continue with the update logic
+    const updatedBacterium = await Bacterium.findOneAndUpdate(
+      { _id: req.params._id },
+      {
+        name: req.body.name,
+        binomialNomenclature: req.body.binomialNomenclature,
+        updateDate: req.body.updateDate,
+        location: req.body.location,
+        image: uniqueImageName,
+        user: req.user._id,
+        dateChanged: dateDataIntegrityValue,
+        locationChanged: locationDataIntegrityValue,
+      },
+      { new: true } // to return the updated document
+    );
+
+    if (!updatedBacterium) {
+      console.log("Bacterium not found");
+      return res.redirect("/error");
+    }
+
+    console.log("Model updated successfully:", updatedBacterium);
+    res.redirect("/bacteria");
+  } catch (error) {
+    console.error("An error occurred:", error);
+    res.redirect("/error");
+  }
+});
+
+/*
 router.post("/edit/:_id", IsLoggedIn, upload.single('image'), (req, res, next) => {
   // Check if a file was uploaded
   if (req.file) {
@@ -204,7 +262,7 @@ router.post("/edit/:_id", IsLoggedIn, upload.single('image'), (req, res, next) =
   .catch((err) => {
     res.redirect("/error");
   });
-});
+});*/
 
 //TODO D > Delete a bacterium
 // GET /bacteria/delete/652f1cb7740320402d9ba04d
