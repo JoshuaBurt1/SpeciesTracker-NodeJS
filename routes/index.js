@@ -9,7 +9,7 @@ const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 var logMiddleware = require('../logMiddleware'); //route logging middleware
 
 // Constants
-const MODEL_NAMES = ['Animal', 'Fungus', 'Plant', 'Bacterium'];
+const MODEL_NAMES = ['Animal', 'Fungus', 'Plant', 'Bacterium', 'Protist'];
 const pageSize = 4;
 
 // Helper function to fetch data from a specific model
@@ -99,6 +99,8 @@ const Animal = require("../models/animal");
 const Fungus = require("../models/fungus");
 const Plant = require("../models/plant");
 const Bacterium = require("../models/bacterium");
+const Protist = require("../models/protist");
+
 
 router.get("/dataViewer", logMiddleware, async (req, res, next) => {
   try {
@@ -191,16 +193,17 @@ router.get("/api", async (req, res) => {
     };
 
     // Fetch data from each model without pagination
-    const [animalData, fungusData, plantData, bacteriumData] = await Promise.all([
-      fetchData(Animal),
+    const [animalData, fungusData, plantData, bacteriumData, protistData] = await Promise.all([
+      fetchData(Bacterium),
+      fetchData(Protist),
       fetchData(Fungus),
       fetchData(Plant),
-      fetchData(Bacterium),
+      fetchData(Animal),
       // Add queries for other models (Plant, Bacterium) if needed
     ]);
 
     // Combine data from different models into a single array
-    const combinedData = [...animalData, ...fungusData, ...plantData, ...bacteriumData];
+    const combinedData = [...bacteriumData, ...protistData, ...fungusData, ...plantData, ...animalData];
 
     // Group entries by name and collect locations, update dates into arrays
     const groupedData = combinedData.reduce((acc, item) => {
