@@ -31,38 +31,3 @@ module.exports = configurations;<br>
 ~User authentication & github auth: npm i passport express-session passport-local-mongoose passport-github2 <br>
 ~Message board with reply <br>
 ~Admin privileges (add category, edit & delete any post) <br>
-
-# To be Added: <br>
-* Message board: 
-* Admin priv.: delete user & associated data
-* add a route for category -> blog -> replies 
-* sort post - most recent reply appears at top under topic
-* Archive - for essential information (admin can move by editing post topic value)
-* allow users to insert attachments/images into post
-* ability to reply to replies
-<br>
-
-* APIs:
-* output API paths --> (all data, filtered data); standardize .csv output; test API data in Python program
-* Input of other API links into this database (Program 2: copy GitHub code, run -> generate API output --> received by Program 1 (this), now Program 2 data in Program 1); distributed computing (API data can be turned on/off)
-<br>
-
-* Data Viewer (Wild):
-* further animal/plant/fungi/protist information via show.ejs --> wiki, genetic profile, etc.; up-vote pictures (if logged in and in View More presentation view) -->  OrderBy button functionality
-* upvoting action -> 4 highest rated by morphology show in row -> button to view other high rated photos; $get cash for good photo if people download;  scroll images (view all button @ dataViewer view --> presentation view)
-* Other data viewer: standardized (Production) & (Identification) datasets
-<br>
-
-* Overall Data: 
-* Ban user & delete associated info by user email function; AND/OR disassociate with more likely true data until "threshold %" reached
-* database (csv/json) backup comparisons to make sure values are not being manipulated
-<br>
-
-* Machine Learning:
-* Machine learning species identifier (within add.ejs view)
-- Choices: A. Use an API B. Use a dataset (Kaggle etc.) + pre-trained model C. Make your own dataset/ train your model
-* Identification (on image upload) - should be able to autofill species name; feedback if wrong kingdom/no upload
-* identification info: added via chatgpt --> orderby button: Taxonomy, Conservation Status, Invasiveness, Industrial Usage, Nutrition, Toxicity (Developer does not hardcode, chatgpt adds info to mongoDB)
-* after info added, searchBar can search by taxonomy, etc.
-
-
