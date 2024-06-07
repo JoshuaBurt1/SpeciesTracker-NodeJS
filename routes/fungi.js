@@ -104,6 +104,7 @@ function convertToDate(dateTimeOriginal) { // Function to convert date to the sp
   date.setMinutes(date.getMinutes() - date.getTimezoneOffset()); // Correct for local time zone offset (**this may need to be changed)
   return `${date.getUTCFullYear()}:${String(date.getUTCMonth() + 1).padStart(2, '0')}:${String(date.getUTCDate()).padStart(2, '0')} ${String(date.getUTCHours()).padStart(2, '0')}:${String(date.getUTCMinutes()).padStart(2, '0')}:${String(date.getUTCSeconds()).padStart(2, '0')}`;
 }
+
 router.post("/add", IsLoggedIn, upload.single('image'), async (req, res, next) => {
   try {
     const uniqueImageName = createUniqueImageName(req.body.name, req.file.originalname);

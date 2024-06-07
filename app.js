@@ -113,49 +113,81 @@ app.use("/bacteria", bacteriaRouter);
 app.use("/protists", protistsRouter);
 
 
-//IDENTIFY PLANT (PlantNet)
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(__dirname));
-// Configure express-fileupload to use a temporary directory
-app.use(fileUpload({ useTempFiles: true, tempFileDir: os.tmpdir() }));
-app.post('/identify', async (req, res) => {
-  const project = 'all?include-related-images=false&no-reject=false&lang=en&type=kt';
-  const apiKey = config.plantNetAPI;
-  const apiUrl = `https://my-api.plantnet.org/v2/identify/${project}&api-key=${apiKey}`;
+  //IDENTIFICATION
+  app.use(cors());
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+  app.use(express.static(__dirname));
+  // Configure express-fileupload to use a temporary directory
+  app.use(fileUpload({ useTempFiles: true, tempFileDir: os.tmpdir() }));
+
+//IDENTIFY Mushroom (http://localhost:5000/identify)
+app.post('/identifyM', async (req, res) => {
+  const apiUrl = `http://127.0.0.1:5000/identify`;
   const formData = new FormData();
-  // Use req.files.image to access the uploaded file  
-  // Check if req.files.image exists and is not null
+
   if (!req.files || !req.files.image) {
     return res.status(400).json({ message: 'No file uploaded.' });
   }
-  // Access the uploaded file  
+
   const file = req.files.image;
   const fileStream = fs.createReadStream(file.tempFilePath);
-  formData.append('images', fileStream, { filename: file.name });
+  formData.append('image', fileStream, { filename: file.name });
+
   try {
-    const response = await axios.post(apiUrl, formData, {
-      headers: {
-        ...formData.getHeaders(),
-      },
-    });
-    // Extract information about the top 3 matches
-    const top4Matches = response.data.results.slice(0, 4);
-    // Send back detailed information to the client
-    res.status(response.status).json({
-      status: response.status,
-      top4Matches: top4Matches.map(match => ({
-        name: match.species.commonNames[0],
-        scientificName: match.species.scientificName,
-        score: match.score
-      }))
-    });
+    const response = await axios.post(apiUrl, formData);
+
+    if (!response.data.identification) {
+      console.error('Identification not found in response data:', response.data);
+      return res.status(500).json({ message: 'Identification not found in response data.' });
+    }
+
+    const identificationResult = response.data.identification;
+    res.status(response.status).json({ identification: identificationResult });
   } catch (error) {
     console.error('Error:', error);
     res.status(error.response?.status || 500).json({ message: error.message });
   }
 });
+
+  //IDENTIFY PLANT (PlantNet)
+  app.post('/identifyP', async (req, res) => {
+    const project = 'all?include-related-images=false&no-reject=false&lang=en&type=kt';
+    const apiKey = config.plantNetAPI;
+    const apiUrl = `https://my-api.plantnet.org/v2/identify/${project}&api-key=${apiKey}`;
+    const formData = new FormData();
+    // Use req.files.image to access the uploaded file  
+    // Check if req.files.image exists and is not null
+    if (!req.files || !req.files.image) {
+      return res.status(400).json({ message: 'No file uploaded.' });
+    }
+    // Access the uploaded file  
+    const file = req.files.image;
+    const fileStream = fs.createReadStream(file.tempFilePath);
+    formData.append('images', fileStream, { filename: file.name });
+    try {
+      const response = await axios.post(apiUrl, formData, {
+        headers: {
+          ...formData.getHeaders(),
+        },
+      });
+      // Extract information about the top 3 matches
+      const top4Matches = response.data.results.slice(0, 4);
+      // Send back detailed information to the client
+      res.status(response.status).json({
+        status: response.status,
+        top4Matches: top4Matches.map(match => ({
+          name: match.species.commonNames[0],
+          scientificName: match.species.scientificName,
+          score: match.score
+        }))
+      });
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(error.response?.status || 500).json({ message: error.message });
+    }
+  });
+
 
 // error handler
 app.use(function (err, req, res, next) {

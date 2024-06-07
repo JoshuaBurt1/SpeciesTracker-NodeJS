@@ -51,13 +51,14 @@
 
 <script defer>
   async function identifyPlant() {
+
     //changes preview image
     const images = image.files;
     const formData = new FormData();
     formData.append('image', images[0]);
     
     try {
-      const apiUrl = 'http://localhost:3000/identify'; // Your server URL
+      const apiUrl = 'http://localhost:3000/identifyP'; // Your server URL
       const response = await fetch(apiUrl, {
         method: 'POST',
         body: formData
