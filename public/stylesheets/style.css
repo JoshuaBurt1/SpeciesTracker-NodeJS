@@ -253,6 +253,13 @@ label {
   margin-bottom: 0.5%;
 }
 
+.custom-dot-icon .dot { /*map custom icon*/
+  width: 2px;
+  height: 2px;
+  background-color: rgba(0, 0, 0, 1);
+  border-radius: 50%;
+}
+
 button.offset-3.btn.btn-primary {
   display: block;
   margin: 1% auto 0; /* 1% top margin, auto for horizontal centering */
