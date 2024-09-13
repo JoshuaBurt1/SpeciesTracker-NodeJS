@@ -116,9 +116,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Update the <div> elements specific to the current map
         const mapContainer = coordinatesElement.closest('td');
-        mapContainer.querySelector('.gridCoordinates').innerHTML = `<u>Grid Coordinates</u>:<br> ${coordinatesText}`;
+        mapContainer.querySelector('.gridCoordinates').innerHTML = `<u>Grid Cell Coordinates</u>:<br> ${coordinatesText}`;
         mapContainer.querySelector('.gridArea').innerHTML = `<u>Area</u>: ${area.toFixed(10)} km²`;
-        mapContainer.querySelector('.gridDensity').innerHTML = `<u>Density</u>: ${density.toFixed(10)} count/km²`;
+        mapContainer.querySelector('.gridDensity').innerHTML = `<u>Density</u>: ${count}/${area.toFixed(2)} = ${density.toFixed(10)} count/km²`;
       });
     });
   }

@@ -104,6 +104,13 @@ function convertToDate(dateTimeOriginal) { // Function to convert date to the sp
   date.setMinutes(date.getMinutes() - date.getTimezoneOffset()); // Correct for local time zone offset (**this may need to be changed)
   return `${date.getUTCFullYear()}:${String(date.getUTCMonth() + 1).padStart(2, '0')}:${String(date.getUTCDate()).padStart(2, '0')} ${String(date.getUTCHours()).padStart(2, '0')}:${String(date.getUTCMinutes()).padStart(2, '0')}:${String(date.getUTCSeconds()).padStart(2, '0')}`;
 }
+
+//GET handler for /bacteria/add (loads)
+router.get("/add", IsLoggedIn, logMiddleware, (req, res, next) => {
+  res.render("bacteria/add", { user: req.user, title: "Add a new Bacterium" });
+});
+
+//POST handler for /bacteria/add (posts entry to database)
 router.post("/add", IsLoggedIn, upload.single('image'), async (req, res, next) => {
   try {
     const uniqueImageName = createUniqueImageName(req.body.name, req.file.originalname);
@@ -151,13 +158,7 @@ router.post("/add", IsLoggedIn, upload.single('image'), async (req, res, next) =
   }
 });
 
-
-//TODO C > Create new bacterium
-//GET handler for /bacteria/add (loads)
-router.get("/add", IsLoggedIn, logMiddleware, (req, res, next) => {
-  res.render("bacteria/add", { user: req.user, title: "Add a new Bacterium" });
-});
-
+//GET handler for /bacteria/edit (loads entry)
 router.get("/edit/:_id", IsLoggedIn, logMiddleware, async  (req, res, next) => {
   try {
     const bacteriumObj = await Bacterium.findById(req.params._id).exec();
@@ -174,117 +175,78 @@ router.get("/edit/:_id", IsLoggedIn, logMiddleware, async  (req, res, next) => {
   }
 });
 
-// POST /bacteria/editID
+// POST handler for /bacteria/edit (edits entry)
 router.post("/edit/:_id", IsLoggedIn, upload.single('image'), async (req, res, next) => {
   try {
-    const uniqueImageName = createUniqueImageName(req.body.name, req.file.originalname);
-    // Move the uploaded image to the new destination path
-    const newDestinationPath = path.join(__dirname, '..', userImagesPath, uniqueImageName);
-    await fs.promises.rename(req.file.path, newDestinationPath);
-    //image data integrity code
-    // Extract metadata from the image
+    // Step 1: Retrieve the existing bacterium entry
+    const bacteriumToUpdate = await Bacterium.findById(req.params._id).exec();
+    if (!bacteriumToUpdate) {
+      console.log("Bacterium not found");
+      return res.redirect("/error");
+    }
+    const imagePath = req.file ? req.file.path : bacteriumToUpdate.image;
+    console.log("Current image path: "+ imagePath);
+    // Step 2: Handle the new image upload
+    const newDestinationPath = path.join(__dirname, '..', userImagesPath, imagePath);
+    // Extract metadata from the new image
     const metadata = await Exifr.parse(newDestinationPath);
-    // Convert GPS coordinates to decimal form
     const imageGPS = metadata?.GPSLatitude && metadata?.GPSLongitude ? convertToDecimal(metadata.GPSLatitude, metadata.GPSLongitude, metadata.GPSLatitudeRef, metadata.GPSLongitudeRef) : null;
-    // Convert date to the specified format
     const imageDate = metadata?.DateTimeOriginal ? convertToDate(metadata.DateTimeOriginal) : null;
-    //console.log(req.body.location);
-    //console.log(req.body.updateDate);
-    var locationDataIntegrityValue;
-    var dateDataIntegrityValue;
-    if(imageDate === req.body.updateDate){
-      dateDataIntegrityValue = 0;
-    }else{
-      dateDataIntegrityValue = 1;
-    }
-    if (imageGPS === req.body.location) {
-      locationDataIntegrityValue = 0;
-    }else{
-      locationDataIntegrityValue = 1;
-    }
+    const dateDataIntegrityValue = (imageDate === req.body.updateDate) ? 0 : 1;
+    const locationDataIntegrityValue = (imageGPS === req.body.location) ? 0 : 1;
 
-    // Continue with the update logic
-    const updatedBacterium = await Bacterium.findOneAndUpdate(
+    // Step 3: Update the entry
+    await Bacterium.findOneAndUpdate(
       { _id: req.params._id },
       {
         name: req.body.name,
         binomialNomenclature: req.body.binomialNomenclature,
         updateDate: req.body.updateDate,
         location: req.body.location,
-        image: uniqueImageName,
-        user: req.user._id,
+        image: imagePath, // Use the new image path or retain the old one
+        user: req.user._id, // Use req.user._id to get the currently logged-in user's ID
         dateChanged: dateDataIntegrityValue,
         locationChanged: locationDataIntegrityValue,
-      },
-      { new: true } // to return the updated document
+      }
     );
-
-    if (!updatedBacterium) {
-      console.log("Bacterium not found");
-      return res.redirect("/error");
-    }
-
-    console.log("Model updated successfully:", updatedBacterium);
     res.redirect("/bacteria");
-  } catch (error) {
-    console.error("An error occurred:", error);
+  } catch (err) {
+    console.error("Update error:", err); // Log the error for debugging
     res.redirect("/error");
   }
 });
 
-/*
-router.post("/edit/:_id", IsLoggedIn, upload.single('image'), (req, res, next) => {
-  // Check if a file was uploaded
-  if (req.file) {
-    // Use req.file.path to get the path of the uploaded image
-    var imagePath = req.file.path;
-    imagePath = path.basename(imagePath);
-    console.log(imagePath); // Print the path of the uploaded image to the console)
-  } else {
-    // No file was uploaded, use the existing image path
-    var imagePath = req.body.image;
-  }
-  // Continue with the update logic
-  Bacterium.findOneAndUpdate(
-    { _id: req.params._id },
-    {
-      name: req.body.name,
-      binomialNomenclature: req.body.binomialNomenclature,
-      updateDate: req.body.updateDate,
-      location: req.body.location,
-      image: imagePath,
-      user: req.user._id, // Use req.user._id to get the currently logged-in user's ID
-    }
-  )
-  .then((updatedBacterium) => {
-    res.redirect("/bacteria");
-  })
-  .catch((err) => {
-    res.redirect("/error");
-  });
-});*/
-
-//TODO D > Delete a bacterium
 // GET /bacteria/delete/652f1cb7740320402d9ba04d
 router.get("/delete/:_id", IsLoggedIn, async (req, res, next) => {
   try {
-    let bacteriumId = req.params._id;
-    
+    const bacteriumId = req.params._id;
+
     // Find the bacterium to be deleted
     const bacteriumToDelete = await Bacterium.findById(bacteriumId).exec();
 
-    // Delete the image file associated with the bacterium
-    if (bacteriumToDelete && bacteriumToDelete.image) {
+    if (!bacteriumToDelete) {
+      console.log("Bacterium not found");
+      return res.redirect("/error");
+    }
+
+    // Delete the image file associated with the bacterium if it exists
+    if (bacteriumToDelete.image) {
       const imagePath = path.join(__dirname, '..', 'public/images/bacteria_images', bacteriumToDelete.image);
-      fs.unlinkSync(imagePath); // Delete the file
+
+      // Use async unlink and handle potential errors
+      try {
+        await fs.promises.unlink(imagePath);
+      } catch (err) {
+        console.error("Error deleting image file:", err);
+        // You might want to continue even if the file wasn't deleted
+      }
     }
 
     // Delete the bacterium from the database
     await Bacterium.deleteOne({ _id: bacteriumId });
-
     res.redirect("/bacteria");
   } catch (err) {
-    console.error(err);
+    console.error("An error occurred during deletion:", err);
     res.redirect("/error");
   }
 });
