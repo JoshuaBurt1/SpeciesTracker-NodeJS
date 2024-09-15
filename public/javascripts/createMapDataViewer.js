@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const mapContainer = coordinatesElement.closest('td');
         mapContainer.querySelector('.gridCoordinates').innerHTML = `<u>Grid Cell Coordinates</u>:<br> ${coordinatesText}`;
         mapContainer.querySelector('.gridArea').innerHTML = `<u>Area</u>: ${area.toFixed(10)} km²`;
-        mapContainer.querySelector('.gridDensity').innerHTML = `<u>Density</u>: ${count}/${area.toFixed(2)} = ${density.toFixed(10)} count/km²`;
+        mapContainer.querySelector('.gridDensity').innerHTML = `<u>Density</u>: ${count}/${area.toFixed(6)} = <br> ${density.toFixed(10)} count/km²`;
       });
     });
   }
@@ -205,3 +205,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 });
+
+/*A decision was made regarding the mapping:
+Option 1. Use lines connecting to each coordinate point on the map to show potential distribution -> n^2 calculations/drawings
+Option 2. Use a grid and simply count the number in the grid -> n calculations (current)
+*/

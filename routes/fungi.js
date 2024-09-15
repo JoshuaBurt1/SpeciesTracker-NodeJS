@@ -220,23 +220,34 @@ router.post("/edit/:_id", IsLoggedIn, upload.single('image'), async (req, res, n
 // GET /fungi/delete/652f1cb7740320402d9ba04d
 router.get("/delete/:_id", IsLoggedIn, async (req, res, next) => {
   try {
-    let fungusId = req.params._id;
-    
+    const fungusId = req.params._id;
+
     // Find the fungus to be deleted
     const fungusToDelete = await Fungus.findById(fungusId).exec();
 
-    // Delete the image file associated with the fungus
-    if (fungusToDelete && fungusToDelete.image) {
+    if (!fungusToDelete) {
+      console.log("Fungus not found");
+      return res.redirect("/error");
+    }
+
+    // Delete the image file associated with the fungus if it exists
+    if (fungusToDelete.image) {
       const imagePath = path.join(__dirname, '..', 'public/images/fungi_images', fungusToDelete.image);
-      fs.unlinkSync(imagePath); // Delete the file
+
+      // Use async unlink and handle potential errors
+      try {
+        await fs.promises.unlink(imagePath);
+      } catch (err) {
+        console.error("Error deleting image file:", err);
+        // You might want to continue even if the file wasn't deleted
+      }
     }
 
     // Delete the fungus from the database
     await Fungus.deleteOne({ _id: fungusId });
-
     res.redirect("/fungi");
   } catch (err) {
-    console.error(err);
+    console.error("An error occurred during deletion:", err);
     res.redirect("/error");
   }
 });

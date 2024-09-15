@@ -9,17 +9,18 @@ const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 var logMiddleware = require('../logMiddleware'); //route logging middleware
 
 // Constants
-const MODEL_NAMES = ['Animal', 'Fungus', 'Plant', 'Bacterium', 'Protist'];
+const MODEL_NAMES = ['Plant','Fungus','Animal','Protist','Bacterium'];
 const pageSize = 4;
 
 // Helper function to fetch data from a specific model
-const fetchData = async (model, searchQuery, kingdomQuery) => {
+const fetchData = async (model, searchQuery, binomialNomenclatureQuery, kingdomQuery) => {
   return await model.find({
     $or: [
       { name: { $regex: new RegExp(searchQuery, 'i') } },
+      { binomialNomenclature: { $regex: new RegExp(binomialNomenclatureQuery, 'i') } },
       { kingdom: { $regex: new RegExp(kingdomQuery, 'i') } },
     ],
-  }).sort({ name: 1 });
+  }).sort({ binomialNomenclature: 1 });
 };
 
 // GET handler for /login
@@ -95,20 +96,21 @@ router.get('/', logMiddleware, function(req, res, next) {
 });
 
 // Import Mongoose models
-const Animal = require("../models/animal");
-const Fungus = require("../models/fungus");
 const Plant = require("../models/plant");
-const Bacterium = require("../models/bacterium");
+const Fungus = require("../models/fungus");
+const Animal = require("../models/animal");
 const Protist = require("../models/protist");
+const Bacterium = require("../models/bacterium");
 
 
 router.get("/dataViewer", logMiddleware, async (req, res, next) => {
   try {
     let searchQuery = req.query.searchBar || '';
     let kingdomQuery = req.query.searchBar || '';
+    let binomialNomenclatureQuery = req.query.searchBar || '';
 
     // Fetch data from each model without pagination
-    const modelData = await Promise.all(MODEL_NAMES.map(model => fetchData(eval(model), searchQuery, kingdomQuery)));
+    const modelData = await Promise.all(MODEL_NAMES.map(model => fetchData(eval(model), searchQuery, binomialNomenclatureQuery, kingdomQuery)));
 
     // Combine data from different models into a single array
     const combinedData = modelData.flat();
@@ -165,6 +167,7 @@ router.get("/dataViewer", logMiddleware, async (req, res, next) => {
       user: req.user,
       dataset: paginatedData,
       searchQuery: searchQuery,
+      binomialNomenclatureQuery: binomialNomenclatureQuery,
       kingdomQuery: kingdomQuery,
       totalPages: totalPages,
       currentPage: page,
@@ -189,21 +192,21 @@ router.get("/api", async (req, res) => {
           { name: { $regex: new RegExp(searchQuery, 'i') } },
           { kingdom: { $regex: new RegExp(kingdomQuery, 'i') } },
         ],
-      }).sort({ name: 1 });
+      }).sort({ binomialNomenclature: 1 });
     };
 
     // Fetch data from each model without pagination
-    const [animalData, fungusData, plantData, bacteriumData, protistData] = await Promise.all([
-      fetchData(Bacterium),
-      fetchData(Protist),
-      fetchData(Fungus),
+    const [plantData, fungusData, animalData, protistData, bacteriumData] = await Promise.all([
       fetchData(Plant),
+      fetchData(Fungus),
       fetchData(Animal),
+      fetchData(Protist),
+      fetchData(Bacterium)
       // Add queries for other models (Plant, Bacterium) if needed
     ]);
 
     // Combine data from different models into a single array
-    const combinedData = [...bacteriumData, ...protistData, ...fungusData, ...plantData, ...animalData];
+    const combinedData = [...plantData, ...fungusData, ...animalData, ...protistData, ...bacteriumData];
 
     // Group entries by name and collect locations, update dates into arrays
     const groupedData = combinedData.reduce((acc, item) => {
@@ -215,6 +218,7 @@ router.get("/api", async (req, res) => {
         // Exclude pushing item.image into the images array
       } else {
         acc.push({
+          binomialNomenclature: item.binomialNomenclature,
           name: item.name,
           kingdom: item.kingdom,
           locations: [item.location],
@@ -270,6 +274,7 @@ router.get("/api/download-csv", async (req, res) => {
           // Exclude pushing item.image into the images array
         } else {
           acc.push({
+            binomialNomenclature: item.binomialNomenclature,
             name: item.name,
             kingdom: item.kingdom,
             locations: [item.location],
@@ -295,6 +300,7 @@ router.get("/api/download-csv", async (req, res) => {
   const csvWriter = createCsvWriter({
   path: path.join(__dirname, "speciesData.csv"), // Use an absolute path
   header: [
+    { id: "binomialNomenclature", title: "BinomialNomenclature" },
     { id: "name", title: "Name" },
     { id: "kingdom", title: "Kingdom" },
     { id: "locations", title: "Locations" },
@@ -415,7 +421,5 @@ router.get('/images-info', (req, res) => {
   // Send the response with the directory size in KB
   res.json({ size: sizeGB });
 });
-
-
 
 module.exports = router;

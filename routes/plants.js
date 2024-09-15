@@ -210,26 +210,36 @@ router.post("/edit/:_id", IsLoggedIn, upload.single('image'), async (req, res, n
 // GET /plants/delete/652f1cb7740320402d9ba04d
 router.get("/delete/:_id", IsLoggedIn, async (req, res, next) => {
   try {
-    let plantId = req.params._id;
-    
+    const plantId = req.params._id;
+
     // Find the plant to be deleted
     const plantToDelete = await Plant.findById(plantId).exec();
 
-    // Delete the image file associated with the plant
-    if (plantToDelete && plantToDelete.image) {
+    if (!plantToDelete) {
+      console.log("Plant not found");
+      return res.redirect("/error");
+    }
+
+    // Delete the image file associated with the plant if it exists
+    if (plantToDelete.image) {
       const imagePath = path.join(__dirname, '..', 'public/images/plantae_images', plantToDelete.image);
-      fs.unlinkSync(imagePath); // Delete the file
+
+      // Use async unlink and handle potential errors
+      try {
+        await fs.promises.unlink(imagePath);
+      } catch (err) {
+        console.error("Error deleting image file:", err);
+        // You might want to continue even if the file wasn't deleted
+      }
     }
 
     // Delete the plant from the database
     await Plant.deleteOne({ _id: plantId });
-
     res.redirect("/plants");
   } catch (err) {
-    console.error(err);
+    console.error("An error occurred during deletion:", err);
     res.redirect("/error");
   }
 });
-
 // Export this router module
 module.exports = router;  
