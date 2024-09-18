@@ -12,6 +12,124 @@ var logMiddleware = require('../logMiddleware'); //route logging middleware
 const MODEL_NAMES = ['Plant','Fungus','Animal','Protist','Bacterium'];
 const pageSize = 4;
 
+// Import Mongoose models
+const Plant = require("../models/plant");
+const Fungus = require("../models/fungus");
+const Animal = require("../models/animal");
+const Protist = require("../models/protist");
+const Bacterium = require("../models/bacterium");
+
+// Map model names to model references
+const modelMap = {
+  'Plant': Plant,
+  'Fungus': Fungus,
+  'Animal': Animal,
+  'Protist': Protist,
+  'Bacterium': Bacterium
+};
+
+//Creates a json file of all names and binomialNomenclature when a user goes to /dataViewer => Necessary for faster drop-down menu searching
+//A decision was made regarding drop-down menu option generation; Option 1 was chosen
+//1. Read from a .json file generated once and populate options (Fast)
+//2. make an fetch request from client side each time the user types in a letter, the drop-drop menu is then updated: (Approx 3sec downdown menu change per letter entered)
+/* 
+CLIENT-SIDE (searchBar.js)
+document.addEventListener('DOMContentLoaded', () => {
+  const apiUrl = '/api/dropdown-options';
+  const searchInput = document.getElementById('search-bar');
+  const dropdownMenu = document.getElementById('dropdown-menu');
+  const form = document.getElementById('dropdown-form');
+
+  const populateDropdown = async (query = '') => {
+    try {
+      const response = await fetch(apiUrl);
+      const options = await response.json(); //this is taking a long time
+      if (query.length === 0) {
+        dropdownMenu.innerHTML = ''; // Clear dropdown if no input
+      } else {
+        const filteredOptions = options.filter(option => 
+          option.name.toLowerCase().includes(query.toLowerCase()) ||
+          option.binomialNomenclature.toLowerCase().includes(query.toLowerCase())
+        );
+        dropdownMenu.innerHTML = '';
+        filteredOptions.forEach(option => {
+          const optionElement = document.createElement('a');
+          optionElement.className = 'dropdown-item';
+          optionElement.href = '#';
+          optionElement.textContent = `${option.name} - ${option.binomialNomenclature}`;
+          optionElement.addEventListener('click', () => {
+            searchInput.value = option.name; // Set the input value to the selected option
+            form.submit(); // Submit the form with the selected option
+          });
+          dropdownMenu.appendChild(optionElement);
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching dropdown options:', error);
+    }
+  };
+
+  searchInput.addEventListener('input', (event) => {
+    populateDropdown(event.target.value);
+  });
+
+  // Clear dropdown initially
+  dropdownMenu.innerHTML = '';
+});
+
+//SERVER-SIDE
+router.get('/api/dropdown-options', async (req, res) => {
+  try {
+    // Fetch data from each model
+    const modelData = await Promise.all(MODEL_NAMES.map(modelName =>
+      fetchData(modelMap[modelName])
+    ));
+    // Combine data from different models into a single array
+    const combinedData = modelData.flat();
+    console.log(combinedData);
+    // Create a map to ensure unique binomial nomenclature and associated names
+    const uniqueDataMap = new Map();
+    combinedData.forEach(item => {
+      const { name, binomialNomenclature } = item;
+      // Check if the binomial nomenclature is already in the map
+      if (!uniqueDataMap.has(binomialNomenclature)) {
+        uniqueDataMap.set(binomialNomenclature, { name, binomialNomenclature });
+      }
+    });
+    const dropdownOptions = Array.from(uniqueDataMap.values());
+    res.json(dropdownOptions);
+  } catch (error) {
+    console.error('Error fetching dropdown options:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+*/
+const writeSpeciesListToFile = async () => {
+  try {
+    const modelData = await Promise.all(MODEL_NAMES.map(modelName =>
+      fetchData(modelMap[modelName])
+    ));
+    const combinedData = modelData.flat();
+    // Create a map to ensure unique binomial nomenclature
+    const uniqueDataMap = new Map();
+    combinedData.forEach(item => {
+      const { name, binomialNomenclature } = item;
+      // Use binomialNomenclature as the key, and the whole item as the value
+      if (!uniqueDataMap.has(binomialNomenclature)) {
+        uniqueDataMap.set(binomialNomenclature, { name, binomialNomenclature });
+      }
+    });
+    // Convert map values to an array for the JSON file
+    const speciesList = Array.from(uniqueDataMap.values());
+    const filePath = path.join(__dirname, 'speciesList.json');
+    fs.writeFileSync(filePath, JSON.stringify(speciesList, null, 2), 'utf-8');
+
+    console.log('Created: speciesList.json');
+  } catch (error) {
+    console.error('Error writing: speciesList.json', error);
+  }
+};
+
 // Helper function to fetch data from a specific model
 const fetchData = async (model, searchQuery, binomialNomenclatureQuery, kingdomQuery) => {
   return await model.find({
@@ -95,23 +213,27 @@ router.get('/', logMiddleware, function(req, res, next) {
   res.render('index', { user: req.user, title: 'Species Tracker'});
 });
 
-// Import Mongoose models
-const Plant = require("../models/plant");
-const Fungus = require("../models/fungus");
-const Animal = require("../models/animal");
-const Protist = require("../models/protist");
-const Bacterium = require("../models/bacterium");
-
-
 router.get("/dataViewer", logMiddleware, async (req, res, next) => {
+  writeSpeciesListToFile();
   try {
     let searchQuery = req.query.searchBar || '';
     let kingdomQuery = req.query.searchBar || '';
     let binomialNomenclatureQuery = req.query.searchBar || '';
 
-    // Fetch data from each model without pagination
+    // Prevents long load time of returning all data
+    if (!searchQuery.trim()) {  // If no search query is provided, render the page with a message or empty data
+      return res.render("dataViewer", {
+        title: "Data Viewer",
+        user: req.user,
+        dataset: [], // Empty dataset since there's no search query
+        searchQuery: searchQuery,
+        totalPages: 0,
+        currentPage: 1,
+      });
+    }
+    
+    // Fetch data from each model (plants, fungus, animal, protist, bacteria) to find a match to searchQuery
     const modelData = await Promise.all(MODEL_NAMES.map(model => fetchData(eval(model), searchQuery, binomialNomenclatureQuery, kingdomQuery)));
-
     // Combine data from different models into a single array
     const combinedData = modelData.flat();
 
@@ -133,7 +255,6 @@ router.get("/dataViewer", logMiddleware, async (req, res, next) => {
           images: [item.image]
         });
       }
-    
       return acc;
     }, []);
     
@@ -167,8 +288,6 @@ router.get("/dataViewer", logMiddleware, async (req, res, next) => {
       user: req.user,
       dataset: paginatedData,
       searchQuery: searchQuery,
-      binomialNomenclatureQuery: binomialNomenclatureQuery,
-      kingdomQuery: kingdomQuery,
       totalPages: totalPages,
       currentPage: page,
     });
@@ -252,70 +371,68 @@ router.get("/api", async (req, res) => {
 });
 
 // Download data as CSV endpoint
-router.get("/api/download-csv", async (req, res) => {
-    // ... (your existing code to fetch and process data)
-    try {
-      let searchQuery = req.query.searchBar || "";
-      let kingdomQuery = req.query.searchBar || "";
-  
-      // Fetch data from each model without pagination
-    const modelData = await Promise.all(MODEL_NAMES.map(model => fetchData(eval(model), searchQuery, kingdomQuery)));
+router.get("/download-csv", async (req, res) => {
+  try {
+      // Define the binomialNomenclatureQuery and kingdomQuery directly, or retrieve from req if needed
+      const binomialNomenclatureQuery = req.body.binomialNomenclatureQuery || ""; // Adjust as necessary
+      const kingdomQuery = req.body.kingdomQuery || ""; // Adjust as necessary
 
-    // Combine data from different models into a single array
-    const combinedData = modelData.flat();
-  
-      // Group entries by name and collect locations, update dates into arrays
+      // Fetch data from each model
+      const modelData = await Promise.all(MODEL_NAMES.map(model => 
+          fetchData(modelMap[model], binomialNomenclatureQuery, kingdomQuery)
+      ));
+
+      // Combine data from different models into a single array
+      const combinedData = modelData.flat();
+
+      // Group entries by name and collect locations and update dates into arrays
       const groupedData = combinedData.reduce((acc, item) => {
-        const existingItem = acc.find((groupedItem) => groupedItem.name === item.name);
-  
-        if (existingItem) {
-          existingItem.locations.push(item.location);
-          existingItem.updateDates.push(item.updateDate);
-          // Exclude pushing item.image into the images array
-        } else {
-          acc.push({
-            binomialNomenclature: item.binomialNomenclature,
-            name: item.name,
-            kingdom: item.kingdom,
-            locations: [item.location],
-            updateDates: [item.updateDate],
-            // Exclude creating images array and pushing item.image
-          });
-        }
-        return acc;
+          const existingItem = acc.find(groupedItem => groupedItem.name === item.name);
+          if (existingItem) {
+              existingItem.locations.push(item.location);
+              existingItem.updateDates.push(item.updateDate);
+          } else {
+              acc.push({
+                  binomialNomenclature: item.binomialNomenclature,
+                  name: item.name,
+                  kingdom: item.kingdom,
+                  locations: [item.location],
+                  updateDates: [item.updateDate],
+              });
+          }
+          return acc;
       }, []);
-      // Sort each named entry by updateDate keeping association to location
-      groupedData.forEach((group) => {
-        const zippedData = group.updateDates.map((updateDate, index) => ({
-          updateDate,
-          location: group.locations[index],
-          // Exclude including image in zippedData
-        }));
-        zippedData.sort((a, b) => a.updateDate.localeCompare(b.updateDate));
-        group.locations = zippedData.map((item) => item.location);
-        group.updateDates = zippedData.map((item) => item.updateDate);
-        // Exclude creating and mapping the images array
+
+      // Prepare data for CSV output
+      const csvData = groupedData.map(group => ({
+          binomialNomenclature: group.binomialNomenclature,
+          name: group.name,
+          kingdom: group.kingdom,
+          locations: group.locations.join(', '), // Join locations as a string
+          updateDates: group.updateDates.join(', '), // Join update dates as a string
+      }));
+
+      // Create a CSV writer
+      const csvPath = path.join(__dirname, "speciesData.csv");
+      const csvWriter = createCsvWriter({
+          path: csvPath,
+          header: [
+              { id: "binomialNomenclature", title: "Binomial Nomenclature" },
+              { id: "name", title: "Name" },
+              { id: "kingdom", title: "Kingdom" },
+              { id: "locations", title: "Locations" },
+              { id: "updateDates", title: "Update Dates" },
+          ],
       });
-  // Create a CSV writer
-  const csvWriter = createCsvWriter({
-  path: path.join(__dirname, "speciesData.csv"), // Use an absolute path
-  header: [
-    { id: "binomialNomenclature", title: "BinomialNomenclature" },
-    { id: "name", title: "Name" },
-    { id: "kingdom", title: "Kingdom" },
-    { id: "locations", title: "Locations" },
-    { id: "updateDates", title: "Update Dates" },
-    // Exclude "images" from the CSV output
-  ],
-  });
-    // Write the groupedData to the CSV file
-    await csvWriter.writeRecords(groupedData);
-    // Send the CSV file as a response
-    res.attachment("speciesData.csv");
-    res.sendFile(path.join(__dirname, "speciesData.csv")); // Use an absolute path
+
+      // Write the CSV data to the file
+      await csvWriter.writeRecords(csvData);
+
+      // Send the CSV file as a response
+      res.attachment("speciesData.csv").sendFile(csvPath);
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: "Internal Server Error" });
+      console.error(err);
+      res.status(500).json({ error: "Internal Server Error" });
   }
 });
 

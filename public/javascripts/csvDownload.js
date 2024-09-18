@@ -1,10 +1,19 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const downloadCsvLink = document.getElementById('downloadCsvLink');
+  const downloadCsvLink = document.getElementById('downloadCsvLink'); // or download-button if you want
 
-    downloadCsvLink.addEventListener('click', function () {
+  // Ensure the download link exists before adding the event listener
+  if (downloadCsvLink) {
+    downloadCsvLink.addEventListener('click', function (event) {
+      event.preventDefault(); // Prevent default link behavior
+
       // Send an AJAX request to the download endpoint
-      fetch('/api/download-csv')
-        .then(response => response.blob())
+      fetch('/download-csv')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.blob();
+        })
         .then(blob => {
           // Create a temporary link and trigger a download
           const link = document.createElement('a');
@@ -14,4 +23,5 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .catch(error => console.error('Error downloading CSV:', error));
     });
-  });
+  }
+});

@@ -5,98 +5,113 @@
   <p class="lead">View all data uploaded by users</p>
 </div>  
 <div id="rowFlex" class="mb-3"> 
-<div class="container mt-5">
-    <form id="search-form" action="/dataViewer" method="GET">
-    <div class="input-group">
+  <div class="dropdown" id="buttonPadDataviewer">
+    <form id="dropdown-form" action="/dataViewer" method="GET">
+      <div class="input-group" id="searchDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">  
         <input type="text" class="form-control" id="search-bar" name="searchBar" placeholder="Search">
-        <button type="submit" class="btn btn-primary">Search</button>
-    </div>
+      </div>
+      <div class="dropdown-menu" id="dataviewer-dropdown-menu" aria-labelledby="searchDropdown">
+        <!-- Dropdown options will be dynamically inserted here -->
+      </div>
     </form>
-</div>
-<div class="dropdown" id="buttonPad">
+  </div>
+
+  <!-- Dropdown Menu -->
+  <div class="dropdown" id="buttonPad">
     <button class="btn btn-secondary dropdown-toggle" type="button" id="searchDropdown" data-bs-toggle="dropdown" data-bs-target="#" aria-haspopup="true" aria-expanded="false">
-    Order by
+      Order by
     </button>
     <div class="dropdown-menu" aria-labelledby="searchDropdown">
-    <a class="dropdown-item" href="#">Default (Alphabetical)</a>
-    <a class="dropdown-item" href="#">Taxonomy</a>
-    <a class="dropdown-item" href="#">Conservation Status</a>
-    <a class="dropdown-item" href="#">Invasiveness</a>
-    <a class="dropdown-item" href="#">Industrial Usage</a>
-    <a class="dropdown-item" href="#">Nutrition</a>
-    <a class="dropdown-item" href="#">Toxicity</a>
+      <a class="dropdown-item" href="#">Default (Alphabetical)</a>
+      <a class="dropdown-item" href="#">Taxonomy</a>
+      <a class="dropdown-item" href="#">Conservation Status</a>
+      <a class="dropdown-item" href="#">Invasiveness</a>
+      <a class="dropdown-item" href="#">Industrial Usage</a>
+      <a class="dropdown-item" href="#">Nutrition</a>
+      <a class="dropdown-item" href="#">Toxicity</a>
+      <!-- Dropdown items go here -->
     </div>
+  </div>
 </div>
-</div>
+
 <!-- To Show data -->
 <div class="page-container">
   <div class="table-container">
-    <table class="table table-striped table-hover">
-      <thead>
-        <th>Name</th>
-        <th>Date Identified</th>
-        <th>Location</th>
-        <th>Map</th>
-        <th>Image</th>
-      </thead>
-      <tbody>
-        <% dataset.forEach(function(item) { %>
+    <% if (dataset && dataset.length > 0) { %>
+      <table class="table table-striped table-hover">
+        <thead>
           <tr>
-            <td class="col-2"><%= item.name %><br><i><%= item.binomialNomenclature %></i><br><br>
-              <input type="radio" name="metadata" value="0" id="same-metadata"> <label for="same-metadata">Original metadata </label> <br>
-              <input type="radio" name="metadata" value="1" id="changed-metadata"> <label for="changed-metadata">User modified metadata </label> <br>
-              <input type="radio" name="metadata" value="default" id="default-metadata" checked> <label for="default-metadata">Default (Both) </label>
-            </td>
-            <td>
-              <ul id="cellList">
-                <% if (item.updateDates && item.updateDates.length > 0) { %>
-                  <% item.updateDates.forEach(function(updateDate, index) { %>
-                    <li><%= updateDate %></li>
-                  <% }); %>
-                <% } else { %>
-                  <li>No date available</li>
-                <% } %>
-              </ul>
-            </td>
-            <td>
-              <div class="container">
-                <div class="coordinates" data-species="<%= JSON.stringify(item.locations) %>">
-                  <ul id="cellList">
-                    <% if (item.locations && item.locations.length > 0) { %>
-                      <% item.locations.forEach(function(location, index) { %>
-                        <li><%= location %></li>
-                      <% }); %>
-                    <% } else { %>
-                      <li>No date available</li>
-                    <% } %>
-                  </ul>
-                </div>
-              </div>
-            </td>
-            <td id="td5" class="map-container">
-              <div class="map" style="height: 300px; width: 300px;"></div>
-              <div class="gridCoordinates"></div>
-              <div class="gridArea"></div>
-              <div class="gridDensity"></div>
-            </td>
-            <td class="col-md-3">
-              <% if (item.images && item.images.length > 0) { %>
-                <% if (item.images.length === 1) { %>
-                  <img class="thumbnail w-75" src="/images/<%= item.kingdom.toLowerCase() %>_images/<%= item.images[0] %>" onclick="showImage(this)" />
-                <% } else { %>
-                  <img class="thumbnail w-75" src="/images/<%= item.kingdom.toLowerCase() %>_images/<%= item.images[0] %>" onclick="showImage(this)" />
-                  <span class="additional-images">+<%= item.images.length - 1 %> more</span>
-                <% } %>
-              <% } %>
-              <div class="overlay" onclick="hideImage()">
-                <span class="close" onclick="hideImage()">&times;</span>
-                <img class="enlarged-image" id="enlarged-image" />
-              </div>
-            </td>
+            <th>Name</th>
+            <th>Date Identified</th>
+            <th>Location</th>
+            <th>Map</th>
+            <th>Image</th>
           </tr>
-        <% }); %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% dataset.forEach(function(item) { %>
+            <tr>
+              <td class="col-2">
+                <%= item.name %><br><i><%= item.binomialNomenclature %></i><br><br>
+                <input type="radio" name="metadata" value="0" id="same-metadata"> <label for="same-metadata">Original metadata </label> <br>
+                <input type="radio" name="metadata" value="1" id="changed-metadata"> <label for="changed-metadata">User modified metadata </label> <br>
+                <input type="radio" name="metadata" value="default" id="default-metadata" checked> <label for="default-metadata">Default (Both) </label>
+              </td>
+              <td>
+                <ul id="cellList">
+                  <% if (item.updateDates && item.updateDates.length > 0) { %>
+                    <% item.updateDates.forEach(function(updateDate, index) { %>
+                      <li><%= updateDate %></li>
+                    <% }); %>
+                  <% } else { %>
+                    <li>No date available</li>
+                  <% } %>
+                </ul>
+              </td>
+              <td>
+                <div class="container">
+                  <div class="coordinates" data-species="<%= JSON.stringify(item.locations) %>">
+                    <ul id="cellList">
+                      <% if (item.locations && item.locations.length > 0) { %>
+                        <% item.locations.forEach(function(location, index) { %>
+                          <li><%= location %></li>
+                        <% }); %>
+                      <% } else { %>
+                        <li>No location available</li>
+                      <% } %>
+                    </ul>
+                  </div>
+                </div>
+              </td>
+              <td id="td5" class="map-container">
+                <div class="map" style="height: 300px; width: 300px;"></div>
+                <div class="gridCoordinates"></div>
+                <div class="gridArea"></div>
+                <div class="gridDensity"></div>
+              </td>
+              <td class="col-md-3">
+                <% if (item.images && item.images.length > 0) { %>
+                  <% if (item.images.length === 1) { %>
+                    <img class="thumbnail w-75" src="/images/<%= item.kingdom.toLowerCase() %>_images/<%= item.images[0] %>" onclick="showImage(this)" />
+                  <% } else { %>
+                    <img class="thumbnail w-75" src="/images/<%= item.kingdom.toLowerCase() %>_images/<%= item.images[0] %>" onclick="showImage(this)" />
+                    <span class="additional-images">+<%= item.images.length - 1 %> more</span>
+                  <% } %>
+                <% } %>
+                <div class="overlay" onclick="hideImage()">
+                  <span class="close" onclick="hideImage()">&times;</span>
+                  <img class="enlarged-image" id="enlarged-image" />
+                </div>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } else { %>
+      <p>This is the random sample of data area, 1 from each kingdom</p>
+      <p>Clicking on this opens the tree of life links to specific species</p>
+    <% } %>
+    
     <!-- Pagination -->
   </div>
   <!-- Pagination -->
@@ -105,21 +120,101 @@
       <a href="/dataViewer?page=1&searchBar=<%= searchQuery %>">&lt;&lt;</a>
       <a href="/dataViewer?page=<%= Math.max(currentPage - 10, 1) %>&searchBar=<%= searchQuery %>">&lt;</a>
     <% } %>
-  
+
     <% const maxPagesToShow = 10; // Adjust this value based on your preference %>
     <% const startPage = Math.max(currentPage - Math.floor(maxPagesToShow / 2), 1); %>
     <% const endPage = Math.min(startPage + maxPagesToShow - 1, totalPages); %>
-  
+
     <% for (let i = startPage; i <= endPage; i++) { %>
       <a href="/dataViewer?page=<%= i %>&searchBar=<%= searchQuery %>" class="<%= currentPage === i ? 'activePagination' : '' %>">
         <%= i %>
       </a>
     <% } %>
-  
+
     <% if (currentPage < totalPages) { %>
       <a href="/dataViewer?page=<%= Math.min(currentPage + 10, totalPages) %>&searchBar=<%= searchQuery %>">&gt;</a>
       <a href="/dataViewer?page=<%= totalPages %>&searchBar=<%= searchQuery %>">&gt;&gt;</a>
     <% } %>
   </div>
-  </div>
+</div>
+
 <%- include('./partials/footer') %>
+
+<script defer>
+//the reason for this search format in dataviewer is:
+//1. large amount of data, takes 10+ seconds to load everything, so the user needs to make a specific search
+//2. Avoids unnecessary calls in user specific search areas "Your datasets"  
+//3. easier to load more data per single species
+document.addEventListener('DOMContentLoaded', () => {
+  const jsonUrl = '/routes/speciesList.json'; // Ensure this path is correct
+  const searchInput = document.getElementById('search-bar');
+  const dropdownMenu = document.getElementById('dataviewer-dropdown-menu');
+  const form = document.getElementById('dropdown-form');
+
+  const cleanValue = (value) => {
+    return value.replace(/[\(\)].*$/, '').trim();
+  };
+
+  const showDropdown = () => {
+    dropdownMenu.style.visibility = 'visible'; 
+    dropdownMenu.style.opacity = '1'; 
+    dropdownMenu.style.pointerEvents = 'auto'; 
+  };
+
+  const hideDropdown = () => {
+    dropdownMenu.style.visibility = 'hidden'; 
+    dropdownMenu.style.opacity = '0'; 
+    dropdownMenu.style.pointerEvents = 'none'; 
+  };
+
+  const populateDropdown = async (query = '') => {
+    try {
+      const response = await fetch(jsonUrl);
+      
+      // Check if the response is ok
+      if (!response.ok) {
+        console.error('Network response was not ok:', response.statusText);
+        return;
+      }
+
+      const options = await response.json();
+      if (query.length === 0) {
+        dropdownMenu.innerHTML = ''; 
+        hideDropdown(); 
+      } else {
+        const filteredOptions = options.filter(option => 
+          option.name.toLowerCase().includes(query.toLowerCase()) ||
+          option.binomialNomenclature.toLowerCase().includes(query.toLowerCase())
+        );
+        dropdownMenu.innerHTML = ''; 
+        if (filteredOptions.length > 0) {
+          filteredOptions.forEach(option => {
+            const cleanedBinomialNomenclature = cleanValue(option.binomialNomenclature);
+            const optionElement = document.createElement('a');
+            optionElement.className = 'dropdown-item';
+            optionElement.href = '#';
+            optionElement.textContent = `${option.name} - ${cleanedBinomialNomenclature}`;
+            optionElement.addEventListener('click', () => {
+              searchInput.value = cleanedBinomialNomenclature; 
+              form.submit(); 
+            });
+            dropdownMenu.appendChild(optionElement);
+          });
+          showDropdown(); 
+        } else {
+          hideDropdown(); 
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching dropdown options:', error);
+    }
+  };
+  
+  searchInput.addEventListener('input', (event) => {
+    populateDropdown(event.target.value);
+  });
+
+  // Initial state: hide dropdown
+  hideDropdown();
+});
+</script>

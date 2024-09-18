@@ -51,7 +51,7 @@ router.get('/', IsLoggedIn, logMiddleware, async (req, res, next) => {
     let skipSize = pageSize * (page - 1);
     
     const bacteria = await Bacterium.find(query)
-      .sort({ name: 1, updateDate: 1 })
+      .sort({ binomialNomenclature: 1, updateDate: 1 })
       .limit(pageSize)
       .skip(skipSize);
 
