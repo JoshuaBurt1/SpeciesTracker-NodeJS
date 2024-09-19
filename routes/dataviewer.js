@@ -25,10 +25,10 @@ const modelMap = {
   'Bacterium': Bacterium
 };
 
-//Creates a json file of all names and binomialNomenclature when a user goes to /dataViewer => Necessary for faster drop-down menu searching
+//Creates a json file of all names and binomialNomenclature when a user goes to /dataviewer => Necessary for faster drop-down menu searching
 //A decision was made regarding drop-down menu option generation; Option 1 was chosen
-//1. Read from a .json file generated once and populate options (Fast)
-//2. make an fetch request from client side each time the user types in a letter, the drop-drop menu is then updated: (Approx 3sec downdown menu change per letter entered)
+//1. Read from a .json file generated, then cached, once and populate options (Fast)
+//2. make an fetch request from client side each time the user types in a letter, the drop-drop menu is then updated: (Approx 3sec dropdown menu change per letter entered)
 /* 
 CLIENT-SIDE (searchBar.js)
 document.addEventListener('DOMContentLoaded', () => {
@@ -103,46 +103,46 @@ router.get('/api/dropdown-options', async (req, res) => {
 */
 
 const writeSpeciesListToFile = async () => {
-    try {
-      const modelData = await Promise.all(MODEL_NAMES.map(modelName =>
-        fetchData(modelMap[modelName])
-      ));
-      const combinedData = modelData.flat();
-  
-      // Create a map to ensure unique binomial nomenclature
-      const uniqueDataMap = new Map();
-      combinedData.forEach(item => {
-        const { name, binomialNomenclature } = item;
-        if (!uniqueDataMap.has(binomialNomenclature)) {
-          uniqueDataMap.set(binomialNomenclature, { name, binomialNomenclature });
-        }
-      });
-  
-      // Convert map values to an array for the JSON file
-      const speciesList = Array.from(uniqueDataMap.values());
-      const filePath = path.join(__dirname, 'speciesList.json');
-  
-      // Check if the file exists and read its content
-      //NOTE: creating a json file causes nodemon to restart, this logs the user out 
-      //comparing the data is necessary to prevent the above issue
-      let existingData = [];
-      if (fs.existsSync(filePath)) {
-        const fileContent = fs.readFileSync(filePath, 'utf-8');
-        existingData = JSON.parse(fileContent);
+  try {
+    const modelData = await Promise.all(MODEL_NAMES.map(modelName =>
+      fetchData(modelMap[modelName])
+    ));
+    const combinedData = modelData.flat();
+
+    // Create a map to ensure unique binomial nomenclature
+    const uniqueDataMap = new Map();
+    combinedData.forEach(item => {
+      const { name, binomialNomenclature } = item;
+      // Trim binomialNomenclature up to the "(" 
+      //const trimmedNomenclature = binomialNomenclature.split('(')[0].trim(); *********//TODO: Remove this when able; then make faster write ******
+      if (!uniqueDataMap.has(binomialNomenclature)) {
+        uniqueDataMap.set(binomialNomenclature, { name, binomialNomenclature: binomialNomenclature });
       }
-  
-      // Compare new data with existing data
-      if (JSON.stringify(existingData) !== JSON.stringify(speciesList)) {
-        // Write to file only if data has changed
-        fs.writeFileSync(filePath, JSON.stringify(speciesList, null, 2), 'utf-8');
-        console.log('Updated: speciesList.json');
-      } else {
-        console.log('No changes detected, speciesList.json not updated.');
-      }
-    } catch (error) {
-      console.error('Error writing: speciesList.json', error);
+    });
+
+    // Convert map values to an array for the JSON file
+    const speciesList = Array.from(uniqueDataMap.values());
+    const filePath = path.join(__dirname, 'speciesList.json');
+
+    // Check if the file exists and read its content
+    let existingData = [];
+    if (fs.existsSync(filePath)) {
+      const fileContent = fs.readFileSync(filePath, 'utf-8');
+      existingData = JSON.parse(fileContent);
     }
-  };
+
+    // Compare new data with existing data
+    if (JSON.stringify(existingData) !== JSON.stringify(speciesList)) {
+      // Write to file only if data has changed
+      fs.writeFileSync(filePath, JSON.stringify(speciesList, null, 2), 'utf-8');
+      console.log('Updated: speciesList.json');
+    } else {
+      console.log('No changes detected, speciesList.json not updated.');
+    }
+  } catch (error) {
+    console.error('Error writing: speciesList.json', error);
+  }
+};
 
 // Helper function to fetch data from a specific model
 const fetchData = async (model, searchQuery, binomialNomenclatureQuery, kingdomQuery) => {
@@ -154,7 +154,6 @@ const fetchData = async (model, searchQuery, binomialNomenclatureQuery, kingdomQ
     ],
   }).sort({ binomialNomenclature: 1 });
 };
-
 
 router.get("/", logMiddleware, async (req, res, next) => {
     writeSpeciesListToFile();

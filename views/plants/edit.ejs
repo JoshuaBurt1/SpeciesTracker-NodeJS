@@ -1,81 +1,43 @@
 <%- include('../partials/header') %>
 <h1><%= title %></h1>
   
-<!--available to req.body object-->
 <div id="editFormOuter">
   <div id="editFormInner">
-    <form method="POST" enctype="multipart/form-data">
-      <!-- Input names have to match the name of the fields in the mongo schema object -->
-      <!-- Mapping is not automatic, but it's best practices -->
-    <div id="names">
-      <fieldset class="form-group">
-        <label for="name" class="col-2">Common Name:</label>
-        <input name="name" id="name" class="form-control" value="<%= plant.name %>" required/>
-      </fieldset>
-      <fieldset class="form-group">
-        <label for="binomialNomenclature" class="col-2">Scientific Name:</label>
-        <input name="binomialNomenclature" id="binomialNomenclature" class="form-control" value="<%= plant.binomialNomenclature %>"/>
-      </fieldset>
-    </div>
+    <form id="editPlantForm" method="POST" enctype="multipart/form-data">
+      <div id="names">
+        <fieldset class="form-group">
+          <label for="name" class="col-2">Common Name:</label>
+          <input name="name" id="name" class="form-control" value="<%= plant.name %>" required />
+        </fieldset>
+        <fieldset class="form-group">
+          <label for="binomialNomenclature" class="col-2">Scientific Name:</label>
+          <input name="binomialNomenclature" id="binomialNomenclature" class="form-control" value="<%= plant.binomialNomenclature %>" />
+        </fieldset>
+      </div>
       <fieldset class="form-group">
         <label for="updateDate" class="col-2">Date Identified:</label>
-        <input name="updateDate" id="updateDate" class="form-control" value="<%= plant.updateDate %>" required/>
+        <input name="updateDate" id="updateDate" class="form-control" value="<%= plant.updateDate %>" required />
       </fieldset>
       <fieldset class="form-group">
         <label for="location" class="col-2">Location:</label>
-        <input name="location" id="location" class="form-control" value="<%= plant.location %>" required/>
+        <input name="location" id="location" class="form-control" value="<%= plant.location %>" required />
       </fieldset>
-      <!-- Display the selected location's coordinates -->
       <div id="coordinates"></div>
-      <!-- Display the selected location's coordinates using Leaflet -->
       <div id="map" style="height: 300px;"></div>
 
-      <!-- Button needs to be inside <form> element to trigger POST -->
       <button class="offset-3 btn btn-primary">Save</button>
     </form>
   </div>
 </div>
 
 <script defer>
-  const nameInput = document.getElementById('name');
-  const imageInput = document.getElementById('image');
+  document.getElementById('editPlantForm').addEventListener('submit', function(event) {
+    // Remove parentheses from name and scientific name
+    const commonNameInput = document.getElementById('name');
+    const scientificInput = document.getElementById('binomialNomenclature');
 
-  // Function to send data to the server
-  const sendDataToServer = async (data) => {
-  try {
-    const formData = new FormData();
-
-    // Append each key-value pair to the FormData object
-    Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
-
-    const response = await fetch('/edit/:_id', {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (!response.ok) {
-      throw new Error('Server error');
-    }
-
-    const result = await response.json();
-    console.log('Server response:', result);
-  } catch (error) {
-    console.error('Error sending data to the server:', error);
-  }
-};
-
-  // Event listener for name input
-  nameInput.addEventListener('input', () => {
-    const nameValue = nameInput.value;
-    sendDataToServer({ name: nameValue });
-  });
-
-  // Event listener for image input (assuming you want to handle file input changes)
-  imageInput.addEventListener('change', () => {
-    const imageFile = imageInput.files[0];
-    sendDataToServer({ image: imageFile });
+    commonNameInput.value = commonNameInput.value.replace(/[()]/g, '').trim();
+    scientificInput.value = scientificInput.value.replace(/[()]/g, '').trim();
   });
 </script>
 

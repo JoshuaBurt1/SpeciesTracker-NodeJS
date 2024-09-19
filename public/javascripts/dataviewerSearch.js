@@ -6,10 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const searchInput = document.getElementById('dataviewer-search-bar');
   const dropdownMenu = document.getElementById('dataviewer-dropdown-menu');
   const form = document.getElementById('dataviewer-dropdown-form');
-
-  const cleanValue = (value) => {
-    return value.replace(/[\(\)].*$/, '').trim();
-  };
+  
+  let cachedOptions = [];
+  let isDataFetched = false;
 
   const showDropdown = () => {
     dropdownMenu.style.visibility = 'visible'; 
@@ -23,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     dropdownMenu.style.pointerEvents = 'none'; 
   };
 
-  const populateDropdown = async (query = '') => {
+  const fetchOptions = async () => {
     try {
       const response = await fetch(jsonUrl);
       
@@ -33,42 +32,71 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const options = await response.json();
-      if (query.length === 0) {
-        dropdownMenu.innerHTML = ''; 
-        hideDropdown(); 
-      } else {
-        const filteredOptions = options.filter(option => 
-          option.name.toLowerCase().includes(query.toLowerCase()) ||
-          option.binomialNomenclature.toLowerCase().includes(query.toLowerCase())
-        );
-        dropdownMenu.innerHTML = ''; 
-        if (filteredOptions.length > 0) {
-          filteredOptions.forEach(option => {
-            const cleanedBinomialNomenclature = cleanValue(option.binomialNomenclature);
-            const optionElement = document.createElement('a');
-            optionElement.className = 'dropdown-item';
-            optionElement.href = '#';
-            optionElement.textContent = `${option.name} - ${cleanedBinomialNomenclature}`;
-            optionElement.addEventListener('click', () => {
-              searchInput.value = cleanedBinomialNomenclature; 
-              form.submit(); 
-            });
-            dropdownMenu.appendChild(optionElement);
-          });
-          showDropdown(); 
-        } else {
-          hideDropdown(); 
-        }
-      }
+      cachedOptions = await response.json();
+      isDataFetched = true; // Mark data as fetched
     } catch (error) {
-      console.error('Error fetching dropdown options:', error);
+      console.error('Error fetching options:', error);
     }
   };
-  
-  searchInput.addEventListener('input', (event) => {
-    populateDropdown(event.target.value);
-  });
+
+  const populateDropdown = (query = '') => {
+    if (!isDataFetched) {
+      console.warn('Data not fetched yet. Aborting dropdown population.');
+      return;
+    }
+
+    dropdownMenu.innerHTML = ''; 
+
+    if (query.length === 0) {
+      hideDropdown(); 
+      return;
+    }
+
+    const filteredOptions = cachedOptions.filter(option => 
+      option.name.toLowerCase().includes(query.toLowerCase()) ||
+      option.binomialNomenclature.toLowerCase().includes(query.toLowerCase())
+    );
+
+    if (filteredOptions.length > 0) {
+      filteredOptions.forEach(option => {
+        const optionElement = document.createElement('a');
+        optionElement.className = 'dropdown-item';
+        optionElement.href = '#';
+        optionElement.innerHTML = `${option.name} : <i>${option.binomialNomenclature}</i>`; // Use innerHTML to allow HTML tags
+        optionElement.addEventListener('click', () => {
+          searchInput.value = option.binomialNomenclature; 
+          form.submit(); 
+        });
+        dropdownMenu.appendChild(optionElement);
+      });
+      showDropdown(); 
+    } else {
+      hideDropdown(); 
+    }
+  };
+
+  // Debounce function (commented out for now)
+  /*
+  const debounce = (func, delay) => {
+    let timeout;
+    return (...args) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), delay);
+    };
+  };
+  */
+
+  // Check if the current path is "/dataviewer"
+  if (window.location.pathname === '/dataviewer') {
+    // Fetch options initially on page load
+    fetchOptions().then(() => {
+      searchInput.addEventListener('input', (event) => {
+        populateDropdown(event.target.value);
+        // If you want to use debounce, uncomment the following line:
+        // debounce((value) => populateDropdown(value), 300)(event.target.value);
+      });
+    });
+  }
 
   // Initial state: hide dropdown
   hideDropdown();

@@ -4,7 +4,7 @@
 <!--available to req.body object-->
 <div id="editFormOuter">
   <div id="editFormInner">
-    <form method="POST" enctype="multipart/form-data">
+    <form id="editProtistForm" method="POST" enctype="multipart/form-data">
       <!-- Input names have to match the name of the fields in the mongo schema object -->
       <!-- Mapping is not automatic, but it's best practices -->
     <div id="names">
@@ -35,4 +35,16 @@
     </form>
   </div>
 </div>
+
+<script defer>
+  document.getElementById('editProtistForm').addEventListener('submit', function(event) {
+    // Remove parentheses from name and scientific name
+    const commonNameInput = document.getElementById('name');
+    const scientificInput = document.getElementById('binomialNomenclature');
+
+    commonNameInput.value = commonNameInput.value.replace(/[()]/g, '').trim();
+    scientificInput.value = scientificInput.value.replace(/[()]/g, '').trim();
+  });
+</script>
+
 <%- include('../partials/footer') %>

@@ -51,8 +51,7 @@
 
 <script defer>
   async function identifyPlant() {
-
-    //changes preview image
+    // Changes preview image
     const images = image.files;
     const formData = new FormData();
     formData.append('image', images[0]);
@@ -79,22 +78,28 @@
       top4Div.innerHTML = ''; // Clear previous content
 
       data.top4Matches.forEach((match, index) => {
-      const matchDiv = document.createElement('div');
-      matchDiv.innerHTML = `<strong>${index + 1}. Name:</strong> ${match.name}; 
-                        <strong>Scientific Name:</strong> ${match.scientificName}; 
-                        <strong>Percentage:</strong> ${match.score}<br>`;
-      top4Div.appendChild(matchDiv);  
-    });
+        const matchDiv = document.createElement('div');
+        matchDiv.innerHTML = `<strong>${index + 1}. Name:</strong> ${match.name}; 
+                              <strong>Scientific Name:</strong> ${match.scientificName}; 
+                              <strong>Percentage:</strong> ${match.score}<br>`;
+        top4Div.appendChild(matchDiv);  
+      });
 
       // Set values for initial fields
       var plant = document.getElementById('binomialNomenclature');
       plant.value = data.top4Matches[0].scientificName;
       var commonName = document.getElementById('name');
       commonName.value = data.top4Matches[0].name;
+
+      // Remove parentheses from name and scientific name at the end
+      commonName.value = commonName.value.replace(/[()]/g, '').trim();
+      //plant.value = plant.value.replace(/[()]/g, '').trim();
+
     } catch (error) {
       console.error('error', error);
     }
   }
 </script>
+
 
 <%- include('../partials/footer') %>

@@ -6,9 +6,9 @@
 </div>  
 <div id="rowFlex" class="mb-3"> 
   <div class="dropdown" id="buttonPadDataviewer">
-    <form id="dataviewer-dropdown-form" action="/dataViewer" method="GET">
+    <form id="dataviewer-dropdown-form" action="/dataviewer" method="GET">
       <div class="input-group" id="searchDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">  
-        <input type="text" class="form-control" id="dataviewer-search-bar" name="searchBar" placeholder="Quick Search">
+        <input type="text" class="form-control" id="dataviewer-search-bar" name="searchBar" placeholder="Search">
       </div>
       <div class="dropdown-menu" id="dataviewer-dropdown-menu" aria-labelledby="searchDropdown">
         <!-- Dropdown options will be dynamically inserted here -->
@@ -107,12 +107,19 @@
           <% }); %>
         </tbody>
       </table>
+      <% } else if (searchQuery) { %>
+        <p>No data available.</p>
+        <img src="public/site_images/noimage.png" alt="Image not found" />
+      <% } else { %>
+        <p>Enter a search value.</p>
+      <% } %>
   </div>
+
   <!-- Pagination -->
   <div class="pagination">
     <% if (currentPage > 1) { %>
-      <a href="/dataViewer?page=1&searchBar=<%= searchQuery %>">&lt;&lt;</a>
-      <a href="/dataViewer?page=<%= Math.max(currentPage - 10, 1) %>&searchBar=<%= searchQuery %>">&lt;</a>
+      <a href="/dataviewer?page=1&searchBar=<%= searchQuery %>">&lt;&lt;</a>
+      <a href="/dataviewer?page=<%= Math.max(currentPage - 10, 1) %>&searchBar=<%= searchQuery %>">&lt;</a>
     <% } %>
 
     <% const maxPagesToShow = 10; // Adjust this value based on your preference %>
@@ -120,104 +127,16 @@
     <% const endPage = Math.min(startPage + maxPagesToShow - 1, totalPages); %>
 
     <% for (let i = startPage; i <= endPage; i++) { %>
-      <a href="/dataViewer?page=<%= i %>&searchBar=<%= searchQuery %>" class="<%= currentPage === i ? 'activePagination' : '' %>">
+      <a href="/dataviewer?page=<%= i %>&searchBar=<%= searchQuery %>" class="<%= currentPage === i ? 'activePagination' : '' %>">
         <%= i %>
       </a>
     <% } %>
 
     <% if (currentPage < totalPages) { %>
-      <a href="/dataViewer?page=<%= Math.min(currentPage + 10, totalPages) %>&searchBar=<%= searchQuery %>">&gt;</a>
-      <a href="/dataViewer?page=<%= totalPages %>&searchBar=<%= searchQuery %>">&gt;&gt;</a>
+      <a href="/dataviewer?page=<%= Math.min(currentPage + 10, totalPages) %>&searchBar=<%= searchQuery %>">&gt;</a>
+      <a href="/dataviewer?page=<%= totalPages %>&searchBar=<%= searchQuery %>">&gt;&gt;</a>
     <% } %>
   </div>
-  <% } else { %>
-    <div class="flex-grid">
-      <button class="grid-item plantae">Plantae</button>
-      <button class="grid-item fungi">Fungi</button>
-      <button class="grid-item animalia">Animalia</button>
-      <button class="grid-item protista">Protista</button>
-      <button class="grid-item bacteria">Bacteria</button>
-      <div class="grid-item empty"></div>
-  </div>
-  <% } %>
 </div>
 
 <%- include('../partials/footer') %>
-
-<script defer>
-// Function to show phyla when Plantae button is clicked
-function showPlantaePhyla() {
-    // Clear the grid
-    const grid = document.querySelector('.flex-grid');
-    grid.innerHTML = ''; // Remove all existing buttons
-
-    // Define phylum buttons for Plantae
-    const phylumButtons = [
-        { name: 'Angiosperms', className: 'plantae' },
-        { name: 'Gymnosperms', className: 'plantae' },
-        { name: 'Bryophytes', className: 'plantae' },
-        { name: 'Pteridophytes', className: 'plantae' }
-    ];
-
-    // Create new buttons for each phylum
-    phylumButtons.forEach(phylum => {
-        const button = document.createElement('button');
-        button.className = `grid-item ${phylum.className}`; // Add existing styles and class
-        button.textContent = phylum.name;
-
-        button.onclick = function() {
-            // Optional: Add functionality for further clicks
-            console.log(`${phylum.name} clicked!`);
-        };
-
-        grid.appendChild(button);
-    });
-
-    // Create and add Go Back button
-    const goBackButton = document.createElement('button');
-    goBackButton.className = 'grid-item'; // Maintain grid-item class for styling
-    goBackButton.textContent = 'Go Back';
-    
-    goBackButton.onclick = function() {
-        goBack();
-    };
-
-    grid.appendChild(goBackButton);
-}
-
-// Function to go back to the original buttons
-function goBack() {
-    const grid = document.querySelector('.flex-grid');
-    grid.innerHTML = ''; // Clear the grid
-
-    // Restore original buttons
-    const originalButtons = [
-        { name: 'Plantae', className: 'plantae' },
-        { name: 'Fungi', className: 'fungi' },
-        { name: 'Animalia', className: 'animalia' },
-        { name: 'Protista', className: 'protista' },
-        { name: 'Bacteria', className: 'bacteria' }
-    ];
-
-    originalButtons.forEach(kingdom => {
-        const button = document.createElement('button');
-        button.className = `grid-item ${kingdom.className}`; // Maintain classes for styling
-        button.textContent = kingdom.name;
-
-        // Bind the showPhylum function to each button
-        button.onclick = function() {
-            if (kingdom.name === 'Plantae') {
-                showPlantaePhyla();
-            } else {
-                console.log(`${kingdom.name} button clicked!`); // Add any specific functionality as needed
-            }
-        };
-
-        grid.appendChild(button);
-    });
-}
-
-// Add event listener to the Plantae button
-document.querySelector('.plantae').addEventListener('click', showPlantaePhyla);
-
-</script>

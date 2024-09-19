@@ -1,7 +1,7 @@
 <%- include('../partials/header') %>
 <h1><%= title %></h1>
 
-<form method="POST" enctype="multipart/form-data">
+<form id="addProtistForm" method="POST" enctype="multipart/form-data">
   <!-- ... other form fields ... -->
   <div id="dataVisual">
     <div id="imageAndName">
@@ -47,5 +47,16 @@
   <!-- Button needs to be inside <form> element to trigger POST -->
   <button class="offset-3 btn btn-primary" type="submit">Save</button>
 </form>
+
+<script defer>
+  document.getElementById('addProtistForm').addEventListener('submit', function(event) {
+    // Remove parentheses from name and scientific name
+    const commonNameInput = document.getElementById('name');
+    const scientificInput = document.getElementById('binomialNomenclature');
+
+    commonNameInput.value = commonNameInput.value.replace(/[()]/g, '').trim();
+    scientificInput.value = scientificInput.value.replace(/[()]/g, '').trim();
+  });
+</script>
 
 <%- include('../partials/footer') %>

@@ -1,15 +1,15 @@
 [
   {
     "name": "American silver Fir",
-    "binomialNomenclature": "Abies balsamea (L.) Mill."
+    "binomialNomenclature": "Abies balsamea L. Mill."
   },
   {
     "name": "Fraser fir",
-    "binomialNomenclature": "Abies fraseri (Pursh) Poir."
+    "binomialNomenclature": "Abies fraseri Pursh Poir."
   },
   {
     "name": "Giant Fir",
-    "binomialNomenclature": "Abies grandis (Douglas ex D.Don) Lindl."
+    "binomialNomenclature": "Abies grandis Douglas ex D.Don Lindl."
   },
   {
     "name": "Boxelder",
@@ -65,7 +65,7 @@
   },
   {
     "name": "Red baneberry",
-    "binomialNomenclature": "Actaea rubra (Aiton) Willd."
+    "binomialNomenclature": "Actaea rubra Aiton Willd."
   },
   {
     "name": "Northern maidenhair",
@@ -81,7 +81,7 @@
   },
   {
     "name": "Slender false foxglove",
-    "binomialNomenclature": "Agalinis tenuifolia (Vahl) Raf."
+    "binomialNomenclature": "Agalinis tenuifolia Vahl Raf."
   },
   {
     "name": "White Snakeroot",
@@ -121,7 +121,7 @@
   },
   {
     "name": "Manchurian alder",
-    "binomialNomenclature": "Alnus hirsuta (Spach) Rupr."
+    "binomialNomenclature": "Alnus hirsuta Spach Rupr."
   },
   {
     "name": "Grey alder",
@@ -137,11 +137,11 @@
   },
   {
     "name": "Saskatoon",
-    "binomialNomenclature": "Amelanchier alnifolia (Nutt.) Nutt. ex M.Roem."
+    "binomialNomenclature": "Amelanchier alnifolia Nutt. Nutt. ex M.Roem."
   },
   {
     "name": "Mountain Serviceberry",
-    "binomialNomenclature": "Amelanchier bartramiana (Tausch) M.Roem."
+    "binomialNomenclature": "Amelanchier bartramiana Tausch M.Roem."
   },
   {
     "name": "Juneberry",
@@ -161,7 +161,7 @@
   },
   {
     "name": "Hog-peanut",
-    "binomialNomenclature": "Amphicarpaea bracteata (L.) Fernald"
+    "binomialNomenclature": "Amphicarpaea bracteata L. Fernald"
   },
   {
     "name": "Pearly Everlasting",
@@ -804,7 +804,7 @@
     "binomialNomenclature": "Cornus sericea L."
   },
   {
-    "name": "Skrubbær (Norwegian)",
+    "name": "Skrubbær Norwegian",
     "binomialNomenclature": "Cornus suecica L."
   },
   {
@@ -1520,7 +1520,7 @@
     "binomialNomenclature": "Iris versicolor L."
   },
   {
-    "name": "Blue flag (Iris virginica)",
+    "name": "Blue flag",
     "binomialNomenclature": "Iris virginica L."
   },
   {
@@ -2668,8 +2668,8 @@
     "binomialNomenclature": "Rosa spinosissima L."
   },
   {
-    "name": "Rosa squarrosa (Rau) Boreau",
-    "binomialNomenclature": "Rosa squarrosa (Rau) Boreau"
+    "name": "Rosa squarrosa Rau Boreau",
+    "binomialNomenclature": "Rosa squarrosa Rau Boreau"
   },
   {
     "name": "Woods's rose",
@@ -5280,7 +5280,7 @@
     "binomialNomenclature": "Tubifera ferruginosa"
   },
   {
-    "name": "Phytoplasma & White Trillium (host)",
-    "binomialNomenclature": "Candidatus Phytoplasma & Trillium grandiflorum (host)"
+    "name": "Phytoplasma & White Trillium - host",
+    "binomialNomenclature": "Candidatus Phytoplasma & Trillium grandiflorum - host"
   }
 ]

@@ -1,59 +1,47 @@
 <%- include('../partials/header') %>
 <h1><%= title %></h1>
     
-<!-- available to req.body object -->
-  <form method="POST" enctype="multipart/form-data">
-    <!-- Input names have to match the name of the fields in the mongo schema object -->
-    <div id="dataVisual">
-      <div id="imageAndName">
-          <fieldset class="form-group">
-              <label for="image" class="col-2">Image:</label>
-              <input type="file" name="image" id="image" class="form-control" accept=".jpg, .jpeg, .png" required onchange="identifyFungus()">
-          </fieldset>
-          <div id="nameRow">
-          <fieldset class="form-group">
-              <label for="name" class="col-2">Name:</label>
-              <input name="name" id="name" class="form-control" required/>
-          </fieldset>
-          <fieldset class="form-group">
-              <label for="binomialNomenclature" class="col-2">Scientific Name:</label>
-              <input name="binomialNomenclature" id="binomialNomenclature" class="form-control"/>
-          </fieldset>
-        </div>
-        <div id="identificationResult"></div>
+<form id="addFungiForm" method="POST" enctype="multipart/form-data">
+  <div id="dataVisual">
+    <div id="imageAndName">
+      <fieldset class="form-group">
+        <label for="image" class="col-2">Image:</label>
+        <input type="file" name="image" id="image" class="form-control" accept=".jpg, .jpeg, .png" required onchange="identifyFungus()">
+      </fieldset>
+      <div id="nameRow">
+        <fieldset class="form-group">
+          <label for="name" class="col-2">Name:</label>
+          <input name="name" id="name" class="form-control" required />
+        </fieldset>
+        <fieldset class="form-group">
+          <label for="binomialNomenclature" class="col-2">Scientific Name:</label>
+          <input name="binomialNomenclature" id="binomialNomenclature" class="form-control" />
+        </fieldset>
       </div>
-      <div id="imageVisual">
-          <img src="/site_images/noimage.png" alt="No image" id="preview">
-      </div>
+      <div id="identificationResult"></div>
     </div>
-    <fieldset class="form-group">
-      <label for="updateDate" class="col-2">Date Identified:</label>
-      <input
-        name="updateDate"
-        id="updateDate"
-        required
-        class="form-control"
-        placeholder="YYYY:MM:DD HH:mm:ss"
-      />
-    </fieldset>
-    <!-- -->
-    <fieldset class="form-group">
-      <label for="location" class="col-2">Location:</label>
-      <input name="location" id="location" class="form-control" placeholder="Latitude, Longitude (e.g., 45.0000, -45.0000)" required/>
-    </fieldset>
-    <!-- Display the selected location's coordinates -->
-    <div id="coordinates"><span id="help">If unsure of coordinates - enter name of location, then copy map coordinates</span></div>
-    <!-- Display the selected location's coordinates using Leaflet -->
-    <div id="map" style="height: 300px;"></div>
-    
-    <!-- Button needs to be inside <form> element to trigger POST -->
-    <button class="offset-3 btn btn-primary">Save</button>
-  </form>
-  
+    <div id="imageVisual">
+      <img src="/site_images/noimage.png" alt="No image" id="preview">
+    </div>
+  </div>
+  <fieldset class="form-group">
+    <label for="updateDate" class="col-2">Date Identified:</label>
+    <input name="updateDate" id="updateDate" required class="form-control" placeholder="YYYY:MM:DD HH:mm:ss" />
+  </fieldset>
+  <fieldset class="form-group">
+    <label for="location" class="col-2">Location:</label>
+    <input name="location" id="location" class="form-control" placeholder="Latitude, Longitude (e.g., 45.0000, -45.0000)" required />
+  </fieldset>
+  <div id="coordinates">
+    <span id="help">If unsure of coordinates - enter name of location, then copy map coordinates</span>
+  </div>
+  <div id="map" style="height: 300px;"></div>
+
+  <button class="offset-3 btn btn-primary">Save</button>
+</form>
+
 <script defer>
 async function identifyFungus() {
-  console.log('Identify fungus function called');
-
   const images = image.files;
   if (!images || images.length === 0) {
     console.error('No image selected');
@@ -64,7 +52,6 @@ async function identifyFungus() {
   formData.append('image', images[0]);
 
   try {
-    console.log('Sending POST request to server...');
     const apiUrl = 'http://localhost:3000/identifyM'; // Correct endpoint
     const response = await fetch(apiUrl, {
       method: 'POST',
@@ -76,7 +63,6 @@ async function identifyFungus() {
     }
 
     const data = await response.json();
-    console.log('Response received:', data);
 
     if (!data.identification) {
       console.error('Identification not found in response data');
@@ -90,7 +76,14 @@ async function identifyFungus() {
   }
 }
 
-console.log('Script loaded successfully'); // Check if the script is loaded
+document.getElementById('addFungiForm').addEventListener('submit', function(event) {
+  // Remove parentheses from name and scientific name
+  const commonNameInput = document.getElementById('name');
+  const scientificInput = document.getElementById('binomialNomenclature');
+
+  commonNameInput.value = commonNameInput.value.replace(/[()]/g, '').trim();
+  scientificInput.value = scientificInput.value.replace(/[()]/g, '').trim();
+});
 </script>
 
 <%- include('../partials/footer') %>
