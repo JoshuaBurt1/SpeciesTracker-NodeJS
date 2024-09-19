@@ -98,6 +98,7 @@ passport.deserializeUser(User.deserializeUser());
 // 4. ROUTER and API ('/', indexRouter)
 var indexRouter = require('./routes/index');
 var blogsRouter = require('./routes/blogs');
+var dataviewerRouter = require('./routes/dataviewer');
 var plantsRouter = require("./routes/plants");
 var fungiRouter = require("./routes/fungi");
 var animalsRouter = require("./routes/animals");
@@ -106,6 +107,7 @@ var protistsRouter = require("./routes/protists");
 
 app.use('/', indexRouter);
 app.use('/blogs', blogsRouter);
+app.use('/dataviewer', dataviewerRouter);
 app.use('/plants', plantsRouter);
 app.use("/fungi", fungiRouter);
 app.use('/animals', animalsRouter);

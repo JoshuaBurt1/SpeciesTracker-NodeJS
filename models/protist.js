@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const protistsSchemaObj = {
   kingdom: { type: String, required: true, default: "protista" },
   name: { type: String, required: true },
-  binomialNomenclature: { type: String, required: false },
+  binomialNomenclature: { type: String, required: true },
   updateDate: { type: String, required: true },
   location: { type: String, required: true },
   image: { type: String, required: true },

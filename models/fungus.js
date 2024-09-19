@@ -8,7 +8,7 @@ const fungiSchemaObj = {
   // note: changing updateDate type to String = 2010-10-10 format)
   kingdom: { type: String, required: true, default: "fungi" },
   name: { type: String, required: true },
-  binomialNomenclature: { type: String, required: false },
+  binomialNomenclature: { type: String, required: true },
   updateDate: { type: String, required: true },
   location: { type: String, required: true},
   image: { type: String, required: true },

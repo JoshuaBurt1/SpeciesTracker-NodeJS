@@ -275,6 +275,78 @@ button.offset-3.btn.btn-primary {
   width: 100%; 
 }
 
+#dataviewer-dropdown-menu {
+  max-height: 50vh; 
+  overflow-y: auto; 
+}
+
+.flex-grid {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%; 
+    height: 100%; 
+}
+
+.grid-item {
+  position: relative; 
+  flex: 0 0 calc(33.33% - 10px);
+  box-sizing: border-box;
+  padding: 20px; 
+  margin: 5px;
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  text-align: center; 
+  color: white; 
+  background-size: cover; 
+  background-position: center; 
+  background-color: rgba(50, 50, 50, 0.8); 
+  border: 2px solid #ccc; 
+  cursor: pointer;
+  font-size: 1.2em;
+  transition: background-color 0.3s, border-color 0.3s; 
+}
+
+.grid-item:hover {
+  border-color: blue; 
+}
+
+.empty {
+  flex: 0 0 calc(33.33% - 10px); 
+  margin: 5px;
+  background-color: rgba(50, 50, 50, 0.5); 
+  cursor: default; 
+}
+
+.empty:hover {
+  background-color: rgba(50, 50, 50, 0.5); 
+  border-color: #ccc; 
+}
+
+/* Additional styles for the empty cell */
+.empty {
+  flex: 0 0 calc(33.33% - 10px); /* Same size as other items */
+  margin: 5px; /* Space between items */
+  background-color: rgba(50, 50, 50, 0.5); /* Optional: grey for empty cell */
+}
+
+/*NOTE: make image choice dynamic with highest rated option*/
+.plantae {
+  background-image: url('/images/plantae_images/Alaskan_Larch_1724288791479.jpg'); 
+}
+.fungi {
+  background-image: url('/images/fungi_images/Fly_agaric_1714710437795.jpg'); 
+}
+.animalia {
+  background-image: url('/images/animalia_images/Snowshoe_Hare_1725668116504.JPG'); 
+}
+.protista {
+  background-image: url("/images/protista_images/Wolf's_milk_slime_mold_1726458242560.jpg"); 
+}
+.bacteria {
+  background-image: url("/images/bacteria_images/Phytoplasma_%26_White_Trillium_%28host%29_1726241051369.jpg"); 
+}
+
 /*Scroll issue with map appearing above table header <th>*/
 .table-container thead {
   z-index: 2; /* Set a higher z-index for the fixed thead */
