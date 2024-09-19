@@ -15,7 +15,7 @@
         </fieldset>
         <fieldset class="form-group">
           <label for="binomialNomenclature" class="col-2">Scientific Name:</label>
-          <input name="binomialNomenclature" id="binomialNomenclature" class="form-control" />
+          <input name="binomialNomenclature" id="binomialNomenclature" class="form-control" required/>
         </fieldset>
       </div>
       <div id="identificationResult"></div>
@@ -76,6 +76,7 @@ async function identifyFungus() {
   }
 }
 
+//Sanitize data NOTE: delete this when button format is available with pre-sanitized data
 document.getElementById('addFungiForm').addEventListener('submit', function(event) {
   // Remove parentheses from name and scientific name
   const commonNameInput = document.getElementById('name');

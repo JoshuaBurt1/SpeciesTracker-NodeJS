@@ -145,50 +145,66 @@ app.post('/identifyM', async (req, res) => {
     }
 
     const identificationResult = response.data.identification;
-    res.status(response.status).json({ identification: identificationResult });
+
+    // Function to remove parentheses
+    const removeParentheses = (str) => str.replace(/[\(\)"]/g, '').trim();
+    // Clean the identification result if it's a string
+    const cleanedIdentification = typeof identificationResult === 'string' 
+      ? removeParentheses(identificationResult) 
+      : identificationResult;
+    // Send back the cleaned identification to the client
+    res.status(response.status).json({ identification: cleanedIdentification });
   } catch (error) {
     console.error('Error:', error);
     res.status(error.response?.status || 500).json({ message: error.message });
   }
 });
 
-  //IDENTIFY PLANT (PlantNet)
-  app.post('/identifyP', async (req, res) => {
-    const project = 'all?include-related-images=false&no-reject=false&lang=en&type=kt';
-    const apiKey = config.plantNetAPI;
-    const apiUrl = `https://my-api.plantnet.org/v2/identify/${project}&api-key=${apiKey}`;
-    const formData = new FormData();
-    // Use req.files.image to access the uploaded file  
-    // Check if req.files.image exists and is not null
-    if (!req.files || !req.files.image) {
+//IDENTIFY PLANT (PlantNet)
+app.post('/identifyP', async (req, res) => {
+  const project = 'all?include-related-images=false&no-reject=false&lang=en&type=kt';
+  const apiKey = config.plantNetAPI;
+  const apiUrl = `https://my-api.plantnet.org/v2/identify/${project}&api-key=${apiKey}`;
+  const formData = new FormData();
+
+  // Check if req.files.image exists and is not null
+  if (!req.files || !req.files.image) {
       return res.status(400).json({ message: 'No file uploaded.' });
-    }
-    // Access the uploaded file  
-    const file = req.files.image;
-    const fileStream = fs.createReadStream(file.tempFilePath);
-    formData.append('images', fileStream, { filename: file.name });
-    try {
+  }
+
+  // Access the uploaded file  
+  const file = req.files.image;
+  const fileStream = fs.createReadStream(file.tempFilePath);
+  formData.append('images', fileStream, { filename: file.name });
+
+  try {
       const response = await axios.post(apiUrl, formData, {
-        headers: {
-          ...formData.getHeaders(),
-        },
+          headers: {
+              ...formData.getHeaders(),
+          },
       });
+
       // Extract information about the top 3 matches
       const top4Matches = response.data.results.slice(0, 4);
+
+      // Function to remove parentheses
+      const removeParentheses = (str) => (str || '').replace(/[\(\)"]/g, '').trim();
+
       // Send back detailed information to the client
       res.status(response.status).json({
-        status: response.status,
-        top4Matches: top4Matches.map(match => ({
-          name: match.species.commonNames[0],
-          scientificName: match.species.scientificName,
-          score: match.score
-        }))
+          status: response.status,
+          top4Matches: top4Matches.map(match => ({
+              name: removeParentheses(match.species.commonNames[0]), // Ensure this exists
+              scientificName: removeParentheses(match.species.scientificName), // Ensure this exists
+              score: match.score
+          }))
       });
-    } catch (error) {
+  } catch (error) {
       console.error('Error:', error);
       res.status(error.response?.status || 500).json({ message: error.message });
-    }
-  });
+  }
+});
+
 
 
 // error handler

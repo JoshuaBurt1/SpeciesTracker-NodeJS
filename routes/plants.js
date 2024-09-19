@@ -37,8 +37,11 @@ router.get('/', IsLoggedIn, logMiddleware, async (req, res, next) => {
     const userId = req.user._id;
     // Use a case-insensitive regular expression to match part of the name
     let query = {
-      name: { $regex: new RegExp(searchQuery, 'i') },
-      user: userId, // Include user ID in the search criteria
+      $or: [
+        { name: { $regex: new RegExp(searchQuery, 'i') } },
+        { binomialNomenclature: { $regex: new RegExp(searchQuery, 'i') } }
+      ],
+      user: userId // Include user ID in the search criteria
     };
     let page = parseInt(req.query.page) || 1;
     let skipSize = pageSize * (page - 1);

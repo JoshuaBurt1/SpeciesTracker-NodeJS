@@ -13,11 +13,11 @@
         <div id="nameRow">
         <fieldset class="form-group">
             <label for="name" class="col-2">Name:</label>
-            <input name="name" id="name" class="form-control" required/>
+            <input name="name" id="name" class="form-control" required readonly/>
         </fieldset>
         <fieldset class="form-group">
             <label for="binomialNomenclature" class="col-2">Scientific Name:</label>
-            <input name="binomialNomenclature" id="binomialNomenclature" class="form-control"/>
+            <input name="binomialNomenclature" id="binomialNomenclature" class="form-control" required readonly/>
         </fieldset>
       </div>
         <div id="top4"></div> <!-- list top 3 names, scientific name and percentages -->
@@ -73,32 +73,40 @@
       console.log('status', response.status);
       console.log('data', data);
       
-      // Display top 3 matches
+      // Display top 4 matches
       const top4Div = document.getElementById('top4');
       top4Div.innerHTML = ''; // Clear previous content
 
       data.top4Matches.forEach((match, index) => {
         const matchDiv = document.createElement('div');
-        matchDiv.innerHTML = `<strong>${index + 1}. Name:</strong> ${match.name}; 
-                              <strong>Scientific Name:</strong> ${match.scientificName}; 
-                              <strong>Percentage:</strong> ${match.score}<br>`;
+        matchDiv.innerHTML = `
+          <strong>${index + 1}. Name:</strong> ${match.name}; 
+          <strong>Scientific Name:</strong> ${match.scientificName}; 
+          <strong>Score:</strong> ${match.score}
+        `;
+        
+        // Create button for each match
+        const button = document.createElement('button');
+        button.textContent = 'Select';
+        button.type = 'button'; // Prevent form submission
+        button.onclick = () => {
+          document.getElementById('name').value = match.name;
+          document.getElementById('binomialNomenclature').value = match.scientificName;
+        };
+
+        matchDiv.appendChild(button);
         top4Div.appendChild(matchDiv);  
       });
-
-      // Set values for initial fields
-      var plant = document.getElementById('binomialNomenclature');
-      plant.value = data.top4Matches[0].scientificName;
-      var commonName = document.getElementById('name');
-      commonName.value = data.top4Matches[0].name;
-
-      // Remove parentheses from name and scientific name at the end
-      commonName.value = commonName.value.replace(/[()]/g, '').trim();
-      //plant.value = plant.value.replace(/[()]/g, '').trim();
+      
+      // Optionally set initial values for fields
+      document.getElementById('binomialNomenclature').value = data.top4Matches[0].scientificName;
+      document.getElementById('name').value = data.top4Matches[0].name;
 
     } catch (error) {
       console.error('error', error);
     }
   }
+
 </script>
 
 

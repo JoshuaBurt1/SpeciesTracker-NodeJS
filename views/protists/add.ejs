@@ -16,7 +16,7 @@
         </fieldset>
         <fieldset class="form-group">
             <label for="binomialNomenclature" class="col-2">Scientific Name:</label>
-            <input name="binomialNomenclature" id="binomialNomenclature" class="form-control"/>
+            <input name="binomialNomenclature" id="binomialNomenclature" class="form-control" required/>
         </fieldset>
       </div>
         <div id="top4"></div> <!-- list top 3 names, scientific name and percentages -->
@@ -48,6 +48,7 @@
   <button class="offset-3 btn btn-primary" type="submit">Save</button>
 </form>
 
+<!--Sanitize data - NOTE: delete this when button format is available with pre-sanitized data @ app.js-->
 <script defer>
   document.getElementById('addProtistForm').addEventListener('submit', function(event) {
     // Remove parentheses from name and scientific name
