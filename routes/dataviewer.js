@@ -143,6 +143,10 @@ const writeSpeciesListToFile = async () => {
     console.error('Error writing: speciesList.json', error);
   }
 };
+// Function to sanitize the search query
+const sanitizeQuery = (query) => {
+  return query.replace(/[()]/g, ''); // Remove any parentheses
+};
 
 // Helper function to fetch data from a specific model
 const fetchData = async (model, searchQuery, binomialNomenclatureQuery, kingdomQuery) => {
@@ -158,9 +162,9 @@ const fetchData = async (model, searchQuery, binomialNomenclatureQuery, kingdomQ
 router.get("/", logMiddleware, async (req, res, next) => {
     writeSpeciesListToFile();
     try {
-      let searchQuery = req.query.searchBar || '';
-      let kingdomQuery = req.query.searchBar || '';
-      let binomialNomenclatureQuery = req.query.searchBar || '';
+      let searchQuery = sanitizeQuery(req.query.searchBar || '');
+      let kingdomQuery = sanitizeQuery(req.query.searchBar || '');
+      let binomialNomenclatureQuery = sanitizeQuery(req.query.searchBar || '');
   
       // Prevents long load time of returning all data
       if (!searchQuery.trim()) {  // If no search query is provided, render the page with a message or empty data

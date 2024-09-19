@@ -275,6 +275,20 @@ button.offset-3.btn.btn-primary {
   width: 100%; 
 }
 
+#imageVisual {
+  display: flex;                /* Use Flexbox for centering */
+  justify-content: center;      /* Center horizontally */
+  align-items: center;          /* Center vertically */
+  height: 100%;                 /* Full height of the parent */
+  overflow: hidden;             /* Hide any overflow */
+}
+
+#dataviewerNoImage {
+  width: auto;                 /* Allow width to adjust automatically */
+  height: 100%;                /* Make the image fill the height */
+  object-fit: cover;           /* Cover the entire area */
+}
+
 #dataviewer-dropdown-menu {
   max-height: 50vh; 
   overflow-y: auto; 

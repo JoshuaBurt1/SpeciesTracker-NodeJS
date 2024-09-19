@@ -32,13 +32,18 @@ const upload = multer({ storage: storage });
 // Use the middleware to check if the user is logged in
 router.use(IsLoggedIn);
 
+// Function to sanitize the search query
+const sanitizeQuery = (query) => {
+  return query.replace(/[()]/g, ''); // Remove any parentheses
+};
+
 // Configure GET/POST handlers
 // GET handler for index /protists/ <<landing/root page of my sections
 const pageSize = 4;
 router.get('/', IsLoggedIn, logMiddleware, async (req, res, next) => {
   try {
     // SearchBar query parameter
-    let searchQuery = req.query.searchBar || '';
+    let searchQuery = sanitizeQuery(req.query.searchBar || '');
     const userId = req.user._id;
 
     // Use a case-insensitive regular expression to match part of the name

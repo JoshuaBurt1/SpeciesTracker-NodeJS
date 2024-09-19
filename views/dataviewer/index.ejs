@@ -109,8 +109,9 @@
       </table>
       <% } else if (searchQuery) { %>
         <p>No data available. Enter another search.</p>
-        <img src="public/site_images/noimage.png" alt="Image not found" />
-      <% } else { %>
+        <div id="imageVisual"> 
+          <img id="dataviewerNoImage" src="public/site_images/noimage.png" alt="Image not found" />
+      </div>      <% } else { %>
         <p>Enter a search value.</p>
       <% } %>
   </div>
