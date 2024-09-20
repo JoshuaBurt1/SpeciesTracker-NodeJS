@@ -30,7 +30,7 @@ router.use(IsLoggedIn);
 
 // Function to sanitize the search query
 const sanitizeQuery = (query) => {
-  return query.replace(/[()]/g, ''); // Remove any parentheses
+  return query.replace(/[()\\?]/g, ''); // Remove parentheses, backslashes, and question marks
 };
 
 // GET handler for index /plants/ <<landing/root page of my sections

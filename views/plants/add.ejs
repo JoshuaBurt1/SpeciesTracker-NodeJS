@@ -2,7 +2,7 @@
 <h1><%= title %></h1>
 
 <!-- available to req.body object -->
-<form method="POST" enctype="multipart/form-data">
+<form id="addPlantForm" method="POST" enctype="multipart/form-data">
   <!-- Input names have to match the name of the fields in the mongo schema object -->
   <div id="dataVisual">
     <div id="imageAndName">
@@ -101,6 +101,16 @@
       // Optionally set initial values for fields
       document.getElementById('binomialNomenclature').value = data.top4Matches[0].scientificName;
       document.getElementById('name').value = data.top4Matches[0].name;
+
+      //Sanitize data - NOTE: keep this, in-case of user DOM manipulation in browser console-->
+      document.getElementById('addPlantForm').addEventListener('submit', function(event) {
+        // Remove parentheses from name and scientific name
+        const commonNameInput = document.getElementById('name');
+        const scientificInput = document.getElementById('binomialNomenclature');
+
+        commonNameInput.value = commonNameInput.value.replace(/[()]/g, '').trim();
+        scientificInput.value = scientificInput.value.replace(/[()]/g, '').trim();
+      });
 
     } catch (error) {
       console.error('error', error);

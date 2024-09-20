@@ -1,6 +1,6 @@
 //NOTE: use the dataviewer folder to add the buttons to compare data and make inferences
 var express = require('express');
-const fs = require('fs'); //for image download
+const fs = require('fs/promises'); //for image download
 const path = require('path');
 var router = express.Router();
 var logMiddleware = require('../logMiddleware'); //route logging middleware
@@ -25,127 +25,61 @@ const modelMap = {
   'Bacterium': Bacterium
 };
 
-//Creates a json file of all names and binomialNomenclature when a user goes to /dataviewer => Necessary for faster drop-down menu searching
+//Creates a json file of all names and binomialNomenclature when a user goes to /dataViewer => Necessary for faster drop-down menu searching
 //A decision was made regarding drop-down menu option generation; Option 1 was chosen
-//1. Read from a .json file generated, then cached, once and populate options (Fast)
-//2. make an fetch request from client side each time the user types in a letter, the drop-drop menu is then updated: (Approx 3sec dropdown menu change per letter entered)
-/* 
-CLIENT-SIDE (searchBar.js)
-document.addEventListener('DOMContentLoaded', () => {
-  const apiUrl = '/api/dropdown-options';
-  const searchInput = document.getElementById('search-bar');
-  const dropdownMenu = document.getElementById('dropdown-menu');
-  const form = document.getElementById('dropdown-form');
+//1. Read from a .json file generated once and populate options (Fast)
+//2. make an fetch request from client side each time the user types in a letter, the drop-drop menu is then updated: (Approx 3sec downdown menu change per letter entered)
 
-  const populateDropdown = async (query = '') => {
-    try {
-      const response = await fetch(apiUrl);
-      const options = await response.json(); //this is taking a long time
-      if (query.length === 0) {
-        dropdownMenu.innerHTML = ''; // Clear dropdown if no input
-      } else {
-        const filteredOptions = options.filter(option => 
-          option.name.toLowerCase().includes(query.toLowerCase()) ||
-          option.binomialNomenclature.toLowerCase().includes(query.toLowerCase())
-        );
-        dropdownMenu.innerHTML = '';
-        filteredOptions.forEach(option => {
-          const optionElement = document.createElement('a');
-          optionElement.className = 'dropdown-item';
-          optionElement.href = '#';
-          optionElement.textContent = `${option.name} - ${option.binomialNomenclature}`;
-          optionElement.addEventListener('click', () => {
-            searchInput.value = option.name; // Set the input value to the selected option
-            form.submit(); // Submit the form with the selected option
-          });
-          dropdownMenu.appendChild(optionElement);
-        });
-      }
-    } catch (error) {
-      console.error('Error fetching dropdown options:', error);
-    }
-  };
+const writeSpeciesListToFile = async () => {
+  const filePath = path.join(__dirname, 'speciesList.json');
 
-  searchInput.addEventListener('input', (event) => {
-    populateDropdown(event.target.value);
-  });
-
-  // Clear dropdown initially
-  dropdownMenu.innerHTML = '';
-});
-
-//SERVER-SIDE
-router.get('/api/dropdown-options', async (req, res) => {
-  try {
-    // Fetch data from each model
+  const fetchAndCombineData = async () => {
     const modelData = await Promise.all(MODEL_NAMES.map(modelName =>
       fetchData(modelMap[modelName])
     ));
-    // Combine data from different models into a single array
     const combinedData = modelData.flat();
-    console.log(combinedData);
-    // Create a map to ensure unique binomial nomenclature and associated names
     const uniqueDataMap = new Map();
-    combinedData.forEach(item => {
-      const { name, binomialNomenclature } = item;
-      // Check if the binomial nomenclature is already in the map
+
+    combinedData.forEach(({ name, binomialNomenclature }) => {
       if (!uniqueDataMap.has(binomialNomenclature)) {
         uniqueDataMap.set(binomialNomenclature, { name, binomialNomenclature });
       }
     });
-    const dropdownOptions = Array.from(uniqueDataMap.values());
-    res.json(dropdownOptions);
-  } catch (error) {
-    console.error('Error fetching dropdown options:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-*/
 
-const writeSpeciesListToFile = async () => {
+    return Array.from(uniqueDataMap.values());
+  };
+
   try {
-    const modelData = await Promise.all(MODEL_NAMES.map(modelName =>
-      fetchData(modelMap[modelName])
-    ));
-    const combinedData = modelData.flat();
-
-    // Create a map to ensure unique binomial nomenclature
-    const uniqueDataMap = new Map();
-    combinedData.forEach(item => {
-      const { name, binomialNomenclature } = item;
-      // Trim binomialNomenclature up to the "(" 
-      //const trimmedNomenclature = binomialNomenclature.split('(')[0].trim(); *********//TODO: Remove this when able; then make faster write ******
-      if (!uniqueDataMap.has(binomialNomenclature)) {
-        uniqueDataMap.set(binomialNomenclature, { name, binomialNomenclature: binomialNomenclature });
-      }
-    });
-
-    // Convert map values to an array for the JSON file
-    const speciesList = Array.from(uniqueDataMap.values());
-    const filePath = path.join(__dirname, 'speciesList.json');
-
-    // Check if the file exists and read its content
+    await fs.access(filePath);
+    // File exists, read and update it
+    const speciesList = await fetchAndCombineData();
     let existingData = [];
-    if (fs.existsSync(filePath)) {
-      const fileContent = fs.readFileSync(filePath, 'utf-8');
+
+    try {
+      const fileContent = await fs.readFile(filePath, 'utf-8');
       existingData = JSON.parse(fileContent);
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error; // Rethrow other errors
     }
 
-    // Compare new data with existing data
+    // Update only if there's a change
     if (JSON.stringify(existingData) !== JSON.stringify(speciesList)) {
-      // Write to file only if data has changed
-      fs.writeFileSync(filePath, JSON.stringify(speciesList, null, 2), 'utf-8');
+      await fs.writeFile(filePath, JSON.stringify(speciesList, null, 2), 'utf-8');
       console.log('Updated: speciesList.json');
     } else {
       console.log('No changes detected, speciesList.json not updated.');
     }
+
   } catch (error) {
-    console.error('Error writing: speciesList.json', error);
+    if (error.code === 'ENOENT') {
+      // File does not exist, create and populate it
+      const speciesList = await fetchAndCombineData();
+      await fs.writeFile(filePath, JSON.stringify(speciesList, null, 2), 'utf-8');
+      console.log('Created and populated speciesList.json with initial data.');
+    } else {
+      console.error('Error accessing speciesList.json:', error);
+    }
   }
-};
-// Function to sanitize the search query
-const sanitizeQuery = (query) => {
-  return query.replace(/[()]/g, ''); // Remove any parentheses
 };
 
 // Helper function to fetch data from a specific model
@@ -159,12 +93,13 @@ const fetchData = async (model, searchQuery, binomialNomenclatureQuery, kingdomQ
   }).sort({ binomialNomenclature: 1 });
 };
 
+
 router.get("/", logMiddleware, async (req, res, next) => {
     writeSpeciesListToFile();
     try {
-      let searchQuery = sanitizeQuery(req.query.searchBar || '');
-      let kingdomQuery = sanitizeQuery(req.query.searchBar || '');
-      let binomialNomenclatureQuery = sanitizeQuery(req.query.searchBar || '');
+      let searchQuery = req.query.searchBar || '';
+      let kingdomQuery = req.query.searchBar || '';
+      let binomialNomenclatureQuery = req.query.searchBar || '';
   
       // Prevents long load time of returning all data
       if (!searchQuery.trim()) {  // If no search query is provided, render the page with a message or empty data

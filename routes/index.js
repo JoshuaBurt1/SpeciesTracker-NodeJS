@@ -5,11 +5,11 @@ const path = require('path');
 var router = express.Router();
 var User = require("../models/user");
 var passport = require("passport");
-const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 var logMiddleware = require('../logMiddleware'); //route logging middleware
 
 // Constants
 const MODEL_NAMES = ['Plant','Fungus','Animal','Protist','Bacterium'];
+const { createObjectCsvStringifier } = require("csv-writer");
 
 // Import Mongoose models
 const Plant = require("../models/plant");
@@ -181,110 +181,125 @@ router.get("/api", async (req, res) => {
   }
 });
 
-// Download data as CSV endpoint
-router.get("/download-csv", async (req, res) => {
+
+const updateCsv = async () => {
   try {
-      // Define the binomialNomenclatureQuery and kingdomQuery directly, or retrieve from req if needed
-      const binomialNomenclatureQuery = req.body.binomialNomenclatureQuery || ""; // Adjust as necessary
-      const kingdomQuery = req.body.kingdomQuery || ""; // Adjust as necessary
+    const binomialNomenclatureQuery = ""; // Adjust as needed
+    const kingdomQuery = ""; // Adjust as needed
 
-      // Fetch data from each model
-      const modelData = await Promise.all(MODEL_NAMES.map(model => 
-          fetchData(modelMap[model], binomialNomenclatureQuery, kingdomQuery)
-      ));
+    const modelData = await Promise.all(MODEL_NAMES.map(model => 
+      fetchData(modelMap[model], binomialNomenclatureQuery, kingdomQuery)
+    ));
 
-      // Combine data from different models into a single array
-      const combinedData = modelData.flat();
+    const combinedData = modelData.flat();
+    const groupedData = combinedData.reduce((acc, item) => {
+      const existingItem = acc.find(groupedItem => groupedItem.name === item.name);
+      if (existingItem) {
+        existingItem.locations.push(item.location);
+        existingItem.updateDates.push(item.updateDate);
+      } else {
+        acc.push({
+          binomialNomenclature: item.binomialNomenclature,
+          name: item.name,
+          kingdom: item.kingdom,
+          locations: [item.location],
+          updateDates: [item.updateDate],
+        });
+      }
+      return acc;
+    }, []);
 
-      // Group entries by name and collect locations and update dates into arrays
-      const groupedData = combinedData.reduce((acc, item) => {
-          const existingItem = acc.find(groupedItem => groupedItem.name === item.name);
-          if (existingItem) {
-              existingItem.locations.push(item.location);
-              existingItem.updateDates.push(item.updateDate);
-          } else {
-              acc.push({
-                  binomialNomenclature: item.binomialNomenclature,
-                  name: item.name,
-                  kingdom: item.kingdom,
-                  locations: [item.location],
-                  updateDates: [item.updateDate],
-              });
-          }
-          return acc;
-      }, []);
+    const csvData = groupedData.map(group => ({
+      binomialNomenclature: group.binomialNomenclature,
+      name: group.name,
+      kingdom: group.kingdom,
+      locations: group.locations.join(', '),
+      updateDates: group.updateDates.join(', '),
+    }));
 
-      // Prepare data for CSV output
-      const csvData = groupedData.map(group => ({
-          binomialNomenclature: group.binomialNomenclature,
-          name: group.name,
-          kingdom: group.kingdom,
-          locations: group.locations.join(', '), // Join locations as a string
-          updateDates: group.updateDates.join(', '), // Join update dates as a string
-      }));
+    const csvPath = path.join(__dirname, 'speciesData.csv');
+    const csvStringifier = createObjectCsvStringifier({
+      header: [
+        { id: "binomialNomenclature", title: "Binomial Nomenclature" },
+        { id: "name", title: "Name" },
+        { id: "kingdom", title: "Kingdom" },
+        { id: "locations", title: "Locations" },
+        { id: "updateDates", title: "Update Dates" },
+      ],
+    });
 
-      // Create a CSV writer
-      const csvPath = path.join(__dirname, "speciesData.csv");
-      const csvWriter = createCsvWriter({
-          path: csvPath,
-          header: [
-              { id: "binomialNomenclature", title: "Binomial Nomenclature" },
-              { id: "name", title: "Name" },
-              { id: "kingdom", title: "Kingdom" },
-              { id: "locations", title: "Locations" },
-              { id: "updateDates", title: "Update Dates" },
-          ],
-      });
-
-      // Write the CSV data to the file
-      await csvWriter.writeRecords(csvData);
-
-      // Send the CSV file as a response
-      res.attachment("speciesData.csv").sendFile(csvPath);
+    const newCsvContent = csvStringifier.getHeaderString() + csvStringifier.stringifyRecords(csvData);
+    
+    // Check if the existing file exists and read its content
+    if (fs.existsSync(csvPath)) {
+      const existingCsvContent = fs.readFileSync(csvPath, 'utf8');
+      
+      // Compare the new content with the existing content
+      if (newCsvContent !== existingCsvContent) {
+        fs.writeFileSync(csvPath, newCsvContent);
+        console.log('CSV file updated successfully.');
+      } else {
+        console.log('No changes detected, speciesData.csv not updated.');
+      }
+    } else {
+      // If the file does not exist, write the new content
+      fs.writeFileSync(csvPath, newCsvContent);
+      console.log('CSV file created successfully.');
+    }
   } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error updating CSV:', err);
+  }
+};
+
+// Route to update CSV (can be called when server starts or scheduled)
+router.get('/update-csv', async (req, res) => {
+  await updateCsv();
+  res.json({ message: 'CSV file updated successfully.' });
+});
+
+// You can call updateCsv() here if you want to update on server start
+updateCsv();
+
+// Download data as CSV endpoint
+// Route for downloading the CSV file
+router.get('/download-csv', (req, res) => {
+  const csvPath = path.join(__dirname, 'speciesData.csv');
+  
+  if (fs.existsSync(csvPath)) {
+    res.download(csvPath, 'speciesData.csv', (err) => {
+      if (err) {
+        console.error('Error sending file:', err);
+        res.status(500).send('Error downloading file');
+      }
+    });
+  } else {
+    res.status(404).send('CSV file not found');
   }
 });
 
-/* //single folder download (animals)
-router.get('/download-images', (req, res) => {
-    const directoryPath = path.join(__dirname, '../public/images/animalia_images');
-    // Create a new zip archive
-    const archive = archiver('zip', {
-        zlib: { level: 9 } // Sets the compression level
-    });
-    // Set the response headers for streaming
-    res.setHeader('Content-Type', 'application/zip');
-    res.setHeader('Content-Disposition', 'attachment; filename="speciesImages.zip"');
-    res.setHeader('Transfer-Encoding', 'chunked'); // Enable chunked transfer encoding
-    // Pipe the archive to the response object
-    archive.pipe(res);
-    // Add files to the archive
-    fs.readdir(directoryPath, (err, files) => {
-        if (err) {
-            console.error('Error reading directory:', err);
-            return res.status(500).send('Error reading directory');
-        }
-        // Check if there are any files in the directory
-        if (files.length === 0) {
-            console.error('No files found in directory:', directoryPath);
-            return res.status(404).send('No images found');
-        }
-        files.forEach(file => {
-            const filePath = path.join(directoryPath, file);
-            archive.file(filePath, { name: file });
-        });
-        // Finalize the archive
-        archive.finalize();
-    });
-    // Handle archive errors
-    archive.on('error', err => {
-        console.error('Error creating archive:', err);
-        res.status(500).send('Error creating archive');
-    });
+// Calculates CSV file size from server and returns to client side
+router.get('/csv-info', (req, res) => {
+  const csvFilePath = path.join(__dirname, '../routes/speciesData.csv'); // Adjust the path as necessary
+
+  try {
+    const stats = fs.statSync(csvFilePath);
+    
+    if (!stats.isFile()) {
+      return res.status(400).json({ error: 'Not a valid CSV file' });
+    }
+
+    const sizeBytes = stats.size;
+    const sizeKB = Math.round(sizeBytes / 1024); // Convert to KB
+    const sizeGB = (sizeBytes / (1024 * 1024 * 1024)).toFixed(2); // Convert to GB
+
+    // Send the response with the file size in KB and GB
+    res.json({ sizeKB, sizeGB });
+  } catch (error) {
+    console.error('Error accessing CSV file:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
-*/
+
 
 router.get('/download-images', (req, res) => {
   const directoryPath = path.join(__dirname, '../public/images');

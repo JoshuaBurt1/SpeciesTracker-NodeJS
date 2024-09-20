@@ -147,7 +147,8 @@ app.post('/identifyM', async (req, res) => {
     const identificationResult = response.data.identification;
 
     // Function to remove parentheses
-    const removeParentheses = (str) => str.replace(/[\(\)"]/g, '').trim();
+    const removeParentheses = (str) => (str || '').replace(/[()\\?]/g, '').trim();
+
     // Clean the identification result if it's a string
     const cleanedIdentification = typeof identificationResult === 'string' 
       ? removeParentheses(identificationResult) 
@@ -187,8 +188,8 @@ app.post('/identifyP', async (req, res) => {
       // Extract information about the top 3 matches
       const top4Matches = response.data.results.slice(0, 4);
 
-      // Function to remove parentheses
-      const removeParentheses = (str) => (str || '').replace(/[\(\)"]/g, '').trim();
+      // Function to remove parentheses, backslashes, and question marks
+      const removeParentheses = (str) => (str || '').replace(/[()\\?]/g, '').trim();
 
       // Send back detailed information to the client
       res.status(response.status).json({
