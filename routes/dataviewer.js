@@ -1,10 +1,9 @@
-//NOTE: use the dataviewer folder to add the buttons to compare data and make inferences
-var express = require('express');
-var router = express.Router();
-var logMiddleware = require('../logMiddleware'); //route logging middleware
+const express = require('express');
+const router = express.Router();
+const logMiddleware = require('../logMiddleware'); // route logging middleware
 
 // Constants
-const MODEL_NAMES = ['Plant','Fungus','Animal','Protist','Bacterium'];
+const MODEL_NAMES = ['Plant', 'Fungus', 'Animal', 'Protist', 'Bacterium'];
 const pageSize = 4;
 
 // Import Mongoose models
@@ -26,32 +25,37 @@ const fetchData = async (model, searchQuery, binomialNomenclatureQuery, kingdomQ
 };
 
 router.get("/", logMiddleware, async (req, res, next) => {
-    try {
-      let searchQuery = req.query.searchBar || '';
-      let kingdomQuery = req.query.searchBar || '';
-      let binomialNomenclatureQuery = req.query.searchBar || '';
-  
-      // Prevents long load time of returning all data
-      if (!searchQuery.trim()) {  // If no search query is provided, render the page with a message or empty data
-        return res.render("dataviewer/index", {
-          title: "Data Viewer",
-          user: req.user,
-          dataset: [], // Empty dataset since there's no search query
-          searchQuery: searchQuery,
-          totalPages: 0,
-          currentPage: 1,
-        });
-      }
-      
-      // Fetch data from each model (plants, fungus, animal, protist, bacteria) to find a match to searchQuery
+  try {
+    let searchQuery = req.query.searchBar || '';
+    let kingdomQuery = req.query.searchBar || '';
+    let binomialNomenclatureQuery = req.query.searchBar || '';
+
+    // Check if search query is empty
+    if (!searchQuery.trim()) {
+      return res.render("dataviewer/index", {
+        title: "Data Viewer",
+        user: req.user,
+        dataset: [],
+        searchQuery: searchQuery,
+        totalPages: 0,
+        currentPage: 1,
+      });
+    }
+
+    // Initialize or retrieve the cached data for this search //decreases pagination GET request times
+    if (!req.session.modelData) {
+      req.session.modelData = {};
+    }
+
+    if (!req.session.modelData[searchQuery]) {
+      // Fetch data if it hasn't been fetched yet
       const modelData = await Promise.all(MODEL_NAMES.map(model => fetchData(eval(model), searchQuery, binomialNomenclatureQuery, kingdomQuery)));
-      // Combine data from different models into a single array
       const combinedData = modelData.flat();
-  
-      // Group entries by name and collect locations, update dates, and images into arrays
+
+      // Grouping logic
       const groupedData = combinedData.reduce((acc, item) => {
-        const existingItem = acc.find((groupedItem) => groupedItem.name === item.name);
-      
+        const existingItem = acc.find(groupedItem => groupedItem.name === item.name);
+        
         if (existingItem) {
           existingItem.locations.push(item.location);
           existingItem.updateDates.push(item.updateDate);
@@ -68,43 +72,47 @@ router.get("/", logMiddleware, async (req, res, next) => {
         }
         return acc;
       }, []);
-      
-      // Sort each named entry by updateDate keeping association to location & image
-      groupedData.forEach((group) => {
+
+      // Sort grouped data by updateDate
+      groupedData.forEach(group => {
         const zippedData = group.updateDates.map((updateDate, index) => ({
           updateDate,
           location: group.locations[index],
           image: group.images[index]
         }));
         zippedData.sort((a, b) => a.updateDate.localeCompare(b.updateDate));
-        group.locations = zippedData.map((item) => item.location);
-        group.updateDates = zippedData.map((item) => item.updateDate);
-        group.images = zippedData.map((item) => item.image);
+        group.locations = zippedData.map(item => item.location);
+        group.updateDates = zippedData.map(item => item.updateDate);
+        group.images = zippedData.map(item => item.image);
       });
-  
-      //API source
-      console.log(groupedData);
-      const totalRecords = groupedData.length;
-      const totalPages = Math.ceil(totalRecords / pageSize);
-  
-      // Paginate the grouped data
-      const page = parseInt(req.query.page) || 1;
-      const skipSize = pageSize * (page - 1);
-      const paginatedData = groupedData.slice(skipSize, skipSize + pageSize);
-  
-      // Render the dataViewer page with the paginated data
-      res.render("dataviewer/index", {
-        title: "Data Viewer",
-        user: req.user,
-        dataset: paginatedData,
-        searchQuery: searchQuery,
-        totalPages: totalPages,
-        currentPage: page,
-      });
-      
-    } catch (err) {
-      console.log(err);
-      res.status(500).send("Internal Server Error");
+
+      req.session.modelData[searchQuery] = groupedData; // Cache the result
     }
-  });
-  module.exports = router;
+
+    const groupedData = req.session.modelData[searchQuery];
+    const totalRecords = groupedData.length;
+    const totalPages = Math.ceil(totalRecords / pageSize);
+
+    // Pagination logic
+    const page = parseInt(req.query.page) || 1;
+    const skipSize = pageSize * (page - 1);
+    const paginatedData = groupedData.slice(skipSize, skipSize + pageSize);
+
+    console.log(groupedData);
+    // Render the dataViewer page with the paginated data
+    res.render("dataviewer/index", {
+      title: "Data Viewer",
+      user: req.user,
+      dataset: paginatedData,
+      searchQuery: searchQuery,
+      totalPages: totalPages,
+      currentPage: page,
+    });
+    
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+module.exports = router;
