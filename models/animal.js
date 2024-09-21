@@ -13,15 +13,12 @@ const animalsSchemaObj = {
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   dateChanged: { type: Number, required: false }, //array to keep track of edits (data integrity metric), if null: higher data integrity
   locationChanged: { type: Number, required: false }, //array to keep track of edits (data integrity metric), if null: higher data integrity
-  //nameChanged: { type: Array, required: false }, //array to keep track of edits (species metric), if not null (poor picture, new species, image identifier updated)
+  nameChanged: { type: Array, required: false }, //array to keep track of edits (species metric), if not null (poor picture, new species, image identifier updated)
   //note: exif metadata of the image is not changed, it is only the shown data in mongoDB, the table, and csv.
 };
 
 // Create new mongoose schema using the definition object
 var animalsSchema = new mongoose.Schema(animalsSchemaObj);
-
-// Create index for the 'name' field
-animalsSchema.index({ name: 1 });
 
 // Create new mongoose model using the schema object
 module.exports = mongoose.model("Animal", animalsSchema);

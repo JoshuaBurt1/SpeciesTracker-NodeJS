@@ -1,5 +1,6 @@
 var express = require('express');
 const fs = require('fs'); //for image download
+const fsPromise = require('fs/promises'); //for image download
 const archiver = require('archiver'); //for image download
 const path = require('path');
 var router = express.Router();
@@ -37,6 +38,148 @@ const fetchData = async (model, searchQuery, binomialNomenclatureQuery, kingdomQ
     ],
   }).sort({ binomialNomenclature: 1 });
 };
+
+
+//Creates a json file of all names and binomialNomenclature when a user goes to /dataViewer => Necessary for faster drop-down menu searching
+//A decision was made regarding drop-down menu option generation; Option 1 was chosen
+//1. Read from a .json file generated once and populate options (Fast)
+//2. make an fetch request from client side each time the user types in a letter, the drop-drop menu is then updated: (Approx 3sec downdown menu change per letter entered)
+const updateJsonList = async () => {
+  const filePath = path.join(__dirname, 'speciesList.json');
+
+  const fetchAndCombineData = async () => {
+    const modelData = await Promise.all(MODEL_NAMES.map(modelName =>
+      fetchData(modelMap[modelName])
+    ));
+    const combinedData = modelData.flat();
+    const uniqueDataMap = new Map();
+
+    combinedData.forEach(({ name, binomialNomenclature }) => {
+      if (!uniqueDataMap.has(binomialNomenclature)) {
+        uniqueDataMap.set(binomialNomenclature, { name, binomialNomenclature });
+      }
+    });
+
+    return Array.from(uniqueDataMap.values());
+  };
+
+  try {
+    await fsPromise.access(filePath);
+    // File exists, read and update it
+    const speciesList = await fetchAndCombineData();
+    let existingData = [];
+
+    try {
+      const fileContent = await fsPromise.readFile(filePath, 'utf-8');
+      existingData = JSON.parse(fileContent);
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error; // Rethrow other errors
+    }
+
+    // Update only if there's a change
+    if (JSON.stringify(existingData) !== JSON.stringify(speciesList)) {
+      await fsPromise.writeFile(filePath, JSON.stringify(speciesList, null, 2), 'utf-8');
+      console.log('Updated: speciesList.json');
+    } else {
+      console.log('No changes detected, speciesList.json not updated.');
+    }
+
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      // File does not exist, create and populate it
+      const speciesList = await fetchAndCombineData();
+      await fsPromise.writeFile(filePath, JSON.stringify(speciesList, null, 2), 'utf-8');
+      console.log('Created and populated speciesList.json with initial data.');
+    } else {
+      console.error('Error accessing speciesList.json:', error);
+    }
+  }
+};
+
+//updateCsv and updateJsonList need a check for similarity to prevent a server restart loop
+const updateCsv = async () => {
+  try {
+    const binomialNomenclatureQuery = ""; // Adjust as needed
+    const kingdomQuery = ""; // Adjust as needed
+
+    const modelData = await Promise.all(MODEL_NAMES.map(model => 
+      fetchData(modelMap[model], binomialNomenclatureQuery, kingdomQuery)
+    ));
+
+    const combinedData = modelData.flat();
+    const groupedData = combinedData.reduce((acc, item) => {
+      const existingItem = acc.find(groupedItem => groupedItem.name === item.name);
+      if (existingItem) {
+        existingItem.locations.push(item.location);
+        existingItem.updateDates.push(item.updateDate);
+      } else {
+        acc.push({
+          binomialNomenclature: item.binomialNomenclature,
+          name: item.name,
+          kingdom: item.kingdom,
+          locations: [item.location],
+          updateDates: [item.updateDate],
+        });
+      }
+      return acc;
+    }, []);
+
+    const csvData = groupedData.map(group => ({
+      binomialNomenclature: group.binomialNomenclature,
+      name: group.name,
+      kingdom: group.kingdom,
+      locations: group.locations.join(', '),
+      updateDates: group.updateDates.join(', '),
+    }));
+
+    const csvPath = path.join(__dirname, 'speciesData.csv');
+    const csvStringifier = createObjectCsvStringifier({
+      header: [
+        { id: "binomialNomenclature", title: "Binomial Nomenclature" },
+        { id: "name", title: "Name" },
+        { id: "kingdom", title: "Kingdom" },
+        { id: "locations", title: "Locations" },
+        { id: "updateDates", title: "Update Dates" },
+      ],
+    });
+
+    const newCsvContent = csvStringifier.getHeaderString() + csvStringifier.stringifyRecords(csvData);
+    
+    // Check if the existing file exists and read its content
+    if (fs.existsSync(csvPath)) {
+      const existingCsvContent = fs.readFileSync(csvPath, 'utf8');
+      
+      // Compare the new content with the existing content
+      if (newCsvContent !== existingCsvContent) {
+        fs.writeFileSync(csvPath, newCsvContent);
+        console.log('CSV file updated successfully.');
+      } else {
+        console.log('No changes detected, speciesData.csv not updated.');
+      }
+    } else {
+      // If the file does not exist, write the new content
+      fs.writeFileSync(csvPath, newCsvContent);
+      console.log('CSV file created successfully.');
+    }
+  } catch (err) {
+    console.error('Error updating CSV:', err);
+  }
+};
+
+/* GET and POST handlers */
+//CSV updating
+// Method 1. updates on server start speciesData.CSV & speciesList.json on server start
+//* do not put this inside router.get('/') because whenever someone adds a new species and goes on the home page, updateCsv(); & updateJsonList(); will call.
+//This will restart the server causing all users to log out *
+updateCsv(); 
+updateJsonList();
+/* Method 2. Route to update CSV (can be called when server starts or scheduled) 
+***** USE WITH node-cron because a server may be on for several days without updating new information *****
+router.get('/update-csv', async (req, res) => {
+  await updateJsonList();
+  await updateCsv();
+  res.json({ message: 'speciesData.csv & speciesList.json file updated successfully.' });
+});*/
 
 // GET handler for /login
 router.get("/login", logMiddleware, (req, res, next) => {
@@ -103,7 +246,6 @@ router.get('/github/callback',
   (req, res, next) => { res.redirect('/') }
 );
 
-/* GET handlers */
 //homepage
 router.get('/', logMiddleware, function(req, res, next) {
   res.render('index', { user: req.user, title: 'Species Tracker'});
@@ -180,85 +322,6 @@ router.get("/api", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
-
-const updateCsv = async () => {
-  try {
-    const binomialNomenclatureQuery = ""; // Adjust as needed
-    const kingdomQuery = ""; // Adjust as needed
-
-    const modelData = await Promise.all(MODEL_NAMES.map(model => 
-      fetchData(modelMap[model], binomialNomenclatureQuery, kingdomQuery)
-    ));
-
-    const combinedData = modelData.flat();
-    const groupedData = combinedData.reduce((acc, item) => {
-      const existingItem = acc.find(groupedItem => groupedItem.name === item.name);
-      if (existingItem) {
-        existingItem.locations.push(item.location);
-        existingItem.updateDates.push(item.updateDate);
-      } else {
-        acc.push({
-          binomialNomenclature: item.binomialNomenclature,
-          name: item.name,
-          kingdom: item.kingdom,
-          locations: [item.location],
-          updateDates: [item.updateDate],
-        });
-      }
-      return acc;
-    }, []);
-
-    const csvData = groupedData.map(group => ({
-      binomialNomenclature: group.binomialNomenclature,
-      name: group.name,
-      kingdom: group.kingdom,
-      locations: group.locations.join(', '),
-      updateDates: group.updateDates.join(', '),
-    }));
-
-    const csvPath = path.join(__dirname, 'speciesData.csv');
-    const csvStringifier = createObjectCsvStringifier({
-      header: [
-        { id: "binomialNomenclature", title: "Binomial Nomenclature" },
-        { id: "name", title: "Name" },
-        { id: "kingdom", title: "Kingdom" },
-        { id: "locations", title: "Locations" },
-        { id: "updateDates", title: "Update Dates" },
-      ],
-    });
-
-    const newCsvContent = csvStringifier.getHeaderString() + csvStringifier.stringifyRecords(csvData);
-    
-    // Check if the existing file exists and read its content
-    if (fs.existsSync(csvPath)) {
-      const existingCsvContent = fs.readFileSync(csvPath, 'utf8');
-      
-      // Compare the new content with the existing content
-      if (newCsvContent !== existingCsvContent) {
-        fs.writeFileSync(csvPath, newCsvContent);
-        console.log('CSV file updated successfully.');
-      } else {
-        console.log('No changes detected, speciesData.csv not updated.');
-      }
-    } else {
-      // If the file does not exist, write the new content
-      fs.writeFileSync(csvPath, newCsvContent);
-      console.log('CSV file created successfully.');
-    }
-  } catch (err) {
-    console.error('Error updating CSV:', err);
-  }
-};
-
-// Route to update CSV (can be called when server starts or scheduled)
-router.get('/update-csv', async (req, res) => {
-  await updateCsv();
-  res.json({ message: 'CSV file updated successfully.' });
-});
-
-// You can call updateCsv() here if you want to update on server start
-updateCsv();
 
 // Download data as CSV endpoint
 // Route for downloading the CSV file

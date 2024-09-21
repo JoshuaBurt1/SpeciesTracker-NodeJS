@@ -12,14 +12,11 @@ const protistsSchemaObj = {
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   dateChanged: { type: Number, required: false }, //array to keep track of edits (data integrity metric), if null: higher data integrity
   locationChanged: { type: Number, required: false }, //array to keep track of edits (data integrity metric), if null: higher data integrity
-  //nameChanged: { type: Array, required: false },
+  nameChanged: { type: Array, required: false },
 };
 
 // Create new mongoose schema using the definition object
 var protistsSchema = new mongoose.Schema(protistsSchemaObj);
-
-// Create index for the 'name' field
-protistsSchema.index({ name: 1 });
 
 // Create new mongoose model using the schema object and
 // Import new model > provide name and schema
