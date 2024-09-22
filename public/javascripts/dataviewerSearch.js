@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let cachedOptions = [];
   let isDataFetched = false;
 
+  // Cache for images
+  const imageCache = {};
+
   const showDropdown = () => {
     dropdownMenu.style.visibility = 'visible'; 
     dropdownMenu.style.opacity = '1'; 
@@ -39,6 +42,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  const lazyLoadImage = (imageUrl) => {
+    if (!imageCache[imageUrl]) {
+      const img = new Image();
+      img.src = imageUrl; // Load the image
+      imageCache[imageUrl] = img; // Store in cache
+    }
+    return imageUrl; // Return the image URL
+  };
+
   const populateDropdown = (query = '') => {
     if (!isDataFetched) {
       console.warn('Data not fetched yet. Aborting dropdown population.');
@@ -62,7 +74,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const optionElement = document.createElement('a');
         optionElement.className = 'dropdown-item';
         optionElement.href = '#';
-        optionElement.innerHTML = `${option.name} : <i>${option.binomialNomenclature}</i>`; // Use innerHTML to allow HTML tags
+
+        optionElement.innerHTML = `
+          <div style="display: flex; align-items: center;">
+            <img src="${lazyLoadImage(option.image)}" alt="${option.name}" style="width: 50px; height: auto; margin-right: 10px;" />
+            <div>
+              <strong>${option.name}</strong> <br> <i>${option.binomialNomenclature}</i>
+            </div>
+          </div>
+        `; // Added image display
+
         optionElement.addEventListener('click', () => {
           searchInput.value = option.binomialNomenclature; 
           form.submit(); 
@@ -75,8 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Debounce function (commented out for now)
-  /*
   const debounce = (func, delay) => {
     let timeout;
     return (...args) => {
@@ -84,17 +103,14 @@ document.addEventListener('DOMContentLoaded', () => {
       timeout = setTimeout(() => func(...args), delay);
     };
   };
-  */
 
   // Check if the current path is "/dataviewer"
   if (window.location.pathname === '/dataviewer') {
     // Fetch options initially on page load
     fetchOptions().then(() => {
-      searchInput.addEventListener('input', (event) => {
+      searchInput.addEventListener('input', debounce((event) => {
         populateDropdown(event.target.value);
-        // If you want to use debounce, uncomment the following line:
-        // debounce((value) => populateDropdown(value), 300)(event.target.value);
-      });
+      }, 300)); // Debounce the input
     });
   }
 

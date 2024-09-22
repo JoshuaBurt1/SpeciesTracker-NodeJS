@@ -368,3 +368,14 @@ footer p {
   font-size: 30px;
   cursor: pointer;
 }
+
+/*Worksheet*/
+#preWorksheet {
+  border-right: 1px solid #ddd; /* Optional for a separating line */
+  padding-right: 15px;
+}
+
+#worksheetEntries {
+  list-style-type: none;
+  padding: 0;
+}

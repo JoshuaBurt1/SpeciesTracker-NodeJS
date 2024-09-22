@@ -2,4 +2,33 @@
 
 <h1 class="display-5"><%= title %></h1>
 
+<% if (speciesData && speciesData.length > 0) { %>
+  <% speciesData.forEach(item => { %>
+    <h2><%= item.name %> (<%= item.binomialNomenclature %>)</h2>
+    <p><strong>Kingdom:</strong> <%= item.kingdom %></p>
+    
+    <h3>Locations:</h3>
+    <ul>
+      <% item.locations.forEach(location => { %>
+        <li><%= location %></li>
+      <% }); %>
+    </ul>
+
+    <h3>Update Dates:</h3>
+    <ul>
+      <% item.updateDates.forEach(date => { %>
+        <li><%= date %></li>
+      <% }); %>
+    </ul>
+
+    <h3>Images:</h3>
+    <% item.images.forEach(image => { %>
+      <img src="/images/<%= item.kingdom.toLowerCase() %>_images/<%= image %>" alt="<%= item.name %>" />
+    <% }); %>
+    
+  <% }); %>
+<% } else { %>
+  <p>No data available for this species.</p>
+<% } %>
+
 <%- include('../partials/footer') %>

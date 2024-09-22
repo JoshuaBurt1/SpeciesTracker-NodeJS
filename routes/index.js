@@ -54,9 +54,10 @@ const updateJsonList = async () => {
     const combinedData = modelData.flat();
     const uniqueDataMap = new Map();
 
-    combinedData.forEach(({ name, binomialNomenclature }) => {
+    combinedData.forEach(({ name, binomialNomenclature, kingdom, image }) => {
       if (!uniqueDataMap.has(binomialNomenclature)) {
-        uniqueDataMap.set(binomialNomenclature, { name, binomialNomenclature });
+        const imagePath = `public/images/${kingdom.toLowerCase()}_images/${image}`;
+        uniqueDataMap.set(binomialNomenclature, { name, binomialNomenclature, image: imagePath });
       }
     });
 
@@ -174,7 +175,7 @@ const updateCsv = async () => {
 updateCsv(); 
 updateJsonList();
 /* Method 2. Route to update CSV (can be called when server starts or scheduled) 
-***** USE WITH node-cron because a server may be on for several days without updating new information *****
+***** USE WITH node-cron because a server may be on for several days without updating new information*****
 router.get('/update-csv', async (req, res) => {
   await updateJsonList();
   await updateCsv();
