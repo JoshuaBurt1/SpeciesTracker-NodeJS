@@ -107,54 +107,62 @@ router.get("/add", IsLoggedIn, logMiddleware, (req, res, next) => {
   res.render("plants/add", { user: req.user, title: "Add a new Plant" });
 });
 
-//POST handler for /plants/add (saves new entry to database)
-router.post("/add", IsLoggedIn, upload.single('image'), async (req, res, next) => {
+// POST handler for /plants/add (saves new entry to database)
+router.post("/add", IsLoggedIn, upload.array('images'), async (req, res, next) => {
   try {
-    const uniqueImageName = createUniqueImageName(req.body.name, req.file.originalname);
-    // Move the uploaded image to the new destination path
-    const newDestinationPath = path.join(__dirname, '..', userImagesPath, uniqueImageName);
-    await fs.promises.rename(req.file.path, newDestinationPath);
-    //image data integrity code
-    // Extract metadata from the image
-    const metadata = await Exifr.parse(newDestinationPath);
-    // Convert GPS coordinates to decimal form
-    const imageGPS = metadata?.GPSLatitude && metadata?.GPSLongitude ? convertToDecimal(metadata.GPSLatitude, metadata.GPSLongitude, metadata.GPSLatitudeRef, metadata.GPSLongitudeRef) : null;
-    // Convert date to the specified format
-    const imageDate = metadata?.DateTimeOriginal ? convertToDate(metadata.DateTimeOriginal) : null;
-    //console.log(req.body.location);
-    //console.log(req.body.updateDate);
-    var locationDataIntegrityValue;
-    var dateDataIntegrityValue;
-    if(imageDate === req.body.updateDate){
-      dateDataIntegrityValue = 0;
-    }else{
-      dateDataIntegrityValue = 1;
+    const plantEntries = []; // Array to hold created plant entries
+
+    // Loop through each uploaded file
+    for (const file of req.files) {
+      const uniqueImageName = createUniqueImageName(req.body.name, file.originalname);
+      // Move the uploaded image to the new destination path
+      const newDestinationPath = path.join(__dirname, '..', userImagesPath, uniqueImageName);
+      await fs.promises.rename(file.path, newDestinationPath);
+      
+      // Extract metadata from the image
+      const metadata = await Exifr.parse(newDestinationPath);
+      
+      // Convert GPS coordinates to decimal form
+      const imageGPS = metadata?.GPSLatitude && metadata?.GPSLongitude
+        ? convertToDecimal(metadata.GPSLatitude, metadata.GPSLongitude, metadata.GPSLatitudeRef, metadata.GPSLongitudeRef)
+        : null;
+
+      // Convert date to the specified format
+      const imageDate = metadata?.DateTimeOriginal ? convertToDate(metadata.DateTimeOriginal) : null;
+
+      // Determine data integrity values
+      const dateDataIntegrityValue = imageDate === req.body.updateDate ? 0 : 1;
+      const locationDataIntegrityValue = imageGPS === req.body.location ? 0 : 1;
+
+      // Create a new plant entry for the updated image
+      const createdModel = await Plant.create({
+        name: req.body.name,
+        binomialNomenclature: req.body.binomialNomenclature,
+        updateDate: req.body.updateDate,
+        location: req.body.location,
+        image: uniqueImageName,
+        user: req.user._id,
+        dateChanged: dateDataIntegrityValue,
+        locationChanged: locationDataIntegrityValue,
+      });
+
+      // Add the created model to the plant entries array
+      plantEntries.push(createdModel);
+      console.log("Created model:", createdModel);
     }
-    if (imageGPS === req.body.location) {
-      locationDataIntegrityValue = 0;
-    }else{
-      locationDataIntegrityValue = 1;
-    }
-    // Create a new plant entry for the updated image
-    const createdModel = await Plant.create({
-      name: req.body.name,
-      binomialNomenclature: req.body.binomialNomenclature,
-      updateDate: req.body.updateDate,
-      location: req.body.location,
-      image: uniqueImageName,
-      user: req.user._id,
-      dateChanged: dateDataIntegrityValue,
-      locationChanged: locationDataIntegrityValue,
-    });
-    //console.log("Model created successfully:", createdModel);
-    //console.log(imageGPS);
-    //console.log(imageDate);
+
+    // Optionally, log all created models
+    console.log("Models created successfully:", plantEntries);
+
+    // Redirect to the plants page after processing all entries
     res.redirect("/plants");
   } catch (error) {
     console.error("An error occurred:", error);
+    console.error("Error stack:", error.stack);  // Log the stack trace for more details
     res.redirect("/error");
   }
 });
+
 
 // GET handler for /plants/edit (loads page)
 router.get("/edit/:_id", IsLoggedIn, logMiddleware, async  (req, res, next) => {

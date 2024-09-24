@@ -161,52 +161,61 @@ app.post('/identifyM', async (req, res) => {
   }
 });
 
-//IDENTIFY PLANT (PlantNet)
 app.post('/identifyP', async (req, res) => {
   const project = 'all?include-related-images=false&no-reject=false&lang=en&type=kt';
   const apiKey = config.plantNetAPI;
   const apiUrl = `https://my-api.plantnet.org/v2/identify/${project}&api-key=${apiKey}`;
-  const formData = new FormData();
 
-  // Check if req.files.image exists and is not null
-  if (!req.files || !req.files.image) {
-      return res.status(400).json({ message: 'No file uploaded.' });
+  console.log("here");
+  console.log("Uploaded files:", req.files);
+
+  // Check if req.files.images[] exists and is not empty
+  if (!req.files || !req.files['images[]']) {
+      console.log("here2");
+      return res.status(400).json({ message: 'No files uploaded.' });
   }
 
-  // Access the uploaded file  
-  const file = req.files.image;
-  const fileStream = fs.createReadStream(file.tempFilePath);
-  formData.append('images', fileStream, { filename: file.name });
+  const uploadedFiles = Array.isArray(req.files['images[]']) ? req.files['images[]'] : [req.files['images[]']];
+  const top4MatchesArray = [];
 
   try {
+    // Process each uploaded file
+    for (const file of uploadedFiles) {
+      const formData = new FormData();
+      const fileStream = fs.createReadStream(file.tempFilePath);
+      formData.append('images', fileStream, { filename: file.name });
+
+      console.log("here3");
+
       const response = await axios.post(apiUrl, formData, {
           headers: {
               ...formData.getHeaders(),
           },
       });
 
-      // Extract information about the top 3 matches
+      console.log("here4");
+      // Extract information about the top 4 matches
       const top4Matches = response.data.results.slice(0, 4);
+      top4MatchesArray.push(top4Matches.map(match => ({
+          name: removeParentheses(match.species.commonNames[0]),
+          scientificName: removeParentheses(match.species.scientificName),
+          score: match.score,
+      })));
+    }
 
-      // Function to remove parentheses, backslashes, and question marks
-      const removeParentheses = (str) => (str || '').replace(/[()\\?]/g, '').trim();
-
-      // Send back detailed information to the client
-      res.status(response.status).json({
-          status: response.status,
-          top4Matches: top4Matches.map(match => ({
-              name: removeParentheses(match.species.commonNames[0]), // Ensure this exists
-              scientificName: removeParentheses(match.species.scientificName), // Ensure this exists
-              score: match.score
-          }))
-      });
+    // Send back detailed information to the client
+    res.status(200).json({
+        status: 200,
+        top4Matches: top4MatchesArray,
+    });
   } catch (error) {
       console.error('Error:', error);
       res.status(error.response?.status || 500).json({ message: error.message });
   }
 });
 
-
+// Function to remove parentheses, backslashes, and question marks
+const removeParentheses = (str) => (str || '').replace(/[()\\?]/g, '').trim();
 
 // error handler
 app.use(function (err, req, res, next) {
