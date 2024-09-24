@@ -110,12 +110,10 @@ router.get("/add", IsLoggedIn, logMiddleware, (req, res, next) => {
 // POST handler for /plants/add (saves new entry to database)
 router.post("/add", IsLoggedIn, upload.array('images'), async (req, res, next) => {
   try {
-    const plantEntries = []; // Array to hold created plant entries
+    const plantEntries = [];
 
-    // Loop through each uploaded file
     for (const file of req.files) {
       const uniqueImageName = createUniqueImageName(req.body.name, file.originalname);
-      // Move the uploaded image to the new destination path
       const newDestinationPath = path.join(__dirname, '..', userImagesPath, uniqueImageName);
       await fs.promises.rename(file.path, newDestinationPath);
       
@@ -131,38 +129,33 @@ router.post("/add", IsLoggedIn, upload.array('images'), async (req, res, next) =
       const imageDate = metadata?.DateTimeOriginal ? convertToDate(metadata.DateTimeOriginal) : null;
 
       // Determine data integrity values
-      const dateDataIntegrityValue = imageDate === req.body.updateDate ? 0 : 1;
-      const locationDataIntegrityValue = imageGPS === req.body.location ? 0 : 1;
+      const dateDataIntegrityValue = imageDate === req.body.updateDate ? 0 : 1; // Check against metadata
+      const locationDataIntegrityValue = imageGPS === req.body.location ? 0 : 1; // Check against metadata
 
       // Create a new plant entry for the updated image
       const createdModel = await Plant.create({
         name: req.body.name,
         binomialNomenclature: req.body.binomialNomenclature,
-        updateDate: req.body.updateDate,
-        location: req.body.location,
+        updateDate: imageDate || req.body.updateDate, // Use metadata if available
+        location: imageGPS || req.body.location, // Use metadata if available
         image: uniqueImageName,
         user: req.user._id,
         dateChanged: dateDataIntegrityValue,
         locationChanged: locationDataIntegrityValue,
       });
 
-      // Add the created model to the plant entries array
       plantEntries.push(createdModel);
       console.log("Created model:", createdModel);
     }
 
-    // Optionally, log all created models
     console.log("Models created successfully:", plantEntries);
-
-    // Redirect to the plants page after processing all entries
     res.redirect("/plants");
   } catch (error) {
     console.error("An error occurred:", error);
-    console.error("Error stack:", error.stack);  // Log the stack trace for more details
+    console.error("Error stack:", error.stack);
     res.redirect("/error");
   }
 });
-
 
 // GET handler for /plants/edit (loads page)
 router.get("/edit/:_id", IsLoggedIn, logMiddleware, async  (req, res, next) => {

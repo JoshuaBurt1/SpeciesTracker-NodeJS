@@ -270,6 +270,10 @@ button.offset-3.btn.btn-primary {
   color: #007bff;
 }
 
+.strike {
+  text-decoration: line-through;
+}
+
 /*Dataviewer index*/
 #buttonPadDataviewer {
   width: 100%; 
