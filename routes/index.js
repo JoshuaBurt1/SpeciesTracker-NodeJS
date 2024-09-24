@@ -54,10 +54,17 @@ const updateJsonList = async () => {
     const combinedData = modelData.flat();
     const uniqueDataMap = new Map();
 
+    /*// If user wants search bar with associated image
     combinedData.forEach(({ name, binomialNomenclature, kingdom, image }) => {
       if (!uniqueDataMap.has(binomialNomenclature)) {
         const imagePath = `public/images/${kingdom.toLowerCase()}_images/${image}`;
         uniqueDataMap.set(binomialNomenclature, { name, binomialNomenclature, image: imagePath });
+      }
+    });*/
+
+    combinedData.forEach(({ name, binomialNomenclature, kingdom }) => {
+      if (!uniqueDataMap.has(binomialNomenclature)) {
+        uniqueDataMap.set(binomialNomenclature, { name, binomialNomenclature});
       }
     });
 

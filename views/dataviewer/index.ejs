@@ -6,11 +6,12 @@
 </div>  
 
 <div class="row">
-  <div class="col-md-3" id="preWorksheet">
-    <h3>Pre-Worksheet</h3>
-    <ul id="worksheetEntries">
+  <div class="col-md-3" id="preWorksheet" style="display: flex; flex-direction: column; height: 100%;">
+    <h3>Worksheet</h3>
+    <ul id="worksheetEntries" style="flex-grow: 1;">
       <!-- Entries will be added here dynamically -->
     </ul>
+    <button id="analyze" class="btn btn-primary" style="margin-top: auto;">Analyze</button> <!-- Button at bottom -->
   </div>
   
   <div class="col-md-9">
@@ -61,7 +62,7 @@
               <% dataset.forEach(function(item) { %>
                 <tr>
                   <td class="col-2">
-                    <a href="/dataviewer/view?name=<%= encodeURIComponent(item.name) %>">
+                    <a href="/dataviewer/view?name=<%= encodeURIComponent(item.binomialNomenclature) %>">
                       <b><%= item.name %></b>
                     </a><br><i><%= item.binomialNomenclature %></i><br><br>
                     <input type="radio" name="metadata" value="0" id="same-metadata"> 

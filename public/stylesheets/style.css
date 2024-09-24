@@ -270,7 +270,7 @@ button.offset-3.btn.btn-primary {
   color: #007bff;
 }
 
-/*Dataviewer*/
+/*Dataviewer index*/
 #buttonPadDataviewer {
   width: 100%; 
 }
@@ -292,6 +292,63 @@ button.offset-3.btn.btn-primary {
 #dataviewer-dropdown-menu {
   max-height: 50vh; 
   overflow-y: auto; 
+}
+
+/*Dataviewer view*/
+.info-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.locations, .update-dates, .sightings-chart {
+  flex: 1;
+  margin-right: 16px; /* Space between columns */
+}
+
+.locations:last-child, .update-dates:last-child {
+  margin-right: 0; /* Remove margin from the last column */
+}
+
+.sightings-chart {
+  position: relative;
+  max-width: 300px; /* Adjust width for the chart */
+}
+
+.flex-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px; /* Adjust the gap as needed */
+}
+
+.image-container {
+  flex: 0 0 calc(10% - 16px); /* 10 columns with a gap */
+  max-width: calc(10% - 16px); /* Ensure max width matches */
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.flex-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px; /* Optional: for rounded corners */
+  transition: transform 0.3s, filter 0.3s;
+}
+
+.image-container:hover .flex-image {
+  transform: scale(1.1); /* Bounce effect */
+  filter: brightness(1.1); /* Highlight effect */
+}
+
+
+.image-container:active .flex-image {
+  transform: scale(1.5); /* Scale for click effect */
+}
+
+.image-container:focus-within .flex-image {
+  outline: 2px solid #fff; /* Outline on focus (for accessibility) */
 }
 
 /*Scroll issue with map appearing above table header <th>*/

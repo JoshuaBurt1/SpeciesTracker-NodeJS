@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let isDataFetched = false;
 
   // Cache for images
-  const imageCache = {};
+  //const imageCache = {};
 
   const showDropdown = () => {
     dropdownMenu.style.visibility = 'visible'; 
@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  /*//If user wants search bar with an associated image
   const lazyLoadImage = (imageUrl) => {
     if (!imageCache[imageUrl]) {
       const img = new Image();
@@ -49,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
       imageCache[imageUrl] = img; // Store in cache
     }
     return imageUrl; // Return the image URL
-  };
+  };*/
 
   const populateDropdown = (query = '') => {
     if (!isDataFetched) {
@@ -75,12 +76,20 @@ document.addEventListener('DOMContentLoaded', () => {
         optionElement.className = 'dropdown-item';
         optionElement.href = '#';
 
+        /*//If user wants search bar with an associated image
         optionElement.innerHTML = `
           <div style="display: flex; align-items: center;">
             <img src="${lazyLoadImage(option.image)}" alt="${option.name}" style="width: 50px; height: auto; margin-right: 10px;" />
             <div>
               <strong>${option.name}</strong> <br> <i>${option.binomialNomenclature}</i>
             </div>
+          </div>
+        `; // Added image display
+        */
+
+        optionElement.innerHTML = `
+          <div>
+            <strong>${option.name}</strong> : <i>${option.binomialNomenclature}</i>
           </div>
         `; // Added image display
 
@@ -96,14 +105,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  /* //If user wants search bar with an associated image
   const debounce = (func, delay) => {
     let timeout;
     return (...args) => {
       clearTimeout(timeout);
       timeout = setTimeout(() => func(...args), delay);
     };
-  };
+  };*/
 
+  /*
   // Check if the current path is "/dataviewer"
   if (window.location.pathname === '/dataviewer') {
     // Fetch options initially on page load
@@ -111,6 +122,15 @@ document.addEventListener('DOMContentLoaded', () => {
       searchInput.addEventListener('input', debounce((event) => {
         populateDropdown(event.target.value);
       }, 300)); // Debounce the input
+    });
+  }*/
+
+  if (window.location.pathname === '/dataviewer') {
+    // Fetch options initially on page load
+    fetchOptions().then(() => {
+      searchInput.addEventListener('input', (event) => {
+        populateDropdown(event.target.value);
+      }); 
     });
   }
 
