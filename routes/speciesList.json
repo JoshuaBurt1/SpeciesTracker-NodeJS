@@ -1212,6 +1212,10 @@
     "binomialNomenclature": "Fragaria x ananassa Duchesne ex Weston Duchesne ex Rozier"
   },
   {
+    "name": "Glossy buckthorn",
+    "binomialNomenclature": "Frangula alnus Mill."
+  },
+  {
     "name": "Ash",
     "binomialNomenclature": "Fraxinus excelsior L."
   },
@@ -1434,6 +1438,10 @@
   {
     "name": "Eastern waterleaf",
     "binomialNomenclature": "Hydrophyllum virginianum L."
+  },
+  {
+    "name": "Butterfly stonecrop",
+    "binomialNomenclature": "Hylotelephium spectabile Boreau H.Ohba"
   },
   {
     "name": "Orpine",

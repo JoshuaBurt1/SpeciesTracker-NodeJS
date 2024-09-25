@@ -227,14 +227,6 @@ label {
   margin-right: 2%;
 }
 
-#imageVisual {
-  height: 100%; /* Set to 90% height */
-  display: flex;
-  justify-content: flex-end; /* Align content to the left */
-  align-items: flex-start; /* Align content to the top */
-  flex-grow: 1; /* Fill remaining space */
-}
-
 #preview {
   object-fit: contain; /* Maintain aspect ratio without overflowing */
 }
@@ -353,6 +345,20 @@ button.offset-3.btn.btn-primary {
 
 .image-container:focus-within .flex-image {
   outline: 2px solid #fff; /* Outline on focus (for accessibility) */
+}
+
+/*Plant add.ejs*/
+#top4 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 4 columns */
+  gap: 16px; /* Space between cells */
+}
+
+.match-cell {
+  border: 1px solid #ccc; /* Optional: styling for the cell */
+  padding: 1%; /* Optional: spacing inside the cell */
+  border-radius: 4px; /* Optional: rounded corners */
+  background-color: #f9f9f9; /* Optional: cell background color */
 }
 
 /*Scroll issue with map appearing above table header <th>*/

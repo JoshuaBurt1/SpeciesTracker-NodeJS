@@ -8,12 +8,9 @@
     <div id="imageAndName">
       <fieldset class="form-group">
         <label for="image" class="col-2">Image:</label>
-        <input type="file" name="images" id="image" class="form-control" accept=".jpg, .jpeg, .png" required multiple onchange="identifyPlant()">
+        <input type="file" name="images" id="image" class="form-control" style="margin-bottom: 10px;" accept=".jpg, .jpeg, .png" required multiple onchange="identifyPlant()">
       </fieldset>
       <div id="top4"></div>
-    </div>
-    <div id="imageVisual">
-      <img src="/site_images/noimage.png" alt="No image" id="preview">
     </div>
   </div>
 
@@ -63,51 +60,67 @@ async function identifyPlant() {
         top4Div.innerHTML = ''; // Clear previous content
 
         data.top4Matches.forEach((matches, imgIndex) => {
-            const imgHeader = document.createElement('h4');
-            imgHeader.textContent = `Matches for Image ${imgIndex + 1}:`;
-            top4Div.appendChild(imgHeader);
+          // Create a cell div for this image's matches
+          const cellDiv = document.createElement('div');
+          cellDiv.className = 'match-cell'; // Optional class for styling
 
-            // Create a fieldset for each image index
-            const fieldset = createFieldsetForImage(imgIndex, matches);
-            top4Div.appendChild(fieldset);
+          const imgHeader = document.createElement('h4');
+          imgHeader.textContent = `Matches for Image ${imgIndex + 1}:`;
+          cellDiv.appendChild(imgHeader);
 
-            // Create matchDiv to display match details
-            matches.forEach((match, index) => {
-                const matchDiv = document.createElement('div');
-                matchDiv.innerHTML = `
-                    <strong>${index + 1}. Name:</strong> ${match.name}; 
-                    <strong>Scientific Name:</strong> ${match.scientificName}; 
-                    <strong>Score:</strong> ${match.score}
-                `;
+          // Display the respective image
+          const imageElement = document.createElement('img');
+          imageElement.src = URL.createObjectURL(images[imgIndex]); // Use a URL for the selected image
+          imageElement.alt = `Uploaded Image ${imgIndex + 1}`;
+          imageElement.style.width = '50%'; // Optional: make image responsive
+          imageElement.style.height = 'auto'; // Maintain aspect ratio
+          cellDiv.appendChild(imageElement);
 
-                // Create button for each match
-                const button = document.createElement('button');
-                button.textContent = 'Select';
-                button.type = 'button'; // Prevent form submission
-                button.onclick = () => {
-                    // Update the fieldset inputs with the selected match's data
-                    updateFieldset(fieldset, match);
-                };
+          // Create a fieldset for each image index
+          const fieldset = createFieldsetForImage(imgIndex, matches);
+          cellDiv.appendChild(fieldset);
 
-                matchDiv.appendChild(button);
-                top4Div.appendChild(matchDiv);
-            });
+          // Create matchDiv to display match details
+          matches.forEach((match, index) => {
+              const matchDiv = document.createElement('div');
+              matchDiv.innerHTML = `
+                  <strong>${index + 1}. Name:</strong> ${match.name}; 
+                  <strong>Scientific Name:</strong> ${match.scientificName}; 
+                  <strong>Score:</strong> ${match.score}
+              `;
 
-            // Extract EXIF data
-            getExifData(images[imgIndex]).then(exifData => {
-                if (exifData) {
-                    const dateInput = fieldset.querySelector(`input[name="updateDate[${imgIndex}]"]`);
-                    const locationInput = fieldset.querySelector(`input[name="location[${imgIndex}]"]`);
+              // Create button for each match
+              const button = document.createElement('button');
+              button.textContent = 'Select';
+              button.type = 'button'; // Prevent form submission
+              button.onclick = () => {
+                  // Update the fieldset inputs with the selected match's data
+                  updateFieldset(fieldset, match);
+              };
 
-                    if (exifData.date) {
-                        dateInput.value = exifData.date; // Set EXIF date
-                    }
-                    if (exifData.location) {
-                        locationInput.value = exifData.location; // Set EXIF location
-                    }
-                }
-            });
-        });
+              matchDiv.appendChild(button);
+              cellDiv.appendChild(matchDiv);
+          });
+
+          // Append the cell div to the main container
+          top4Div.appendChild(cellDiv);
+
+          // Extract EXIF data
+          getExifData(images[imgIndex]).then(exifData => {
+              if (exifData) {
+                  const dateInput = fieldset.querySelector(`input[name="updateDate[${imgIndex}]"]`);
+                  const locationInput = fieldset.querySelector(`input[name="location[${imgIndex}]"]`);
+
+                  if (exifData.date) {
+                      dateInput.value = exifData.date; // Set EXIF date
+                  }
+                  if (exifData.location) {
+                      locationInput.value = exifData.location; // Set EXIF location
+                  }
+              }
+          });
+      });
+
     } catch (error) {
         console.error('error', error);
     }
