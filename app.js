@@ -161,13 +161,11 @@ app.post('/identifyM', async (req, res) => {
   }
 });
 
+//IDENTIFY PLANT (PlantNet)
 app.post('/identifyP', async (req, res) => {
   const project = 'all?include-related-images=false&no-reject=false&lang=en&type=kt';
   const apiKey = config.plantNetAPI;
   const apiUrl = `https://my-api.plantnet.org/v2/identify/${project}&api-key=${apiKey}`;
-
-  console.log("Uploaded files:", req.files);
-
   // Check if req.files.images[] exists and is not empty
   if (!req.files || !req.files['images[]']) {
       return res.status(400).json({ message: 'No files uploaded.' });

@@ -116,7 +116,6 @@ router.post("/add", IsLoggedIn, upload.array('images'), async (req, res, next) =
     const userId = req.user._id; // Get user ID
 
     for (let i = 0; i < req.files.length; i++) {
-      console.log(i);
       const file = req.files[i];
       const binomialNomenclature = req.body.binomialNomenclature[i] || "Unnamed"; // Use default if not provided
       const name = req.body.name[i] || "Unnamed"; // Get the name from the form
@@ -128,30 +127,28 @@ router.post("/add", IsLoggedIn, upload.array('images'), async (req, res, next) =
       
       // Extract metadata from the image
       const metadata = await Exifr.parse(newDestinationPath);
-      console.log('Metadata:', metadata); // Log the metadata to see its content
-
+      
       // Convert GPS coordinates to decimal form
       const imageGPS = metadata?.GPSLatitude && metadata?.GPSLongitude
           ? convertToDecimal(metadata.GPSLatitude, metadata.GPSLongitude, metadata.GPSLatitudeRef, metadata.GPSLongitudeRef)
           : null;
 
-      console.log('Image GPS:', imageGPS); // Log the GPS data
-
       // Convert date to the specified format
       const imageDate = metadata?.DateTimeOriginal ? convertToDate(metadata.DateTimeOriginal) : null;
-      console.log('Image Date:', imageDate); // Log the date
 
-      // Determine data integrity values
-      const dateDataIntegrityValue = imageDate === req.body.updateDate ? 0 : 1; // Check against metadata
-      const locationDataIntegrityValue = imageGPS === req.body.location ? 0 : 1; // Check against metadata
+      // Use user-provided data if available; otherwise, fallback to metadata
+      const location = req.body.location[i] || imageGPS; // Use user input or fallback to GPS
+      const updateDate = req.body.updateDate[i] || imageDate; // Use user input or fallback to date
 
+      const dateDataIntegrityValue = updateDate === imageDate ? 0 : 1; // Check against metadata
+      const locationDataIntegrityValue = location === imageGPS ? 0 : 1; // Check against metadata
 
       // Create a new plant entry
       const createdModel = await Plant.create({
         name: name,
         binomialNomenclature: binomialNomenclature,
-        updateDate: imageDate || req.body.updateDate, // Use metadata if available
-        location: imageGPS || req.body.location, // Use metadata if available
+        updateDate: updateDate, // Use user-provided or metadata
+        location: location, // Use user-provided or metadata
         image: uniqueImageName,
         user: req.user._id,
         dateChanged: dateDataIntegrityValue,
@@ -168,6 +165,24 @@ router.post("/add", IsLoggedIn, upload.array('images'), async (req, res, next) =
     console.error("An error occurred:", error);
     console.error("Error stack:", error.stack);
     res.redirect("/error");
+  }
+});
+
+// GET handler for /plants/edit (loads page)
+router.get("/edit/:_id", IsLoggedIn, logMiddleware, async  (req, res, next) => {
+  try {
+    const plantObj = await Plant.findById(req.params._id).exec();
+    console.log(plantObj);
+    console.log(plantObj.name);
+    res.render("plants/edit", {
+      user: req.user,
+      title: "Edit a Plant Entry",
+      plant: plantObj
+      //user: req.user,
+    });
+  } catch (err) {
+    console.error(err);
+    // Handle the error appropriately
   }
 });
 

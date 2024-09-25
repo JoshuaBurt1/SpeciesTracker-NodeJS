@@ -183,6 +183,7 @@ function createFieldsetForImage(imgIndex, matches) {
     dateInput.name = `updateDate[${imgIndex}]`;
     dateInput.className = 'form-control';
     dateInput.placeholder = 'YYYY:MM:DD HH:mm:ss';
+    dateInput.required = true; // Make this field required
     fieldset.appendChild(dateInput);
 
     // Location Field
@@ -194,6 +195,7 @@ function createFieldsetForImage(imgIndex, matches) {
     locationInput.name = `location[${imgIndex}]`;
     locationInput.className = 'form-control';
     locationInput.placeholder = 'Latitude, Longitude (e.g., 45.0000, -45.0000)';
+    locationInput.required = true; // Make this field required
     fieldset.appendChild(locationInput);
 
     // Prefill fields if data exists in matches
@@ -215,9 +217,11 @@ function updateFieldset(fieldset, match) {
     // Update the inputs with the selected match's data
     nameInput.value = match.name;
     sciNameInput.value = match.scientificName;
-    dateInput.value = match.updateDate || ''; // Update date if exists
-    locationInput.value = match.location || ''; // Update location if exists
+    // Don't modify dateInput and locationInput
+    // dateInput.value = match.updateDate || ''; // Uncomment if you want to allow updating
+    // locationInput.value = match.location || ''; // Uncomment if you want to allow updating
 }
+
 </script>
 
 <%- include('../partials/footer') %>
