@@ -166,12 +166,10 @@ app.post('/identifyP', async (req, res) => {
   const apiKey = config.plantNetAPI;
   const apiUrl = `https://my-api.plantnet.org/v2/identify/${project}&api-key=${apiKey}`;
 
-  console.log("here");
   console.log("Uploaded files:", req.files);
 
   // Check if req.files.images[] exists and is not empty
   if (!req.files || !req.files['images[]']) {
-      console.log("here2");
       return res.status(400).json({ message: 'No files uploaded.' });
   }
 
@@ -180,20 +178,19 @@ app.post('/identifyP', async (req, res) => {
 
   try {
     // Process each uploaded file
+    var count = 0;
     for (const file of uploadedFiles) {
       const formData = new FormData();
       const fileStream = fs.createReadStream(file.tempFilePath);
       formData.append('images', fileStream, { filename: file.name });
-
-      console.log("here3");
 
       const response = await axios.post(apiUrl, formData, {
           headers: {
               ...formData.getHeaders(),
           },
       });
-
-      console.log("here4");
+      count++;
+      console.log("Classification " + count + " complete");
       // Extract information about the top 4 matches
       const top4Matches = response.data.results.slice(0, 4);
       top4MatchesArray.push(top4Matches.map(match => ({

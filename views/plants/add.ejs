@@ -3,137 +3,221 @@
 <span>Select one or more image files to upload. 1 classification : 1 image uploaded.</span> <br>
 <span class="strike">Select one or more image files to upload. 1 classification : multiple images uploaded.</span>
 
-<form id="addPlantForm" method="POST" enctype="multipart/form-data">
+<form id="addPlantForm" method="POST" action="/plants/add" enctype="multipart/form-data">
   <div id="dataVisual">
     <div id="imageAndName">
       <fieldset class="form-group">
         <label for="image" class="col-2">Image:</label>
         <input type="file" name="images" id="image" class="form-control" accept=".jpg, .jpeg, .png" required multiple onchange="identifyPlant()">
       </fieldset>
-      <div id="nameRow">
-        <fieldset class="form-group">
-          <label for="name" class="col-2">Name:</label>
-          <input name="name" id="name" class="form-control" required readonly/>
-        </fieldset>
-        <fieldset class="form-group">
-          <label for="binomialNomenclature" class="col-2">Scientific Name:</label>
-          <input name="binomialNomenclature" id="binomialNomenclature" class="form-control" required readonly/>
-        </fieldset>
-      </div>
       <div id="top4"></div>
     </div>
     <div id="imageVisual">
       <img src="/site_images/noimage.png" alt="No image" id="preview">
     </div>
   </div>
-  
-  <!-- This will process multiple images with embedded gps and date data; 
-   but may need to process metadata on client side for users that do not have photos with gps or time -->
-   <!--
-  <fieldset class="form-group">
-    <label for="updateDate">Date Identified:</label>
-    <input name="updateDate" id="updateDate" required class="form-control" placeholder="YYYY:MM:DD HH:mm:ss"/>
-  </fieldset>
-  <fieldset class="form-group">
-    <label for="location">Location:</label>
-    <input name="location" id="location" class="form-control" placeholder="Latitude, Longitude (e.g., 45.0000, -45.0000)" required/>
-  </fieldset>
-  -->
-  
-  <!-- Display the selected location's coordinates -->
-  <div id="coordinates"><span id="help">If unsure of coordinates - enter name of location, then copy map coordinates</span></div>
-  <!-- Display the selected location's coordinates using Leaflet -->
+
+  <div id="coordinates">
+    <span id="help">If unsure of coordinates - enter name of location, then copy map coordinates</span>
+  </div>
   <div id="map" style="height: 300px;"></div>
 
-  <!-- Button needs to be inside <form> element to trigger POST -->
   <button class="offset-3 btn btn-primary">Save</button>
 </form>
 
 <script defer>
-  async function identifyPlant() {
+async function identifyPlant() {
     const images = document.getElementById('image').files; // Get the files from the input
     const formData = new FormData();
 
     // Check if at least one image is selected
     if (images.length === 0) {
-      console.error('No images selected');
-      return;
+        console.error('No images selected');
+        return;
     }
 
     // Append each image to FormData
     for (const image of images) {
-      formData.append('images[]', image); // Use 'images[]' to match backend expectations
+        formData.append('images[]', image); // Use 'images[]' to match backend expectations
     }
 
     try {
-      const apiUrl = 'http://localhost:3000/identifyP'; // Your server URL
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        body: formData
-      });
-
-      if (!response.ok) {
-        console.error('Error response status:', response.status);
-        console.log('Error response text:', await response.text());
-        return;
-      }
-
-      const data = await response.json();
-      console.log('status', response.status);
-      console.log('data', data);
-      
-      // Display top 4 matches for each image
-      const top4Div = document.getElementById('top4');
-      top4Div.innerHTML = ''; // Clear previous content
-
-      data.top4Matches.forEach((matches, imgIndex) => {
-        const imgHeader = document.createElement('h4');
-        imgHeader.textContent = `Matches for Image ${imgIndex + 1}:`;
-        top4Div.appendChild(imgHeader);
-
-        matches.forEach((match, index) => {
-          const matchDiv = document.createElement('div');
-          matchDiv.innerHTML = `
-            <strong>${index + 1}. Name:</strong> ${match.name}; 
-            <strong>Scientific Name:</strong> ${match.scientificName}; 
-            <strong>Score:</strong> ${match.score}
-          `;
-          
-          // Create button for each match
-          const button = document.createElement('button');
-          button.textContent = 'Select';
-          button.type = 'button'; // Prevent form submission
-          button.onclick = () => {
-            document.getElementById('name').value = match.name;
-            document.getElementById('binomialNomenclature').value = match.scientificName;
-          };
-
-          matchDiv.appendChild(button);
-          top4Div.appendChild(matchDiv);  
+        const apiUrl = 'http://localhost:3000/identifyP'; // Your server URL
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            body: formData
         });
-      });
 
-      // Optionally set initial values for fields from the first image's first match
-      if (data.top4Matches.length > 0 && data.top4Matches[0].length > 0) {
-        const firstMatch = data.top4Matches[0][0]; // Get the first match of the first image
-        document.getElementById('binomialNomenclature').value = firstMatch.scientificName;
-        document.getElementById('name').value = firstMatch.name;
-      }
+        if (!response.ok) {
+            console.error('Error response status:', response.status);
+            console.log('Error response text:', await response.text());
+            return;
+        }
 
-      // Sanitize data - keep this to avoid user manipulation in browser console
-      document.getElementById('addPlantForm').addEventListener('submit', function(event) {
-        const commonNameInput = document.getElementById('name');
-        const scientificInput = document.getElementById('binomialNomenclature');
+        const data = await response.json();
+        console.log('status', response.status);
+        console.log('data', data);
 
-        commonNameInput.value = commonNameInput.value.replace(/[()]/g, '').trim();
-        scientificInput.value = scientificInput.value.replace(/[()]/g, '').trim();
-      });
+        // Display top 4 matches for each image
+        const top4Div = document.getElementById('top4');
+        top4Div.innerHTML = ''; // Clear previous content
 
+        data.top4Matches.forEach((matches, imgIndex) => {
+            const imgHeader = document.createElement('h4');
+            imgHeader.textContent = `Matches for Image ${imgIndex + 1}:`;
+            top4Div.appendChild(imgHeader);
+
+            // Create a fieldset for each image index
+            const fieldset = createFieldsetForImage(imgIndex, matches);
+            top4Div.appendChild(fieldset);
+
+            // Create matchDiv to display match details
+            matches.forEach((match, index) => {
+                const matchDiv = document.createElement('div');
+                matchDiv.innerHTML = `
+                    <strong>${index + 1}. Name:</strong> ${match.name}; 
+                    <strong>Scientific Name:</strong> ${match.scientificName}; 
+                    <strong>Score:</strong> ${match.score}
+                `;
+
+                // Create button for each match
+                const button = document.createElement('button');
+                button.textContent = 'Select';
+                button.type = 'button'; // Prevent form submission
+                button.onclick = () => {
+                    // Update the fieldset inputs with the selected match's data
+                    updateFieldset(fieldset, match);
+                };
+
+                matchDiv.appendChild(button);
+                top4Div.appendChild(matchDiv);
+            });
+
+            // Extract EXIF data
+            getExifData(images[imgIndex]).then(exifData => {
+                if (exifData) {
+                    const dateInput = fieldset.querySelector(`input[name="updateDate[${imgIndex}]"]`);
+                    const locationInput = fieldset.querySelector(`input[name="location[${imgIndex}]"]`);
+
+                    if (exifData.date) {
+                        dateInput.value = exifData.date; // Set EXIF date
+                    }
+                    if (exifData.location) {
+                        locationInput.value = exifData.location; // Set EXIF location
+                    }
+                }
+            });
+        });
     } catch (error) {
-      console.error('error', error);
+        console.error('error', error);
     }
-  }
-</script>
+}
 
+async function getExifData(file) {
+    return new Promise((resolve) => {
+        EXIF.getData(file, function() {
+            const dateTaken = EXIF.getTag(this, 'DateTimeOriginal');
+            const latitudeArray = EXIF.getTag(this, 'GPSLatitude');
+            const longitudeArray = EXIF.getTag(this, 'GPSLongitude');
+            const latitudeRef = EXIF.getTag(this, 'GPSLatitudeRef');
+            const longitudeRef = EXIF.getTag(this, 'GPSLongitudeRef');
+
+            // Convert to decimal and format location
+            let location = null;
+            if (latitudeArray && longitudeArray) {
+                const latitude = convertToDecimal(latitudeArray, latitudeRef);
+                const longitude = convertToDecimal(longitudeArray, longitudeRef);
+                location = `${latitude}, ${longitude}`;
+            }
+
+            resolve({ date: dateTaken, location });
+        });
+    });
+}
+
+function convertToDecimal(valueArray, ref) {
+    // Convert the latitude/longitude from DMS to decimal
+    const degrees = valueArray[0];
+    const minutes = valueArray[1] / 60;
+    const seconds = valueArray[2] / 3600;
+    let decimal = degrees + minutes + seconds;
+    if (ref === 'S' || ref === 'W') {
+        decimal *= -1; // Make negative if South or West
+    }
+    return decimal.toFixed(6); // Return with fixed decimal points
+}
+
+function createFieldsetForImage(imgIndex, matches) {
+    const fieldset = document.createElement('fieldset');
+    fieldset.className = 'form-group match-fieldset';
+    fieldset.id = `fieldset-${imgIndex}`; // Unique ID for each fieldset
+
+    // Name Field
+    const nameLabel = document.createElement('label');
+    nameLabel.textContent = 'Name:';
+    fieldset.appendChild(nameLabel);
+
+    const nameInput = document.createElement('input');
+    nameInput.name = `name[${imgIndex}]`; // Array-like naming
+    nameInput.className = 'form-control';
+    nameInput.readOnly = true; // Make it read-only initially
+    fieldset.appendChild(nameInput);
+
+    // Scientific Name Field
+    const sciNameLabel = document.createElement('label');
+    sciNameLabel.textContent = 'Scientific Name:';
+    fieldset.appendChild(sciNameLabel);
+
+    const sciNameInput = document.createElement('input');
+    sciNameInput.name = `binomialNomenclature[${imgIndex}]`; // Array-like naming
+    sciNameInput.className = 'form-control';
+    sciNameInput.readOnly = true; // Make it read-only initially
+    fieldset.appendChild(sciNameInput);
+
+    // Update Date Field
+    const dateLabel = document.createElement('label');
+    dateLabel.textContent = 'Date Identified:';
+    fieldset.appendChild(dateLabel);
+
+    const dateInput = document.createElement('input');
+    dateInput.name = `updateDate[${imgIndex}]`;
+    dateInput.className = 'form-control';
+    dateInput.placeholder = 'YYYY:MM:DD HH:mm:ss';
+    fieldset.appendChild(dateInput);
+
+    // Location Field
+    const locationLabel = document.createElement('label');
+    locationLabel.textContent = 'Location:';
+    fieldset.appendChild(locationLabel);
+
+    const locationInput = document.createElement('input');
+    locationInput.name = `location[${imgIndex}]`;
+    locationInput.className = 'form-control';
+    locationInput.placeholder = 'Latitude, Longitude (e.g., 45.0000, -45.0000)';
+    fieldset.appendChild(locationInput);
+
+    // Prefill fields if data exists in matches
+    if (matches.length > 0) {
+        const match = matches[0]; // Assuming you want to prefill with the first match
+        nameInput.value = match.name || '';
+        sciNameInput.value = match.scientificName || '';
+    }
+
+    return fieldset;
+}
+
+function updateFieldset(fieldset, match) {
+    const nameInput = fieldset.querySelector('input[name^="name"]');
+    const sciNameInput = fieldset.querySelector('input[name^="binomialNomenclature"]');
+    const dateInput = fieldset.querySelector('input[name^="updateDate"]');
+    const locationInput = fieldset.querySelector('input[name^="location"]');
+
+    // Update the inputs with the selected match's data
+    nameInput.value = match.name;
+    sciNameInput.value = match.scientificName;
+    dateInput.value = match.updateDate || ''; // Update date if exists
+    locationInput.value = match.location || ''; // Update location if exists
+}
+</script>
 
 <%- include('../partials/footer') %>

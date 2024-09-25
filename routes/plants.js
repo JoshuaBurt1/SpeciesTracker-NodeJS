@@ -73,12 +73,14 @@ router.get('/', IsLoggedIn, logMiddleware, async (req, res, next) => {
 const userImagesPath = 'public/images/plantae_images';
 // Ensure the directory exists
 fs.mkdirSync(path.join(__dirname, '..', userImagesPath), { recursive: true });
-const createUniqueImageName = (name, originalName) => {
-  // Replace spaces with underscores in the name
-  const formattedName = name.replace(/\s+/g, '_');
+
+
+const createUniqueImageName = (binomialNomenclature, userId, originalName) => {
+  // Replace spaces with underscores in the binomial nomenclature
+  const formattedName = binomialNomenclature.replace(/\s+/g, '_');
   const extension = path.extname(originalName);
   const timestamp = new Date().getTime();
-  const uniqueName = `${formattedName}_${timestamp}${extension}`;
+  const uniqueName = `${formattedName}_${timestamp}_${userId}${extension}`;
   return uniqueName;
 };
 
@@ -111,31 +113,43 @@ router.get("/add", IsLoggedIn, logMiddleware, (req, res, next) => {
 router.post("/add", IsLoggedIn, upload.array('images'), async (req, res, next) => {
   try {
     const plantEntries = [];
+    const userId = req.user._id; // Get user ID
 
-    for (const file of req.files) {
-      const uniqueImageName = createUniqueImageName(req.body.name, file.originalname);
+    for (let i = 0; i < req.files.length; i++) {
+      console.log(i);
+      const file = req.files[i];
+      const binomialNomenclature = req.body.binomialNomenclature[i] || "Unnamed"; // Use default if not provided
+      const name = req.body.name[i] || "Unnamed"; // Get the name from the form
+
+      // Generate the unique image name
+      const uniqueImageName = createUniqueImageName(binomialNomenclature, userId, file.originalname);
       const newDestinationPath = path.join(__dirname, '..', userImagesPath, uniqueImageName);
       await fs.promises.rename(file.path, newDestinationPath);
       
       // Extract metadata from the image
       const metadata = await Exifr.parse(newDestinationPath);
-      
+      console.log('Metadata:', metadata); // Log the metadata to see its content
+
       // Convert GPS coordinates to decimal form
       const imageGPS = metadata?.GPSLatitude && metadata?.GPSLongitude
-        ? convertToDecimal(metadata.GPSLatitude, metadata.GPSLongitude, metadata.GPSLatitudeRef, metadata.GPSLongitudeRef)
-        : null;
+          ? convertToDecimal(metadata.GPSLatitude, metadata.GPSLongitude, metadata.GPSLatitudeRef, metadata.GPSLongitudeRef)
+          : null;
+
+      console.log('Image GPS:', imageGPS); // Log the GPS data
 
       // Convert date to the specified format
       const imageDate = metadata?.DateTimeOriginal ? convertToDate(metadata.DateTimeOriginal) : null;
+      console.log('Image Date:', imageDate); // Log the date
 
       // Determine data integrity values
       const dateDataIntegrityValue = imageDate === req.body.updateDate ? 0 : 1; // Check against metadata
       const locationDataIntegrityValue = imageGPS === req.body.location ? 0 : 1; // Check against metadata
 
-      // Create a new plant entry for the updated image
+
+      // Create a new plant entry
       const createdModel = await Plant.create({
-        name: req.body.name,
-        binomialNomenclature: req.body.binomialNomenclature,
+        name: name,
+        binomialNomenclature: binomialNomenclature,
         updateDate: imageDate || req.body.updateDate, // Use metadata if available
         location: imageGPS || req.body.location, // Use metadata if available
         image: uniqueImageName,
@@ -154,24 +168,6 @@ router.post("/add", IsLoggedIn, upload.array('images'), async (req, res, next) =
     console.error("An error occurred:", error);
     console.error("Error stack:", error.stack);
     res.redirect("/error");
-  }
-});
-
-// GET handler for /plants/edit (loads page)
-router.get("/edit/:_id", IsLoggedIn, logMiddleware, async  (req, res, next) => {
-  try {
-    const plantObj = await Plant.findById(req.params._id).exec();
-    console.log(plantObj);
-    console.log(plantObj.name);
-    res.render("plants/edit", {
-      user: req.user,
-      title: "Edit a Plant Entry",
-      plant: plantObj
-      //user: req.user,
-    });
-  } catch (err) {
-    console.error(err);
-    // Handle the error appropriately
   }
 });
 
