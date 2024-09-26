@@ -18,10 +18,12 @@ const animalsSchemaObj = {
     name: { type: String, required: false }, // The new name 
     changeCount: { type: Number, required: false, default: 0 } // Count starting at 0;
   }],
-  //Use case - the name changes in 2 scenarios
-  //1. Admin: during bulk upload to reprocess photos (new identifier model) => if same name : changecount not updated (image identifier solidity metric)
-  //2. User: edits name (this should be from a given larger list compared to top 4 in add) => (user veracity/expertise metric)
-  removalFlag: { type: Number, required: false, default: 0}, //If 0 : valid object; if 1 : invalid object (not shown in dataviewer) as user (userId) with veracity value < threshold
+  //Use case - User edits name (this should be from a given larger list compared to top 4 in add) => (user veracity/expertise metric)
+  removalFlag: { type: Number, required: false, default: 0}, //If 0 : valid object; if 1 : invalid object (not shown in dataviewer) as A. user (userId) with veracity value < threshold OR B. image found to be a duplicate of another user submission OR C. AI generated image OR D. Augmented image with added effects E. Inappropriate/illegal content (scanner to recognize this)
+  userImageRating: { type: Number, required: false, default: 1}, //a range of 1 to 10 based on user likes (this MUST have no effect on contributionPoints, as it can be an incentive to be manipulated)
+  imageQuality: { type: Number, required: false, default: 1}, //a range of 1 to 10 based on a computer based image scanning tool (sharpness, contrast)
+  rarity: {type: Number, required: false, default: 1}, //based on total number of classifications (total all/total this); new species added = round(10000/1) (higher score); common species = round(10000/100) (lower score)
+  difficulty: {type: Number, required: false, default: 3}, //difficulty to obtain image (virus:6>bacteria:5>protist:4>animal:3>mushroom:2>plant:1)
 };
 
 // Create new mongoose schema using the definition object

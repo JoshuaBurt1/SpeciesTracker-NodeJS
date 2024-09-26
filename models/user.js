@@ -9,7 +9,9 @@ var dataSchemaObj = {
   oauthProvider: { type: String }, // what auth provider was used?
   created: { type: Date }, // keeps track of when the user was created
   admin: { type: Number, default: 0 }, // Set default value to 0 if admin field is not provided
-  userVeracity: {type: Number, default: 100.0}, // default user veracity value (calculated by: dateChanged*n, locationChanged*n, nameChanged*n, locationOutlier*n)
+  userVeracity: {type: Number, default: 100.0}, // default user veracity value (calculated by: dateChanged*n, locationChanged*n, nameChanged*n, locationOutlier*n); below 50% and user's submissions are "blocked"
+  submissionCount: {type: Number, default: 0}, // number of image submission
+  contributionPoints: {type: Number, default: 0}, //number  = Sum of all (imageQuality(current model value)*rarity(current model value)*difficulty)
 };
 
 var usersSchema = new mongoose.Schema(dataSchemaObj);

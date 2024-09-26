@@ -114,14 +114,29 @@ app.use('/animals', animalsRouter);
 app.use("/bacteria", bacteriaRouter);
 app.use("/protists", protistsRouter);
 
+//IDENTIFICATION
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(__dirname));
+// Configure express-fileupload to use a temporary directory
+app.use(fileUpload({ useTempFiles: true, tempFileDir: os.tmpdir() }));
 
-  //IDENTIFICATION
-  app.use(cors());
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
-  app.use(express.static(__dirname));
-  // Configure express-fileupload to use a temporary directory
-  app.use(fileUpload({ useTempFiles: true, tempFileDir: os.tmpdir() }));
+
+//SESSIONS FOR EACH USER
+app.get('/events', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  // Save the response object to send messages later
+  const clientId = Date.now();
+  clients[clientId] = res;
+  // Remove client when connection is closed
+  req.on('close', () => {
+    delete clients[clientId];
+  });
+});
+const clients = {};
 
 //IDENTIFY Mushroom (http://localhost:5000/identify)
 app.post('/identifyM', async (req, res) => {
@@ -178,6 +193,12 @@ app.post('/identifyP', async (req, res) => {
     // Process each uploaded file
     var count = 0;
     for (const file of uploadedFiles) {
+
+      // Send count to all connected clients (real-time server-client responses without using res)
+      for (const client of Object.values(clients)) {
+        client.write(`data: ${count}\n\n`);
+      }
+
       const formData = new FormData();
       const fileStream = fs.createReadStream(file.tempFilePath);
       formData.append('images', fileStream, { filename: file.name });
@@ -187,9 +208,10 @@ app.post('/identifyP', async (req, res) => {
               ...formData.getHeaders(),
           },
       });
-      count++;
-      console.log("Classification " + count + " complete");
-      // Extract information about the top 4 matches
+      count++; 
+      //console.log("Classification: " + count + " complete");
+     
+      // Extract information about the top "4" matches
       const top4Matches = response.data.results.slice(0, 4);
       top4MatchesArray.push(top4Matches.map(match => ({
           name: removeParentheses(match.species.commonNames[0]),
