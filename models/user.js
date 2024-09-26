@@ -12,6 +12,7 @@ var dataSchemaObj = {
   userVeracity: {type: Number, default: 100.0}, // default user veracity value (calculated by: dateChanged*n, locationChanged*n, nameChanged*n, locationOutlier*n); below 50% and user's submissions are "blocked"
   submissionCount: {type: Number, default: 0}, // number of image submission
   contributionPoints: {type: Number, default: 0}, //number  = Sum of all (imageQuality(current model value)*rarity(current model value)*difficulty)
+  groups: { type: [String] } //group option: A. compare data against: all users, group or groups, individual user B. Separate account, single organization
 };
 
 var usersSchema = new mongoose.Schema(dataSchemaObj);

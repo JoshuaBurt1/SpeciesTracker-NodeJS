@@ -21,13 +21,13 @@ module.exports = configurations;<br>
 * In terminal: nodemon
 
 # Capabilities <br>
-~CRUD, Multiple tables <br>
-~Search bar (by name & kingdom only) <br>
-~Image upload: npm i multer <br>
-~Date, time, gps autofill: npm/exif-js <br>
-~Coordinates to map & map to coordinates: npm i leaflet <br>
+~CRUD <br>
+~Search bar <br>
+~Image upload <br>
+~Date, time, gps autofill <br>
+~Coordinates to map & map to coordinates <br>
 ~Plant identification (plantNet API) <br>
 ~Website database API, csv download, total image download <br>
-~User authentication & github auth: npm i passport express-session passport-local-mongoose passport-github2 <br>
-~Message board with reply <br>
-~Admin privileges (add category, edit & delete any post) <br>
+~User authentication & github auth <br>
+~Message board <br>
+~Admin privileges <br>

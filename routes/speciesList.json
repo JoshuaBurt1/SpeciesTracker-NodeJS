@@ -156,7 +156,7 @@
     "binomialNomenclature": "Amelanchier spicata Lam. K.Koch"
   },
   {
-    "name": "Juneberry hybrid",
+    "name": "Juneberry",
     "binomialNomenclature": "Amelanchier × lamarckii F.G.Schroed."
   },
   {
@@ -1200,12 +1200,16 @@
     "binomialNomenclature": "Fothergilla latifolia J.F.Mill."
   },
   {
-    "name": "Strawberry",
+    "name": "Wild Strawberry",
     "binomialNomenclature": "Fragaria vesca L."
   },
   {
-    "name": "Scarlet strawberry",
+    "name": "Wild strawberry",
     "binomialNomenclature": "Fragaria virginiana Mill."
+  },
+  {
+    "name": "Green Strawberry",
+    "binomialNomenclature": "Fragaria viridis Weston"
   },
   {
     "name": "Garden Strawberry",
@@ -1452,7 +1456,7 @@
     "binomialNomenclature": "Hypericum ellipticum Hook."
   },
   {
-    "name": "Hairy St. John's wort",
+    "name": "Hairy St. John's-wort",
     "binomialNomenclature": "Hypericum hirsutum L."
   },
   {
@@ -1460,7 +1464,7 @@
     "binomialNomenclature": "Hypericum humifusum L."
   },
   {
-    "name": "St John's Wort perfoliatum",
+    "name": "St John's Wort",
     "binomialNomenclature": "Hypericum perfoliatum L."
   },
   {
@@ -1472,7 +1476,7 @@
     "binomialNomenclature": "Hypericum tetrapterum Fr."
   },
   {
-    "name": "Saint John’s Wort hybrid",
+    "name": "St John’s wort",
     "binomialNomenclature": "Hypericum × desetangsii Lamotte"
   },
   {
@@ -1488,7 +1492,7 @@
     "binomialNomenclature": "Ilex verticillata L. A. Gray"
   },
   {
-    "name": "Orange Jewelweed",
+    "name": "Jewelweed",
     "binomialNomenclature": "Impatiens capensis Meerb."
   },
   {
@@ -2354,10 +2358,6 @@
   {
     "name": "Holly-fern",
     "binomialNomenclature": "Polystichum lonchitis L. Roth"
-  },
-  {
-    "name": "Pickerelweed",
-    "binomialNomenclature": "Pontederia cordata"
   },
   {
     "name": "Pickerelweed",

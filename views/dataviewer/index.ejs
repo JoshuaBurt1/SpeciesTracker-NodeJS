@@ -46,7 +46,7 @@
 
     <!-- To Show data -->
     <div class="page-container">
-      <div class="table-container">
+      <div class="table-container-dataviewer">
         <% if (dataset && dataset.length > 0) { %>
           <table class="table table-striped table-hover">
             <thead>
@@ -64,28 +64,37 @@
                   <td class="col-2">
                     <a href="/dataviewer/view?name=<%= encodeURIComponent(item.binomialNomenclature) %>">
                       <b><%= item.name %></b>
-                    </a><br><i><%= item.binomialNomenclature %></i><br><br>
+                    </a><br><i><%= item.binomialNomenclature %></i><br>
+                    <% if (item.showSightedLogo) { %>
+                      <img src="/public/site_images/sightedLogo.png" alt="Heart Icon" style="width: 50%; height: 50%;" />
+                    <% } %>
+                    <br>
                     <input type="radio" name="metadata" value="0" id="same-metadata"> 
-                    <label for="same-metadata">Original metadata</label><br>
+                    <label for="same-metadata">Unmodified metadata</label><br> <!-- of all data - unmodified metadata (Most reliable)-->
                     <input type="radio" name="metadata" value="1" id="changed-metadata"> 
-                    <label for="changed-metadata">User modified metadata</label><br>
+                    <label for="changed-metadata">Modified metadata</label><br> <!--of all data - modified metadata; data integrity check (Not as reliable)-->
                     <input type="radio" name="metadata" value="default" id="default-metadata" checked> 
-                    <label for="default-metadata">Default (Both)</label><br><br>
+                    <label for="default-metadata">Default (Both)</label><br><br> <!--all data -->
+                    <input type="checkbox" name="metadata" value="0" id="user-data"> 
+                    <label for="same-metadata">Only your data</label><br> <!--of all data - your data (with unmodified, modified, or default)-->
+                    <input type="checkbox" name="metadata" value="0" id="group-data"> 
+                    <label for="same-metadata">Only group data</label> <!--of all data - a group/individual user data (with unmodified, modified, or default)-->
+                    <input type="text" id="group-name" placeholder="Enter group name" /><br> <!-- name of the group or individual user-->
                 
                     <!-- Time period entry -->
                     <label for="time-period">Time Period:</label>
                     <input type="text" id="time-period" placeholder="Enter time period" /><br><br>
                     
                     <!-- Add to Worksheet button -->
-                    <button type="button" id="add-to-worksheet" onclick="addToWorksheet('<%= item.name %>', document.getElementById('time-period').value)">Add to Worksheet</button>
+                    <button type="button" id="add-to-worksheet" onclick="addToWorksheet('<%= item.binomialNomenclature %>', document.getElementById('time-period').value)">Add to Worksheet</button>
                   </td>
                   <td>
                     <ul id="cellList">
                       <% if (item.updateDates && item.updateDates.length > 0) { %>
-                        <% item.updateDates.slice(0, 20).forEach(function(updateDate) { %>
+                        <% item.updateDates.slice(0, 10).forEach(function(updateDate) { %>
                           <li><%= updateDate %></li>
                         <% }); %>
-                        <% if (item.updateDates.length > 20) { %>
+                        <% if (item.updateDates.length > 10) { %>
                           <li>…</li> <!-- Ellipsis for more entries -->
                         <% } %>
                       <% } else { %>
@@ -98,10 +107,10 @@
                       <div class="coordinates" data-species="<%= JSON.stringify(item.locations) %>">
                         <ul id="cellList">
                           <% if (item.locations && item.locations.length > 0) { %>
-                            <% item.locations.slice(0, 20).forEach(function(location) { %>
+                            <% item.locations.slice(0, 10).forEach(function(location) { %>
                               <li><%= location %></li>
                             <% }); %>
-                            <% if (item.locations.length > 20) { %>
+                            <% if (item.locations.length > 10) { %>
                               <li>…</li> <!-- Ellipsis for more entries -->
                             <% } %>
                           <% } else { %>
@@ -144,29 +153,6 @@
           <p><!--Some kind of message here --></p>
         <% } %>
       </div>
-
-      <!-- Pagination -->
-      <div class="pagination">
-        <% if (currentPage > 1) { %>
-          <a href="/dataviewer?page=1&searchBar=<%= searchQuery %>">&lt;&lt;</a>
-          <a href="/dataviewer?page=<%= Math.max(currentPage - 10, 1) %>&searchBar=<%= searchQuery %>">&lt;</a>
-        <% } %>
-
-        <% const maxPagesToShow = 10; %>
-        <% const startPage = Math.max(currentPage - Math.floor(maxPagesToShow / 2), 1); %>
-        <% const endPage = Math.min(startPage + maxPagesToShow - 1, totalPages); %>
-
-        <% for (let i = startPage; i <= endPage; i++) { %>
-          <a href="/dataviewer?page=<%= i %>&searchBar=<%= searchQuery %>" class="<%= currentPage === i ? 'activePagination' : '' %>">
-            <%= i %>
-          </a>
-        <% } %>
-
-        <% if (currentPage < totalPages) { %>
-          <a href="/dataviewer?page=<%= Math.min(currentPage + 10, totalPages) %>&searchBar=<%= searchQuery %>">&gt;</a>
-          <a href="/dataviewer?page=<%= totalPages %>&searchBar=<%= searchQuery %>">&gt;&gt;</a>
-        <% } %>
-      </div>
     </div>
   </div>
 </div>
@@ -175,9 +161,9 @@
 
 
 <script>
-  function addToWorksheet(name, timePeriod) {
+  function addToWorksheet(binomialNomenclature, timePeriod) {
     const entry = document.createElement('li');
-    entry.textContent = `${name} - Time Period: ${timePeriod}`;
+    entry.innerHTML = `${binomialNomenclature} <br> Time Period: ${timePeriod}<br>`;
     document.getElementById('worksheetEntries').appendChild(entry);
   }
 </script>

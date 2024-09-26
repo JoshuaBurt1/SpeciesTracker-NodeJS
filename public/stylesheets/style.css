@@ -10,6 +10,11 @@
   overflow-y: auto; /* Enable vertical scrolling if the content overflows */
 }
 
+.table-container-dataviewer {
+  height: 65vh; 
+  overflow-y: auto; /* Enable vertical scrolling if the content overflows */
+}
+
 /* Optionally, you can style the header to make it fixed */
 .table-container thead {
   position: sticky;

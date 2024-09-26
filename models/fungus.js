@@ -25,6 +25,7 @@ const fungiSchemaObj = {
   imageQuality: { type: Number, required: false, default: 1}, //a range of 1 to 10 based on a computer based image scanning tool (sharpness, contrast)
   rarity: {type: Number, required: false, default: 1}, //based on total number of classifications (total all/total this); new species added = round(10000/1) (higher score); common species = round(10000/100) (lower score)
   difficulty: {type: Number, required: false, default: 2}, //difficulty to obtain image (virus:6>bacteria:5>protist:4>animal:3>mushroom:2>plant:1)
+  //magnification: {type: Number, required: true, default: 1}, //there needs to be a trained computer based image scanner that can determine magnification; 1 = meter
 };
 
 // Create new mongoose schema using the definition object
