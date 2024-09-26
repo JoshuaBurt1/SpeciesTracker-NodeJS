@@ -21,7 +21,6 @@
 
   <button class="offset-3 btn btn-primary">Save</button>
 </form>
-
 <script defer>
     const eventSource = new EventSource('/events');
 
@@ -31,217 +30,170 @@
     };
 
     async function identifyPlant() {
-        const images = document.getElementById('image').files; // Get the files from the input
+        const images = document.getElementById('image').files;
         const formData = new FormData();
 
-        // Check if at least one image is selected
         if (images.length === 0) {
-        console.error('No images selected');
-        return;
-        }
-
-        // Append each image to FormData
-        for (const image of images) {
-        formData.append('images[]', image); // Use 'images[]' to match backend expectations
-        }
-
-        try {
-        const apiUrl = 'http://localhost:3000/identifyP'; // Your server URL
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            body: formData
-        });
-
-        if (!response.ok) {
-            console.error('Error response status:', response.status);
-            console.log('Error response text:', await response.text());
+            console.error('No images selected');
             return;
         }
 
-        const data = await response.json();
-        console.log('status', response.status);
-        console.log('data', data);
+        for (const image of images) {
+            formData.append('images[]', image);
+        }
 
-        // Display top "3" matches for each image
+        try {
+            const apiUrl = 'http://localhost:3000/identifyP';
+            const response = await fetch(apiUrl, { method: 'POST', body: formData });
+
+            if (!response.ok) {
+                console.error('Error response status:', response.status);
+                console.log('Error response text:', await response.text());
+                return;
+            }
+
+            const data = await response.json();
+            displayMatches(data.top4Matches, images);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    function displayMatches(matchesArray, images) {
         const top4Div = document.getElementById('top4');
-        top4Div.innerHTML = ''; // Clear previous content
+        top4Div.innerHTML = '';
 
-        data.top4Matches.forEach((matches, imgIndex) => {
-            // Create a cell div for this image's matches
+        matchesArray.forEach((matches, imgIndex) => {
             const cellDiv = document.createElement('div');
-            cellDiv.className = 'match-cell'; // Optional class for styling
+            cellDiv.className = 'match-cell';
 
             const imgHeader = document.createElement('h4');
             imgHeader.textContent = `Matches for Image ${imgIndex + 1}:`;
             cellDiv.appendChild(imgHeader);
 
-            // Display the respective image
             const imageElement = document.createElement('img');
-            imageElement.src = URL.createObjectURL(images[imgIndex]); // Use a URL for the selected image
+            imageElement.src = URL.createObjectURL(images[imgIndex]);
             imageElement.alt = `Uploaded Image ${imgIndex + 1}`;
-            imageElement.style.width = '50%'; // Optional: make image responsive
-            imageElement.style.height = 'auto'; // Maintain aspect ratio
+            imageElement.style.width = '50%';
+            imageElement.style.height = 'auto';
             cellDiv.appendChild(imageElement);
 
-            // Create a fieldset for each image index
             const fieldset = createFieldsetForImage(imgIndex, matches);
             cellDiv.appendChild(fieldset);
 
-            // Create matchDiv to display match details
             matches.forEach((match, index) => {
-            const matchDiv = document.createElement('div');
-            matchDiv.innerHTML = `
-                <strong>${index + 1}. Name:</strong> ${match.name}; 
-                <strong>Scientific Name:</strong> ${match.scientificName}; 
-                <strong>Score:</strong> ${match.score}
-            `;
-
-            // Create button for each match
-            const button = document.createElement('button');
-            button.textContent = 'Select';
-            button.type = 'button'; // Prevent form submission
-            button.onclick = () => {
-                // Update the fieldset inputs with the selected match's data
-                updateFieldset(fieldset, match);
-            };
-
-            matchDiv.appendChild(button);
-            cellDiv.appendChild(matchDiv);
+                const matchDiv = createMatchDiv(match, fieldset, index);
+                cellDiv.appendChild(matchDiv);
             });
 
-            // Append the cell div to the main container
             top4Div.appendChild(cellDiv);
+            extractExifData(images[imgIndex], fieldset, imgIndex);
+        });
+    }
 
-            // Extract EXIF data
-            getExifData(images[imgIndex]).then(exifData => {
+    function createMatchDiv(match, fieldset, index) {
+        const matchDiv = document.createElement('div');
+        matchDiv.innerHTML = `
+            <strong>${index + 1}. Name:</strong> ${match.name}; 
+            <strong>Scientific Name:</strong> ${match.scientificName}; 
+            <strong>Score:</strong> ${match.score}
+        `;
+
+        const button = document.createElement('button');
+        button.textContent = 'Select';
+        button.type = 'button';
+        button.onclick = () => updateFieldset(fieldset, match);
+        matchDiv.appendChild(button);
+
+        return matchDiv;
+    }
+
+    function extractExifData(file, fieldset, imgIndex) {
+        getExifData(file).then(exifData => {
             if (exifData) {
                 const dateInput = fieldset.querySelector(`input[name="updateDate[${imgIndex}]"]`);
                 const locationInput = fieldset.querySelector(`input[name="location[${imgIndex}]"]`);
 
-                if (exifData.date) {
-                dateInput.value = exifData.date; // Set EXIF date
-                }
-                if (exifData.location) {
-                locationInput.value = exifData.location; // Set EXIF location
-                }
+                if (exifData.date) dateInput.value = exifData.date;
+                if (exifData.location) locationInput.value = exifData.location;
             }
-            });
         });
-
-        } catch (error) {
-        console.error('error', error);
-        }
     }
 
     async function getExifData(file) {
-        return new Promise((resolve) => {
-        EXIF.getData(file, function() {
-            const dateTaken = EXIF.getTag(this, 'DateTimeOriginal');
-            const latitudeArray = EXIF.getTag(this, 'GPSLatitude');
-            const longitudeArray = EXIF.getTag(this, 'GPSLongitude');
-            const latitudeRef = EXIF.getTag(this, 'GPSLatitudeRef');
-            const longitudeRef = EXIF.getTag(this, 'GPSLongitudeRef');
+        return new Promise(resolve => {
+            EXIF.getData(file, function() {
+                const dateTaken = EXIF.getTag(this, 'DateTimeOriginal');
+                const latitudeArray = EXIF.getTag(this, 'GPSLatitude');
+                const longitudeArray = EXIF.getTag(this, 'GPSLongitude');
+                const latitudeRef = EXIF.getTag(this, 'GPSLatitudeRef');
+                const longitudeRef = EXIF.getTag(this, 'GPSLongitudeRef');
 
-            // Convert to decimal and format location
-            let location = null;
-            if (latitudeArray && longitudeArray) {
-            const latitude = convertToDecimal(latitudeArray, latitudeRef);
-            const longitude = convertToDecimal(longitudeArray, longitudeRef);
-            location = `${latitude}, ${longitude}`;
-            }
+                let location = null;
+                if (latitudeArray && longitudeArray) {
+                    const latitude = convertToDecimal(latitudeArray, latitudeRef);
+                    const longitude = convertToDecimal(longitudeArray, longitudeRef);
+                    location = `${latitude}, ${longitude}`;
+                }
 
-            resolve({ date: dateTaken, location });
-        });
+                resolve({ date: dateTaken, location });
+            });
         });
     }
 
     function convertToDecimal(valueArray, ref) {
-        // Convert the latitude/longitude from DMS to decimal
         const degrees = valueArray[0];
         const minutes = valueArray[1] / 60;
         const seconds = valueArray[2] / 3600;
         let decimal = degrees + minutes + seconds;
-        if (ref === 'S' || ref === 'W') {
-        decimal *= -1; // Make negative if South or West
-        }
-        return decimal.toFixed(6); // Return with fixed decimal points
+        if (ref === 'S' || ref === 'W') decimal *= -1;
+        return decimal.toFixed(6);
     }
 
     function createFieldsetForImage(imgIndex, matches) {
         const fieldset = document.createElement('fieldset');
         fieldset.className = 'form-group match-fieldset';
-        fieldset.id = `fieldset-${imgIndex}`; // Unique ID for each fieldset
+        fieldset.id = `fieldset-${imgIndex}`;
 
-        // Name Field
-        const nameLabel = document.createElement('label');
-        nameLabel.textContent = 'Name:';
-        fieldset.appendChild(nameLabel);
+        const fields = [
+            { label: 'Name:', name: `name[${imgIndex}]`, readOnly: true },
+            { label: 'Scientific Name:', name: `binomialNomenclature[${imgIndex}]`, readOnly: true },
+            { label: 'Date Identified:', name: `updateDate[${imgIndex}]`, required: true, placeholder: 'YYYY:MM:DD HH:mm:ss', pattern: '^\\d{4}:\\d{2}:\\d{2} \\d{2}:\\d{2}:\\d{2}$' },
+            { label: 'Location:', name: `location[${imgIndex}]`, required: true, placeholder: 'Latitude, Longitude (e.g., 45.0000, -45.0000)', pattern: '^-?\\d{1,2}\\.\\d{6}, -?\\d{1,3}\\.\\d{6}$' }
+        ];
 
-        const nameInput = document.createElement('input');
-        nameInput.name = `name[${imgIndex}]`; // Array-like naming
-        nameInput.className = 'form-control';
-        nameInput.readOnly = true; // Make it read-only initially
-        fieldset.appendChild(nameInput);
+        fields.forEach(({ label, name, readOnly, required, placeholder, pattern }) => {
+            const labelElement = document.createElement('label');
+            labelElement.textContent = label;
+            fieldset.appendChild(labelElement);
 
-        // Scientific Name Field
-        const sciNameLabel = document.createElement('label');
-        sciNameLabel.textContent = 'Scientific Name:';
-        fieldset.appendChild(sciNameLabel);
+            const input = document.createElement('input');
+            input.name = name;
+            input.className = 'form-control';
+            if (readOnly) input.readOnly = true;
+            if (required) input.required = true;
+            if (placeholder) input.placeholder = placeholder;
+            if (pattern) input.pattern = pattern; // Add regex pattern for validation
+            fieldset.appendChild(input);
+        });
 
-        const sciNameInput = document.createElement('input');
-        sciNameInput.name = `binomialNomenclature[${imgIndex}]`; // Array-like naming
-        sciNameInput.className = 'form-control';
-        sciNameInput.readOnly = true; // Make it read-only initially
-        fieldset.appendChild(sciNameInput);
-
-        // Update Date Field
-        const dateLabel = document.createElement('label');
-        dateLabel.textContent = 'Date Identified:';
-        fieldset.appendChild(dateLabel);
-
-        const dateInput = document.createElement('input');
-        dateInput.name = `updateDate[${imgIndex}]`;
-        dateInput.className = 'form-control';
-        dateInput.placeholder = 'YYYY:MM:DD HH:mm:ss';
-        dateInput.required = true; // Make this field required
-        fieldset.appendChild(dateInput);
-
-        // Location Field
-        const locationLabel = document.createElement('label');
-        locationLabel.textContent = 'Location:';
-        fieldset.appendChild(locationLabel);
-
-        const locationInput = document.createElement('input');
-        locationInput.name = `location[${imgIndex}]`;
-        locationInput.className = 'form-control';
-        locationInput.placeholder = 'Latitude, Longitude (e.g., 45.0000, -45.0000)';
-        locationInput.required = true; // Make this field required
-        fieldset.appendChild(locationInput);
-
-        // Prefill fields if data exists in matches
         if (matches.length > 0) {
-        const match = matches[0]; // Assuming you want to prefill with the first match
-        nameInput.value = match.name || '';
-        sciNameInput.value = match.scientificName || '';
+            const match = matches[0];
+            fieldset.querySelector(`input[name="name[${imgIndex}]"]`).value = match.name || '';
+            fieldset.querySelector(`input[name="binomialNomenclature[${imgIndex}]"]`).value = match.scientificName || '';
         }
 
         return fieldset;
     }
 
     function updateFieldset(fieldset, match) {
-        const nameInput = fieldset.querySelector('input[name^="name"]');
-        const sciNameInput = fieldset.querySelector('input[name^="binomialNomenclature"]');
-        const dateInput = fieldset.querySelector('input[name^="updateDate"]');
-        const locationInput = fieldset.querySelector('input[name^="location"]');
+    const nameInput = fieldset.querySelector('input[name^="name"]');
+    const sciNameInput = fieldset.querySelector('input[name^="binomialNomenclature"]');
 
-        // Update the inputs with the selected match's data
-        nameInput.value = match.name;
-        sciNameInput.value = match.scientificName;
-        // Don't modify dateInput and locationInput
-        // dateInput.value = match.updateDate || ''; // Uncomment if you want to allow updating
-        // locationInput.value = match.location || ''; // Uncomment if you want to allow updating
-    }
+    // Replace "×" with "x"
+    nameInput.value = match.name.replace(/×/g, 'x');
+    sciNameInput.value = match.scientificName.replace(/×/g, 'x');
+}
 </script>
 
 <%- include('../partials/footer') %>
-  
