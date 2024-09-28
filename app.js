@@ -212,7 +212,7 @@ app.post('/identifyP', async (req, res) => {
       //console.log("Classification: " + count + " complete");
      
       // Extract information about the top "4" matches
-      const top4Matches = response.data.results.slice(0, 4);
+      const top4Matches = response.data.results.slice(0, 6);
       top4MatchesArray.push(top4Matches.map(match => ({
           name: removeParentheses(match.species.commonNames[0]),
           scientificName: removeParentheses(match.species.scientificName),

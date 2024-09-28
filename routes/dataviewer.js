@@ -3,6 +3,13 @@ var express = require('express');
 var router = express.Router();
 var logMiddleware = require('../logMiddleware'); // Route logging middleware
 
+// Import configurations
+const configurations = require('../config/globals'); // Adjust the path as necessary
+const OpenAI = require('openai');
+const openai = new OpenAI({
+    apiKey: configurations.openAIAPIKey, // Use the key from your config
+});
+
 // Constants
 const MODEL_NAMES = ['Plant', 'Fungus', 'Animal', 'Protist', 'Bacterium'];
 //const pageSize = 4;
@@ -186,5 +193,33 @@ router.get("/view", logMiddleware, async (req, res, next) => {
     res.status(500).send("Internal Server Error");
   }
 });  
+
+// POST handler for analyzing data
+router.post("/analyze", async (req, res) => {
+  const { binomialNomenclatures, updateDates, locations } = req.body;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "user",
+          content: `Analyze the location data ${locations} for each respective ${binomialNomenclatures}. 
+          Compare each species location distributions by associating higher density areas around known geological and soil data, then
+          hypothesize mathematical and scientific insights like why a species is more prevelant at a certain location and time.`
+
+        /*Analyze the location data ${locations} and the time period data ${updateDates} for each respective ${binomialNomenclatures}. 
+        Return 5 listed coordinates and their associated landformations.
+        Return 5 listed updateDates and their possible reason for occurence at this time.*/
+        }
+      ]
+    });
+
+    res.json(response.choices[0].message.content);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error analyzing data");
+  }
+});
 
 module.exports = router;
