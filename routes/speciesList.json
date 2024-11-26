@@ -80,8 +80,16 @@
     "binomialNomenclature": "Aesculus hippocastanum L."
   },
   {
+    "name": "Purple false foxglove",
+    "binomialNomenclature": "Agalinis purpurea L. Pennell"
+  },
+  {
     "name": "Slender false foxglove",
     "binomialNomenclature": "Agalinis tenuifolia Vahl Raf."
+  },
+  {
+    "name": "Yellow giant-hyssop",
+    "binomialNomenclature": "Agastache nepetoides L. Kuntze"
   },
   {
     "name": "White Snakeroot",
@@ -118,6 +126,10 @@
   {
     "name": "Green Alder",
     "binomialNomenclature": "Alnus alnobetula Ehrh. K.Koch"
+  },
+  {
+    "name": "Alder",
+    "binomialNomenclature": "Alnus glutinosa L. Gaertn."
   },
   {
     "name": "Manchurian alder",
@@ -208,8 +220,16 @@
     "binomialNomenclature": "Antennaria parvifolia Nutt."
   },
   {
+    "name": "Cow parsley",
+    "binomialNomenclature": "Anthriscus cerefolium L. Hoffm."
+  },
+  {
     "name": "Spreading dogbane",
     "binomialNomenclature": "Apocynum androsaemifolium L."
+  },
+  {
+    "name": "Dogbane",
+    "binomialNomenclature": "Apocynum cannabinum L."
   },
   {
     "name": "Red columbine",
@@ -280,6 +300,14 @@
     "binomialNomenclature": "Artemisia absinthium L."
   },
   {
+    "name": "Field sagewort",
+    "binomialNomenclature": "Artemisia campestris L."
+  },
+  {
+    "name": "Mugwort",
+    "binomialNomenclature": "Artemisia verlotiorum Lamotte"
+  },
+  {
     "name": "Canadian Wild Ginger",
     "binomialNomenclature": "Asarum canadense L."
   },
@@ -326,6 +354,10 @@
   {
     "name": "Green spleenwort",
     "binomialNomenclature": "Asplenium viride Huds."
+  },
+  {
+    "name": "Rough-surface aster",
+    "binomialNomenclature": "Aster ageratoides Turcz."
   },
   {
     "name": "Alpine lady fern",
@@ -476,6 +508,10 @@
     "binomialNomenclature": "Cardamine impatiens L."
   },
   {
+    "name": "Musk thistle",
+    "binomialNomenclature": "Carduus nutans L."
+  },
+  {
     "name": "Eastern Woodland Sedge",
     "binomialNomenclature": "Carex blanda Dewey"
   },
@@ -596,6 +632,14 @@
     "binomialNomenclature": "Carya cordiformis"
   },
   {
+    "name": "Bitternut",
+    "binomialNomenclature": "Carya cordiformis Wangenh. K.Koch"
+  },
+  {
+    "name": "Pignut hickory",
+    "binomialNomenclature": "Carya glabra Mill. Sweet"
+  },
+  {
     "name": "Shagbark Hickory",
     "binomialNomenclature": "Carya ovata Mill. K.Koch"
   },
@@ -606,6 +650,10 @@
   {
     "name": "Northern catalpa",
     "binomialNomenclature": "Catalpa speciosa Teas"
+  },
+  {
+    "name": "Catawbatree",
+    "binomialNomenclature": "Catalpa speciosa Warder ex Barney Warder ex Engelm."
   },
   {
     "name": "Blue cohosh",
@@ -728,6 +776,10 @@
     "binomialNomenclature": "Cirsium muticum Michx."
   },
   {
+    "name": "Spear Thistle",
+    "binomialNomenclature": "Cirsium vulgare Savi Ten."
+  },
+  {
     "name": "Smooth saw-grass",
     "binomialNomenclature": "Cladium mariscoides Muhl. Torr."
   },
@@ -736,7 +788,7 @@
     "binomialNomenclature": "Claytonia caroliniana Michx."
   },
   {
-    "name": "Devil's darning needles",
+    "name": "Virgin's-bower",
     "binomialNomenclature": "Clematis virginiana L."
   },
   {
@@ -752,6 +804,10 @@
     "binomialNomenclature": "Clintonia umbellulata Michx. Morong"
   },
   {
+    "name": "Northern horsebalm",
+    "binomialNomenclature": "Collinsonia canadensis L."
+  },
+  {
     "name": "Bastard-Toadflax",
     "binomialNomenclature": "Comandra umbellata L. Nutt."
   },
@@ -760,8 +816,16 @@
     "binomialNomenclature": "Comarum palustre L."
   },
   {
+    "name": "Dayflower",
+    "binomialNomenclature": "Commelina communis L."
+  },
+  {
     "name": "Sweetfern",
     "binomialNomenclature": "Comptonia peregrina L. Coult."
+  },
+  {
+    "name": "Poison hemlock",
+    "binomialNomenclature": "Conium maculatum L."
   },
   {
     "name": "Squawroot",
@@ -888,6 +952,10 @@
     "binomialNomenclature": "Cryptotaenia canadensis L. DC."
   },
   {
+    "name": "Straw-Color Flat Sedge",
+    "binomialNomenclature": "Cyperus strigosus L."
+  },
+  {
     "name": "Pink lady's-slipper",
     "binomialNomenclature": "Cypripedium acaule Aiton"
   },
@@ -922,6 +990,10 @@
   {
     "name": "Queen Anne's lace",
     "binomialNomenclature": "Daucus carota L."
+  },
+  {
+    "name": "Swamp-loosestrife",
+    "binomialNomenclature": "Decodon verticillatus L. Elliott"
   },
   {
     "name": "Menzies's larkspur",
@@ -984,6 +1056,10 @@
     "binomialNomenclature": "Dryopteris carthusiana Vill. H.P. Fuchs"
   },
   {
+    "name": "Narrow Buckler Fern",
+    "binomialNomenclature": "Dryopteris carthusiana Vill. H.P.Fuchs"
+  },
+  {
     "name": "Crested Buckler Fern",
     "binomialNomenclature": "Dryopteris cristata L. A.Gray"
   },
@@ -1006,6 +1082,10 @@
   {
     "name": "Marginal woodfern",
     "binomialNomenclature": "Dryopteris marginalis L. A. Gray"
+  },
+  {
+    "name": "Purple Coneflower",
+    "binomialNomenclature": "Echinacea purpurea L. Moench"
   },
   {
     "name": "American Barnyard Grass",
@@ -1104,6 +1184,10 @@
     "binomialNomenclature": "Equisetum sylvaticum L."
   },
   {
+    "name": "Tall Fleabane",
+    "binomialNomenclature": "Erigeron annuus L. Desf"
+  },
+  {
     "name": "Eastern daisy fleabane",
     "binomialNomenclature": "Erigeron annuus L. Desf."
   },
@@ -1140,8 +1224,16 @@
     "binomialNomenclature": "Euonymus alatus Thunb. Siebold"
   },
   {
+    "name": "Bursting-heart",
+    "binomialNomenclature": "Euonymus americanus L."
+  },
+  {
     "name": "Climbing euonymus",
     "binomialNomenclature": "Euonymus fortunei Turcz. Hand.-Mazz."
+  },
+  {
+    "name": "Hamilton's spindle",
+    "binomialNomenclature": "Euonymus hamiltonianus Wall."
   },
   {
     "name": "Boneset",
@@ -1200,6 +1292,10 @@
     "binomialNomenclature": "Fagus grandifolia Ehrh."
   },
   {
+    "name": "Oriental Beech",
+    "binomialNomenclature": "Fagus orientalis Lipsky"
+  },
+  {
     "name": "Forsythia",
     "binomialNomenclature": "Forsythia intermedia Zabel"
   },
@@ -1226,6 +1322,10 @@
   {
     "name": "Glossy buckthorn",
     "binomialNomenclature": "Frangula alnus Mill."
+  },
+  {
+    "name": "White ash",
+    "binomialNomenclature": "Fraxinus americana L."
   },
   {
     "name": "Ash",
@@ -1266,6 +1366,10 @@
   {
     "name": "Hedge Bedstraw",
     "binomialNomenclature": "Galium mollugo L."
+  },
+  {
+    "name": "Blunt-Leaf Bedstraw",
+    "binomialNomenclature": "Galium obtusum Bigelow"
   },
   {
     "name": "Sweet Woodruff",
@@ -1376,6 +1480,10 @@
     "binomialNomenclature": "Hackelia virginiana L. I.M.Johnst."
   },
   {
+    "name": "English ivy",
+    "binomialNomenclature": "Hedera helix L."
+  },
+  {
     "name": "Sunflower",
     "binomialNomenclature": "Helianthus annuus L."
   },
@@ -1384,8 +1492,24 @@
     "binomialNomenclature": "Helianthus decapetalus L."
   },
   {
+    "name": "Woodland sunflower",
+    "binomialNomenclature": "Helianthus divaricatus L."
+  },
+  {
+    "name": "Giant sunflower",
+    "binomialNomenclature": "Helianthus giganteus L."
+  },
+  {
+    "name": "Sawtooth Sunflower",
+    "binomialNomenclature": "Helianthus grosseserratus M.Martens"
+  },
+  {
     "name": "Hairy sunflower",
     "binomialNomenclature": "Helianthus hirsutus Raf."
+  },
+  {
+    "name": "Pale-leaf sunflower",
+    "binomialNomenclature": "Helianthus strumosus L."
   },
   {
     "name": "Orange daylily",
@@ -1410,6 +1534,10 @@
   {
     "name": "Dames rocket",
     "binomialNomenclature": "Hesperis matronalis L."
+  },
+  {
+    "name": "Swamp Rose-Mallow",
+    "binomialNomenclature": "Hibiscus grandiflorus Michx."
   },
   {
     "name": "Alpine hawkweed",
@@ -1454,6 +1582,10 @@
   {
     "name": "Butterfly stonecrop",
     "binomialNomenclature": "Hylotelephium spectabile Boreau H.Ohba"
+  },
+  {
+    "name": "Allegheny Stonecrop",
+    "binomialNomenclature": "Hylotelephium telephioides Michx. H.Ohba"
   },
   {
     "name": "Orpine",
@@ -1644,6 +1776,10 @@
     "binomialNomenclature": "Lathyrus japonicus Willd."
   },
   {
+    "name": "Everlasting-pea",
+    "binomialNomenclature": "Lathyrus latifolius L."
+  },
+  {
     "name": "Narrow-leaf everlasting-pea",
     "binomialNomenclature": "Lathyrus sylvestris L."
   },
@@ -1708,6 +1844,14 @@
     "binomialNomenclature": "Ligustrum obtusifolium Siebold & Zucc."
   },
   {
+    "name": "Chinese-privet",
+    "binomialNomenclature": "Ligustrum sinense Lour."
+  },
+  {
+    "name": "European privet",
+    "binomialNomenclature": "Ligustrum vulgare L."
+  },
+  {
     "name": "Orange lily",
     "binomialNomenclature": "Lilium bulbiferum L."
   },
@@ -1728,6 +1872,10 @@
     "binomialNomenclature": "Linaria vulgaris Mill."
   },
   {
+    "name": "Northern spicebush",
+    "binomialNomenclature": "Lindera benzoin L. Blume"
+  },
+  {
     "name": "Twinflower",
     "binomialNomenclature": "Linnaea borealis L."
   },
@@ -1736,12 +1884,20 @@
     "binomialNomenclature": "Liriodendron chinense Hemsl. Sarg."
   },
   {
+    "name": "Tulip Poplar",
+    "binomialNomenclature": "Liriodendron tulipifera L."
+  },
+  {
     "name": "Cardinal Flower",
     "binomialNomenclature": "Lobelia cardinalis L."
   },
   {
     "name": "Indian-tobacco",
     "binomialNomenclature": "Lobelia inflata L."
+  },
+  {
+    "name": "Great blue lobelia",
+    "binomialNomenclature": "Lobelia siphilitica L."
   },
   {
     "name": "American Fly Honeysuckle",
@@ -1816,6 +1972,10 @@
     "binomialNomenclature": "Lycopus virginicus L."
   },
   {
+    "name": "Scarlet Pimpernel",
+    "binomialNomenclature": "Lysimachia arvensis L. U.Manns & Anderb."
+  },
+  {
     "name": "Northern Starflower",
     "binomialNomenclature": "Lysimachia borealis Raf. U.Manns & Anderb."
   },
@@ -1850,6 +2010,10 @@
   {
     "name": "Fraser's magnolia",
     "binomialNomenclature": "Magnolia fraseri Walter"
+  },
+  {
+    "name": "May Lily",
+    "binomialNomenclature": "Maianthemum bifolium L. F.W.Schmidt"
   },
   {
     "name": "Canada mayflower",
@@ -1904,6 +2068,14 @@
     "binomialNomenclature": "Malus × floribunda Siebold ex Van Houtte"
   },
   {
+    "name": "Pink Mallow",
+    "binomialNomenclature": "Malva alcea L."
+  },
+  {
+    "name": "Musk-mallow",
+    "binomialNomenclature": "Malva moschata L."
+  },
+  {
     "name": "Common mallow",
     "binomialNomenclature": "Malva neglecta Wallr."
   },
@@ -1946,6 +2118,10 @@
   {
     "name": "Lemon Balm",
     "binomialNomenclature": "Melissa officinalis L."
+  },
+  {
+    "name": "Moonseed",
+    "binomialNomenclature": "Menispermum canadense L."
   },
   {
     "name": "Water Mint",
@@ -2152,6 +2328,10 @@
     "binomialNomenclature": "Panax quinquefolius L."
   },
   {
+    "name": "Bitter beach grass",
+    "binomialNomenclature": "Panicum amarum Elliott"
+  },
+  {
     "name": "Fen Grass-of-Parnassus",
     "binomialNomenclature": "Parnassia glauca Raf."
   },
@@ -2208,8 +2388,16 @@
     "binomialNomenclature": "Phlox divaricata L."
   },
   {
+    "name": "Reed grass",
+    "binomialNomenclature": "Phragmites australis Cav. Trin. ex Steud."
+  },
+  {
     "name": "Nine Bark",
     "binomialNomenclature": "Physocarpus opulifolius L. Maxim."
+  },
+  {
+    "name": "American pokeweed",
+    "binomialNomenclature": "Phytolacca americana L."
   },
   {
     "name": "Common Spruce",
@@ -2308,6 +2496,10 @@
     "binomialNomenclature": "Platanthera orbiculata Pursh Lindl."
   },
   {
+    "name": "American sycamore",
+    "binomialNomenclature": "Platanus occidentalis L."
+  },
+  {
     "name": "Smooth Meadow-grass",
     "binomialNomenclature": "Poa pratensis L."
   },
@@ -2342,6 +2534,10 @@
   {
     "name": "Hairy Solomon's-seal",
     "binomialNomenclature": "Polygonatum pubescens Willd. Pursh"
+  },
+  {
+    "name": "Black-fringed knotweed",
+    "binomialNomenclature": "Polygonum cilinode Michx."
   },
   {
     "name": "Spotted ladysthumb",
@@ -2400,6 +2596,14 @@
     "binomialNomenclature": "Potentilla argentea L."
   },
   {
+    "name": "Common cinquefoil",
+    "binomialNomenclature": "Potentilla canadensis L."
+  },
+  {
+    "name": "Tormentil",
+    "binomialNomenclature": "Potentilla erecta L. Raeusch."
+  },
+  {
     "name": "Grey cinquefoil",
     "binomialNomenclature": "Potentilla inclinata Vill."
   },
@@ -2428,8 +2632,8 @@
     "binomialNomenclature": "Prosartes lanuginosa Michx. D.Don"
   },
   {
-    "name": "Large Self-Heal",
-    "binomialNomenclature": "Prunella grandiflora L. Turra"
+    "name": "Large-flowered Selfheal",
+    "binomialNomenclature": "Prunella grandiflora L. Scholler"
   },
   {
     "name": "Self-heal",
@@ -2548,6 +2752,10 @@
     "binomialNomenclature": "Ranunculus macounii Britton"
   },
   {
+    "name": "Large Buttercup",
+    "binomialNomenclature": "Ranunculus macranthus Scheele"
+  },
+  {
     "name": "Straight-beak buttercup",
     "binomialNomenclature": "Ranunculus orthorhynchus Hook."
   },
@@ -2562,6 +2770,10 @@
   {
     "name": "Celery buttercup",
     "binomialNomenclature": "Ranunculus sceleratus L."
+  },
+  {
+    "name": "Pinnate prairie coneflower",
+    "binomialNomenclature": "Ratibida pinnata Vent. Barnhart"
   },
   {
     "name": "Japanese knotweed",
@@ -2728,7 +2940,7 @@
     "binomialNomenclature": "Rubus occidentalis L."
   },
   {
-    "name": "Purple-flowering raspberry",
+    "name": "Purpleflowering raspberry",
     "binomialNomenclature": "Rubus odoratus L."
   },
   {
@@ -2748,8 +2960,20 @@
     "binomialNomenclature": "Rudbeckia hirta L."
   },
   {
+    "name": "Cutleaf coneflower",
+    "binomialNomenclature": "Rudbeckia laciniata L."
+  },
+  {
+    "name": "Brown-eyed Susan",
+    "binomialNomenclature": "Rudbeckia triloba L."
+  },
+  {
     "name": "Green dock",
     "binomialNomenclature": "Rumex conglomeratus Murray"
+  },
+  {
+    "name": "Curly dock",
+    "binomialNomenclature": "Rumex crispus L."
   },
   {
     "name": "Greek dock",
@@ -2780,6 +3004,10 @@
     "binomialNomenclature": "Salix bebbiana Sarg."
   },
   {
+    "name": "Pussy willow",
+    "binomialNomenclature": "Salix cinerea L."
+  },
+  {
     "name": "Heart-leaf willow",
     "binomialNomenclature": "Salix eriocephala Michx."
   },
@@ -2806,6 +3034,10 @@
   {
     "name": "Common elderberry",
     "binomialNomenclature": "Sambucus canadensis L."
+  },
+  {
+    "name": "Common Elder",
+    "binomialNomenclature": "Sambucus nigra L."
   },
   {
     "name": "Red elderberry",
@@ -2868,6 +3100,10 @@
     "binomialNomenclature": "Scirpus sylvaticus L."
   },
   {
+    "name": "Figwort",
+    "binomialNomenclature": "Scrophularia marilandica L."
+  },
+  {
     "name": "Crownvetch",
     "binomialNomenclature": "Securigera varia L. Lassen"
   },
@@ -2892,7 +3128,11 @@
     "binomialNomenclature": "Senecio viscosus L."
   },
   {
-    "name": "Canadian buffalo-berry",
+    "name": "Yellow foxtail",
+    "binomialNomenclature": "Setaria pumila Poir. Roem. & Schult."
+  },
+  {
+    "name": "Soapberry",
     "binomialNomenclature": "Shepherdia canadensis L. Nutt."
   },
   {
@@ -2912,12 +3152,20 @@
     "binomialNomenclature": "Silene vulgaris Moench Garcke"
   },
   {
+    "name": "Cup-plant",
+    "binomialNomenclature": "Silphium perfoliatum L."
+  },
+  {
     "name": "American blue-eyed-grass",
     "binomialNomenclature": "Sisyrinchium montanum Greene"
   },
   {
     "name": "Carrion-flower",
     "binomialNomenclature": "Smilax herbacea L."
+  },
+  {
+    "name": "Bristly greenbrier",
+    "binomialNomenclature": "Smilax tamnoides L."
   },
   {
     "name": "Climbing nightshade",
@@ -2982,6 +3230,10 @@
   {
     "name": "Goldenrod",
     "binomialNomenclature": "Solidago virgaurea L."
+  },
+  {
+    "name": "Field sowthistle",
+    "binomialNomenclature": "Sonchus arvensis L."
   },
   {
     "name": "Mountain-ash",
@@ -3090,6 +3342,14 @@
   {
     "name": "Michaelmas Daisy",
     "binomialNomenclature": "Symphyotrichum novi-belgii L. G.L.Nesom"
+  },
+  {
+    "name": "Azure aster",
+    "binomialNomenclature": "Symphyotrichum oolentangiense Riddell G.L.Nesom"
+  },
+  {
+    "name": "Awl Aster",
+    "binomialNomenclature": "Symphyotrichum pilosum Willd. G.L.Nesom"
   },
   {
     "name": "Bog Aster",
@@ -3272,6 +3532,10 @@
     "binomialNomenclature": "Typha latifolia L."
   },
   {
+    "name": "Oriental cattail",
+    "binomialNomenclature": "Typha orientalis C.Presl"
+  },
+  {
     "name": "Hybrid cattail",
     "binomialNomenclature": "Typha × glauca Godr."
   },
@@ -3314,6 +3578,10 @@
   {
     "name": "Dwarf bilberry",
     "binomialNomenclature": "Vaccinium cespitosum Michx."
+  },
+  {
+    "name": "Blueberry",
+    "binomialNomenclature": "Vaccinium corymbosum L."
   },
   {
     "name": "Canada blueberry",
@@ -3660,6 +3928,10 @@
     "binomialNomenclature": "Calvatia gigantea"
   },
   {
+    "name": "Dog's nose fungus",
+    "binomialNomenclature": "Camarops petersii"
+  },
+  {
     "name": "Pale brittlestem",
     "binomialNomenclature": "Candolleomyces candolleanus"
   },
@@ -3768,6 +4040,10 @@
     "binomialNomenclature": "Conocybe rugosa"
   },
   {
+    "name": "Fairy Inkcap",
+    "binomialNomenclature": "Coprinellus disseminatus"
+  },
+  {
     "name": "Mica Cap",
     "binomialNomenclature": "Coprinellus micaceus"
   },
@@ -3822,6 +4098,10 @@
   {
     "name": "Orange Jelly",
     "binomialNomenclature": "Dacrymyces chrysospermus"
+  },
+  {
+    "name": "Fan-shaped Jelly Fungus",
+    "binomialNomenclature": "Dacrymyces spathularia"
   },
   {
     "name": "Blushing bracket",
@@ -4268,6 +4548,10 @@
     "binomialNomenclature": "Onnia tomentosa"
   },
   {
+    "name": "Common glasscup",
+    "binomialNomenclature": "Orbilia xanthostigma"
+  },
+  {
     "name": "Mealy oyster",
     "binomialNomenclature": "Ossicaulis lignatilis"
   },
@@ -4444,6 +4728,10 @@
     "binomialNomenclature": "Puccinia coronata"
   },
   {
+    "name": "Mealy speckled shield lichen",
+    "binomialNomenclature": "Punctelia missouriensis"
+  },
+  {
     "name": "American cartilage lichen",
     "binomialNomenclature": "Ramalina americana"
   },
@@ -4554,6 +4842,10 @@
   {
     "name": "Crowded parchment",
     "binomialNomenclature": "Stereum complicatum"
+  },
+  {
+    "name": "Hairy curtain crust",
+    "binomialNomenclature": "Stereum hirsutum"
   },
   {
     "name": "False turkey-tail",
@@ -4740,6 +5032,10 @@
     "binomialNomenclature": "Adelphocoris lineolatus"
   },
   {
+    "name": "Bicolored Striped Sweat Bee",
+    "binomialNomenclature": "Agapostemon virescens"
+  },
+  {
     "name": "Red-winged blackbird",
     "binomialNomenclature": "Agelaius phoeniceus"
   },
@@ -4774,6 +5070,10 @@
   {
     "name": "Marbled Orbweaver",
     "binomialNomenclature": "Araneus marmoreus"
+  },
+  {
+    "name": "Archytas apicifer",
+    "binomialNomenclature": "Archytas apicifer"
   },
   {
     "name": "Garden Tiger Moth",
@@ -4884,6 +5184,14 @@
     "binomialNomenclature": "Coleomegilla maculata lengi"
   },
   {
+    "name": "Orange sulphur",
+    "binomialNomenclature": "Colias eurytheme"
+  },
+  {
+    "name": "Clouded Sulphur",
+    "binomialNomenclature": "Colias philodice"
+  },
+  {
     "name": "Rock Pigeon",
     "binomialNomenclature": "Columba livia"
   },
@@ -4906,6 +5214,10 @@
   {
     "name": "Monarch butterfly",
     "binomialNomenclature": "Danaus plexippus"
+  },
+  {
+    "name": "Spotted Cucumber Beetle",
+    "binomialNomenclature": "Diabrotica undecimpunctata"
   },
   {
     "name": "Winter firefly",
@@ -5096,6 +5408,10 @@
     "binomialNomenclature": "Meleagris gallopavo"
   },
   {
+    "name": "Swamp Sparrow",
+    "binomialNomenclature": "Melospiza georgiana"
+  },
+  {
     "name": "Song sparrow",
     "binomialNomenclature": "Melospiza melodia"
   },
@@ -5148,8 +5464,16 @@
     "binomialNomenclature": "Odontocorynus salebrosus"
   },
   {
+    "name": "Large Milkweed Bug",
+    "binomialNomenclature": "Oncopeltus fasciatus"
+  },
+  {
     "name": "Mountain goat",
     "binomialNomenclature": "Oreamnos americanus"
+  },
+  {
+    "name": "Osprey",
+    "binomialNomenclature": "Pandion haliaetus"
   },
   {
     "name": "Wandering Glider",
@@ -5184,6 +5508,10 @@
     "binomialNomenclature": "Phanogomphus borealis"
   },
   {
+    "name": "Turbulent Phosphila",
+    "binomialNomenclature": "Phosphila turbulenta"
+  },
+  {
     "name": "Pearl Crescent",
     "binomialNomenclature": "Phyciodes tharos"
   },
@@ -5200,12 +5528,24 @@
     "binomialNomenclature": "Pieris oleracea"
   },
   {
+    "name": "Cabbage White",
+    "binomialNomenclature": "Pieris rapae"
+  },
+  {
+    "name": "Common Whitetail",
+    "binomialNomenclature": "Plathemis lydia"
+  },
+  {
     "name": "Black capped chickadee",
     "binomialNomenclature": "Poecile atricapillus"
   },
   {
     "name": "Green Immigrant Leaf Weevil",
     "binomialNomenclature": "Polydrusus formosus"
+  },
+  {
+    "name": "Eastern Comma",
+    "binomialNomenclature": "Polygonia comma"
   },
   {
     "name": "Japanese beetle",

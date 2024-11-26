@@ -2,3 +2,4 @@ globals.js
 config/
 config/globals.js
 public/images
+node_modules

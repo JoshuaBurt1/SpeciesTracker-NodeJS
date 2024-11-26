@@ -3,10 +3,9 @@ concept biological catalogue <br>
 https://speciestracker3.azurewebsites.net/
 
 # To Start: <br>
-* Download zip, open in code editor
-* Download node.js, create a MongoDB account and cluster
-* In terminal: npm init -y
-* Download dependencies: npm i connect cookie-parser csv-writer debug ejs express express-session fs http-errors leaflet mongodb mongoose morgan multer nodemon passport passport-github2 passport-local-mongoose url axios form-data cors express-fileupload os
+* Download zip, open in code editor (i.e. VS code)
+* Download Node.js, create a MongoDB account and cluster
+* Download node_modules. In terminal: npm install
 * Add folder & file config/globals.js <br>
 const configurations = {  <br>
   plantNetAPI: "your_plantNet_API_key", <br>
@@ -19,7 +18,7 @@ const configurations = {  <br>
   }, <br>
 }; <br>
 module.exports = configurations;<br>
-* In terminal: nodemon
+* In terminal: npm start
 
 # Capabilities <br>
 ~Database with create, read, update, delete <br>
