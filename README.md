@@ -1,5 +1,5 @@
 # SpeciesTracker
-concept biological catalogue <br>
+concept biological catalogue, contains approximately 1 GB of images<br>
 https://speciestracker3.azurewebsites.net/
 
 # To Start: <br>
