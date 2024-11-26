@@ -19,6 +19,7 @@ const configurations = {  <br>
 }; <br>
 module.exports = configurations;<br>
 * In terminal: npm start
+* Open a browser and run in http://localhost:3000/ or http://localhost:3001/
 
 # Capabilities <br>
 ~Database with create, read, update, delete <br>
